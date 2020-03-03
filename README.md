@@ -18,7 +18,7 @@ http://www.romhacking.net/utilities/27/ - Lunar Expand
 
 ## Features (Zero)
 
-* Zero is playable at any time including the introduction level! However, if the player obtains the Z-Saber as per usual then Zero is unavailable.
+* Zero is playable at any time including the introduction level! However, if the player obtains the Z-Saber as per usual then Zero is unavailable for the remainder of that game.
 * Zero can use sub-weapons, although at double the cost and he cannot charge them.
 * Zero starts off with his air-dash and double jump.
 * Zero CANNOT use the Hyper Charge (Hyper C.) and is unable to select it via L/R buttons or even in the menu. 
