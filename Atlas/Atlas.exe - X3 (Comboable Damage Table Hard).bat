@@ -1,0 +1,2 @@
+Atlas MMX3.sfc mmx3_comboabledamage_tables_hard_000.txt
+pause
