@@ -12,7 +12,7 @@ http://www.romhacking.net/utilities/27/ - Lunar Expand
 ## Requirements
 * Lunar Expand is needed to expand the ROM to 4MB before compiling.
 * Atlas is needed to insert various table files and text data.
-  * It is highly recommended to do this first after ROM expansion so you won't need to constantly recompile any coding changes.
+  * It is highly recommended to do this first after ROM expansion so you won't need to constantly recompile after any coding changes.
 * Asar must be used as the compiler.
 * MUST have a clean Mega Man X3 (U) ROM renamed to a .sfc header as this notates that it's unheadered for Asar.
 
