@@ -16,7 +16,7 @@ http://www.romhacking.net/utilities/27/ - Lunar Expand
 * Asar must be used as the compiler.
 * MUST have a clean Mega Man X3 (U) ROM renamed to a .sfc header as this notates that it's unheadered for Asar.
 
-### Features (Zero)
+## Features (Zero)
 
 * Zero is playable at any time including the introduction level! However, if the player obtains the Z-Saber as per usual then Zero is unavailable.
 * Zero can use sub-weapons, although at double the cost and he cannot charge them.
@@ -34,7 +34,7 @@ http://www.romhacking.net/utilities/27/ - Lunar Expand
 * Zero has his own unique 'GET WEAPON' portrait. (Thanks to Metalwario64 for his gracious work!)
 * Zero has his own 1-up icon in game now.
 
-#### Features (X)
+## Features (X)
 
 * X can use the Hyper Charge (Hyper C.) at any time if the ammo is >= 4. Though, X CANNOT use the Z-Saber when using the Hyper Charge. It will only use Charged Shots.
 * X's buster animation speed has been greatly increased. His Z-Saber swing animation has been very subtly sped up as well.
@@ -47,19 +47,21 @@ http://www.romhacking.net/utilities/27/ - Lunar Expand
 * X's 'GET WEAPON' screen is slightly updated.
 	* He'll show his unused blue palette upon first loading but when the screen flashes it'll load his weapon palette.
 
-##### General Changes And Enhancements
-* The password system has been entirely removed and the game now uses 'saved game' system instead. Up to twenty games can be saved in separate files! The downside is some emulators may not work, such as bsnes due to this change. Save files will display:
-	* Sub-weapons obtained.
-	* Heart tanks obtained.
-	* Current lives.
-	* Sub-tanks obtained.
-	* Ride Armor modules obtained.
-	* Armor enhancement chips obtained.
-	* Whether Bit/Byte/Vile are destroyed.
-	* Whether the game is New Game+ or not using 'CLEAR' as the note..
-	* Who was last played with (X or Zero will be up front to notate this).
-	* All armor upgrades (Will be displayed on the character).
-	* New Game+ weapons will be grayed out and then re-lit up once you have obtained them
+## General Changes And Enhancements
+* The password system has been entirely removed and the game now uses 'saved game' system instead.
+	* Up to twenty games can be saved in separate files! The downside is some emulators may not work, such as bsnes due to this change. 
+	* Save files will display:
+		* Sub-weapons obtained.
+		* Heart tanks obtained.
+		* Current lives.
+		* Sub-tanks obtained.
+		* Ride Armor modules obtained.
+		* Armor enhancement chips obtained.
+		* Whether Bit/Byte/Vile are destroyed.
+		* Whether the game is New Game+ or not using 'CLEAR' as the note..
+		* Who was last played with (X or Zero will be up front to notate this).
+		* All armor upgrades (Will be displayed on the character).
+		* New Game+ weapons will be grayed out and then re-lit up once you have obtained them
 * New Game+ has been introduced into the game. This will carry over any upgrade that was obtained from the last game.
 * When the game is cleared, there'll be a new screen dictating to 'Press Any Button' and will allow you to save your data. Immediately after, the game will reset.
 * Dialogue can now be skipped by pressing the 'START' button. This cuts straight to the end of the sequence.
