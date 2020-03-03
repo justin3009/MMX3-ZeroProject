@@ -3,8 +3,11 @@ A mod of the original Mega Man X3 game by Capcom for the Super Nintendo. This ai
 
 ## Requirements
 http://www.romhacking.net/utilities/224/ - Atlas
+
 https://github.com/RPGHacker/asar - Asar
+
 http://www.romhacking.net/utilities/27/ - Lunar Expand
+
 
 In order to compile all the files, you MUST have clean Mega Man X3 (U) ROM that has NO HEADER. Asar must also be used to compile all the files. The file extension for the ROM must be renamed to .sfc as that's noted to asar that it's an unheadered file. It's very likely you'll need to expand the game to 4MB as well by using Lunar Expand. I generally labeled the base file as 'Base_ROM.sfc' and when the 'Asar MMX3.bat' file is run, it'll spit out MMX3.sfc which houses all the changes. It's highly recommended to run this through Atlas first for the base ROM so you don't have to keep redoing Atlas everytime you update.
 
