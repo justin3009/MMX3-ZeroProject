@@ -1,0 +1,183 @@
+-------------------------------
+Global changes
+-------------------------------
+$7E:1FB2 - Set to 80+ and X has Z-Saber with Zero alive. (Also used for Bit/Byte encounters)
+	00 - Nothing
+	01 - X gone
+	02 - Zero with X-Buster obtained
+	04 - Introduction text for Bit has been done
+	08 - Introduction text for Byte has been done
+	10 - Introduction text for Vile has been done
+	20 - Doppler Lab has emerged from ground on Stage Select
+	40 - Zero gone
+	80 - Z-Saber obtained
+
+$7E:1FCF - Z-Saber check on enemy
+$7E:1FD0 - Z-Saber BIT on Bosses (Checks whether they can be damaged by Z-Saber again or not)
+	--> Checks RAM using $7E:F400 (Enemy Z-Saber BIT table. Covers all 15 enemies that can be on screen at once)
+
+$7E:1FD1 - Now total Chip Capsule collection. (If F0 then GA capsule is available)
+
+$7E:1FD3 - Bit flag for introduction level beat/Secret ending flag
+	00 - No level done
+	01 - Introduction level done
+	02 - Secret ending active (UNUSED)
+
+$7E:1FD7 - Ride Chip collection (Stays universal no matter difficulty)
+
+
+-------------------------------
+X Data
+-------------------------------
+$7E:F400 - $7E:F403 - Sub-tanks 1-4 life
+For sub-tanks:
+	Set to 00: Sub-tank not obtained
+	Set to 80: Sub-tanks obtained, no health.
+	Set to 8E: Sub-tank obtained, full health.
+
+$7E:F404 - Acid Bomb life
+$7E:F405 - Parasite Bomb life
+$7E:F406 - Triad Thunder life
+$7E:F407 - Spinning Blades life
+$7E:F408 - Ray Shot life
+$7E:F409 - Gravity Well life
+$7E:F40A - Frost Shield life
+$7E:F40B - Tornado Fang life
+$7E:F40C - Hyper Chip life
+$7E:F40D - $7E:F417 - UNUSED
+For sub-weapons:
+	Set to 00: Sub-weapons not obtained.
+	Set to 1C: Sub-weapons obtained and at full health.
+	Set to 5C: Sub-weapons obtained, full health and are on the 'half' use bit. Firing once will take half the ammo, then again for normal.
+	Set to C0: Sub-weapons obtained but have no health left.
+
+$7E:F418 - X's Armor #1 pieces/X's Armor #2 pieces (00-0F then 10-80)
+$7E:F419 - X's Armor #3 pieces/X's Armor #4 pieces (00-0F then 10-80) (UNUSED)
+$7E:F41A - X's Current health (PC swap)
+$7E:F41B - X's Max health
+$7E:F41C - X's Heart Tank collection
+$7E:F41D - X's Sub-Tank collection
+	00 - None
+	01 - UNUSED
+	02 - UNUSED
+	04 - UNUSED
+	08 - UNUSED
+	10 - Sub-tank #1
+	20 - Sub-tank #2
+	40 - Sub-tank #3
+	80 - Sub-tank #4
+	F0+ - All sub-tanks obtained.
+$7E:F41E - X's Armors fully obtained (UNUSED)
+	00 - None
+	01 - Armor #1
+	02 - Armor #2
+	04 - Armor #3
+	08 - Armor #4
+$7E:F41F - X's availability (UNUSED)
+	00 - Available
+	01 - Unavailable
+$7E:F420 - $7E:F430 - UNUSED
+
+
+--------------------------------
+Zero's Data (Starts at $7E:F430)
+--------------------------------
+$7E:F430 - $7E:F433 - Sub-tanks 1-4 life
+For sub-tanks:
+	Set to 00: Sub-tank not obtained
+	Set to 80: Sub-tanks obtained, no health.
+	Set to 8E: Sub-tank obtained, full health.
+
+$7E:F434 - Acid Bomb life
+$7E:F435 - Parasite Bomb life
+$7E:F436 - Triad Thunder life
+$7E:F437 - Spinning Blades life
+$7E:F438 - Ray Shot life
+$7E:F439 - Gravity Well life
+$7E:F43A - Frost Shield life
+$7E:F43B - Tornado Fang life
+$7E:F43C - Hyper Chip life
+$7E:F43D - $7E:F447 - UNUSED
+For sub-weapons:
+	Set to 00: Sub-weapons not obtained.
+	Set to 1C: Sub-weapons obtained and at full health.
+	Set to 5C: Sub-weapons obtained, full health and are on the 'half' use bit. Firing once will take half the ammo, then again for normal.
+	Set to C0: Sub-weapons obtained but have no health left.
+
+$7E:F448 - Zero's Armor #1 pieces/Zero's Armor #2 pieces (00-0F then 10-80) (UNUSED)
+$7E:F449 - Zero's Armor #3 pieces/Zero's Armor #4 pieces (00-0F then 10-80) (UNUSED)
+$7E:F44A - Zero's Current health (PC swap)
+$7E:F44B - Zero's Max health
+$7E:F44C - Zero's Heart Tank collection
+$7E:F44D - Zero Sub-Tank collection
+	00 - None
+	01 - UNUSED
+	02 - UNUSED
+	04 - UNUSED
+	08 - UNUSED
+	10 - Sub-tank #1
+	20 - Sub-tank #2
+	40 - Sub-tank #3
+	80 - Sub-tank #4
+	F0+ - All sub-tanks obtained.
+$7E:F44E - Zero's Armors fully obtained (UNUSED)
+	00 - None
+	01 - Armor #1
+	02 - Armor #2
+	04 - Armor #3
+	08 - Armor #4
+$7E:F44F - Zero's availability (UNUSED)
+	00 - Available
+	01 - Unavailable
+$7E:F450 - $7E:F460 - UNUSED
+
+--------------------------------
+PC3's Data (Starts at $7E:F460) (UNUSED)
+--------------------------------
+
+--------------------------------
+PC4's Data (Starts at $7E:F490) (UNUSED)
+--------------------------------
+
+
+--------------------------------
+End RAM Data
+--------------------------------
+$7E:F4C0 - $7E:F4E0 - UNUSED
+
+$7E:F4E0 - Difficulty Selection/New Game+
+	00 - Normal
+	01 - Hard
+	02 - Xtreme
+	04 - UNUSED
+	08 - UNUSED
+	10+ - New Game+
+
+$7E:F4E1 - Mode Select (This goes unused!)
+	00 - Normal
+	01 - X only
+	02 - Zero Only
+	04 - PC #3 only
+	08 - PC #4 only
+
+$7E:F4E2 - Boss Defeat Counter
+$7E:F4E3 - Boss Defeat Counter #2 (Extra - UNUSED)
+$7E:F4E4 - Bit for PC talking to Dr. Light for first time
+	00 - Nothing
+	01 - Zero talked
+	02 - ??? talked
+	04 - ??? talked
+	08 - UNUSED
+	10 - UNUSED
+	20 - UNUSED
+	40 - UNUSED
+	80 - Zero in Introduction Level
+
+$7E:F4E5 - Various sub-weapon in progress checks (Instead of 7E:1FFF)
+$7E:F4E6 - Double Jump/Air Dash amount values
+$7E:F4E7 - UNUSED
+$7E:F4E8 - Which VRAM graphics to load for PC
+$7E:F4EA - Healing Counter for sub-tanks/PC life (01, 02, 04, cap 08)
+$7E:F4EB - Value used to determine if PC or PC NPC is firing a buster
+$7E:F4EC - $7E:F4FF - UNUSED
+$7E:F400 - $7E:F410 - Z-Saber Enemy Table (Enemy Z-Saber BIT table. Covers all 15 enemies that can be on screen at once)
