@@ -3,6 +3,10 @@ Mega Man X3 - Base Mod (Zero Project)
 
 A mod of the original Mega Man X3 game by Capcom for the Super Nintendo. This aims to make Zero fully playable without him being cut from the game when you die as him.
 
+REQUIREMENTS: In order to compile all the files, you MUST have clean Mega Man X3 (U) ROM that has NO HEADER. You must ALSO have asar! The file extension must also be renamed to .sfc as that's noted to asar that it's an unheadered file. It's very likely you'll need to expand the game to 4MB as well by using LunarExpand. I generally labeled the base file as 'Base_ROM.sfc' and when the 'Asar MMX3.bat' file is run, it'll spit out MMX3.sfc which houses all the changes. It's highly recommended to run this through Atlas first for the base ROM so you don't have to keep redoing Atlas everytime you update.
+
+The 'Atlas' folder just needs an 'Atlas.exe' in there and you can use any of the .bats to update things as needed.
+
 Features and changes include:
 
 1.	Zero is playable at any time including the introduction level! However, if you obtain the Z-Saber as per usual, Zero is unavailable.
