@@ -2814,21 +2814,36 @@ PCChargeAndSwitchSubWeaponsSetup: ;Routine that determines who can charge regula
 	
 	X_ChargeAndSwitchSubWeapons:
 		SEP #$20
+		LDA !BossesDefeated1_7EF4E2
+		BNE CheckCurrentWeapon
+		LDA !RideChipsOrigin_7E1FD7_Short
+		BIT #$20 ;Check if hyper charge available
+		BEQ X_NoSubWeaponsAvailable
+	CheckCurrentWeapon:
 		LDA !CurrentPCSubWeaponShort_33 ;Load current sub-weapon short
 		CMP #$09 ;Check if it's #$09 (Hyper Charge)
 		RTS
 		
-	Zero_ChargeAndSwitchSubWeapons:
-		LDA !CurrentPCSubWeapon_0A0B
+	PC_NoSubWeaponsAvailable:
+		INC ;Do not clear buster charge state
+		RTS
 		
+	Zero_ChargeAndSwitchSubWeapons:
+		LDA !BossesDefeated1_7EF4E2
+		BEQ PC_NoSubWeaponsAvailable
+
+		;Clear buster charge state
 		STZ !CurrentPCChargeLevel4_0A66 ;Split Shot #1/2
 		STZ !CurrentPCCharge_0A30 ;PC Charge level
 		STZ !SetFlashForPC_0A32 ;Set PC to flash
+		
 		SEP #$20
 		STZ $0B58 ;Palette of bubbles
 		STZ $0B5E ;Current level of bubble
 		STZ $0B66 ;Charge timer extra storage
 		STZ $0A8F ;Removes Z-Saber
+		
+		LDA !CurrentPCSubWeapon_0A0B
 		RTS
 		
 	PC3_ChargeAndSwitchSubWeapons:
