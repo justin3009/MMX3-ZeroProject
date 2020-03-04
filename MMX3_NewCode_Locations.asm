@@ -2817,8 +2817,9 @@ PCChargeAndSwitchSubWeaponsSetup: ;Routine that determines who can charge regula
 		LDA !BossesDefeated1_7EF4E2
 		BNE CheckCurrentWeapon
 		LDA !RideChipsOrigin_7E1FD7_Short
-		BIT #$20 ;Check if hyper charge available
-		BEQ X_NoSubWeaponsAvailable
+		BIT #$20 ;Check if Hper Charge available
+		BEQ PC_NoSubWeaponsAvailable
+		
 	CheckCurrentWeapon:
 		LDA !CurrentPCSubWeaponShort_33 ;Load current sub-weapon short
 		CMP #$09 ;Check if it's #$09 (Hyper Charge)
