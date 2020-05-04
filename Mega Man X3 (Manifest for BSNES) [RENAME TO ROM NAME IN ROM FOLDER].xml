@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cartridge region="NTSC">
+  <rom>
+    <map mode="linear" address="00-7f:8000-ffff"/>
+    <map mode="linear" address="80-ff:8000-ffff"/>
+  </rom>
+	
+  <ram size='2000'>
+    <map mode='linear' address='70-77:0000-7fff'/>
+    <map mode='linear' address='b0-bf:0000-7fff'/>
+  </ram>
+  
+  <cx4>
+    <map address="00-3f:6000-7fff"/>
+    <map address="80-bf:6000-7fff"/>
+  </cx4>
+
+  <msu1>
+    <map address="00-3f:2000-2007"/>
+    <map address="80-bf:2000-2007"/>
+  <mmio>
+    <map address="00-3f:2000-2007"/>
+    <map address="80-bf:2000-2007"/>
+  </mmio>
+  </msu1>
+</cartridge>
