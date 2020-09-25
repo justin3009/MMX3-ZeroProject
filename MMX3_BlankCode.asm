@@ -27,6 +27,10 @@ header : lorom
 org $869FAA ;Original code location for all sub-weapon icon, graphics, text, ammo and their text coordinates.
 	padbyte $FF ;All of it was removed as it's no longer needed.
 	pad $86A07D
+	
+org $8D96F2 ;This blanks out all walking frames for Frog Armor
+	padbyte $FF
+	pad $8D970D
 
 org $B9C1BC ;Original code location for all dialogue pointers and the dialogue itself.
 	padbyte $FF ;All of it was removed as it has been moved and split up based on which PC you are.

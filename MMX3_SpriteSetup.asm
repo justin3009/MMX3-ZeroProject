@@ -17,16 +17,18 @@ incsrc MMX3_VariousAddresses.asm
 ;Setup PC & PC NPC VRAM data that allows missiles in events.
 ;***************************
 org !VRAMRoutineAllowMissiles
+{
 	JSL PCNPC_VRAMStart
 	JSL PCNPC_VRAMAllowMissilesStart
 	NOP #4
 	RTL
+}
 
-	
 ;***************************
 ;1-up Icon In-Game Sprite Assembly
 ;***************************
 org $8DF147 ;Sprite assembly of PC's 1-up icon in VRAM
+{
 	db $04 ;How many sprite assembly chunks
 	db $00,$F8,$00,$CB ;Direction/size, X coordinate, Y coordinate, VRAM chunk to use
 	db $40,$00,$F8,$CA ;Direction/size, X coordinate, Y coordinate, VRAM chunk to use
@@ -37,13 +39,16 @@ org $8DF147 ;Sprite assembly of PC's 1-up icon in VRAM
 	db $00,$F8,$00,$CD ;Direction/size, X coordinate, Y coordinate, VRAM chunk to use
 	db $40,$00,$F8,$CC ;Direction/size, X coordinate, Y coordinate, VRAM chunk to use
 	db $00,$F8,$F8,$CC ;Direction/size, X coordinate, Y coordinate, VRAM chunk to use
-	db $40,$00,$00,$CD ;Direction/size, X coordinate, Y coordinate, VRAM chunk to use	
+	db $40,$00,$00,$CD ;Direction/size, X coordinate, Y coordinate, VRAM chunk to use
+}
 	
 ;***************************
 ;***************************
-;Charging Level 1/2 Sprite Assembly (All 22 pointers)
+;Charging Level 1/2/3/4 Sprite Assembly (All 22 pointers)
 ;***************************
-org $90D74D
+{
+org $90D74D ;Original offset location for Charging Buster sprite assembly (Level 1/2)
+{
 	db $02,$00,$FA,$11,$F9,$00,$FA,$E3,$F9,$02,$00,$FA,$10,$F9,$00,$FA
 	db $E4,$F9,$04,$00,$10,$FA,$F9,$00,$E4,$FA,$F9,$00,$FA,$0F,$F9,$00
 	db $FA,$E5,$F9,$04,$00,$0F,$FA,$F9,$00,$E5,$FA,$F9,$00,$FA,$0E,$F9
@@ -78,12 +83,9 @@ org $90D74D
 	db $EA,$F4,$FA,$04,$00,$F5,$07,$FA,$C0,$FF,$ED,$FA,$40,$09,$00,$FA
 	db $80,$EB,$F4,$FA,$02,$40,$08,$FF,$FA,$80,$EC,$F5,$FA,$02,$40,$07
 	db $FF,$FA,$80,$ED,$F5,$FA
-	
-;***************************
-;***************************
-;Charging Level 3/4 Sprite Assembly (All 22 pointers)
-;***************************
-org $90DB9A
+}
+org $90DB9A ;Original offset location for Charging Buster sprite assembly (Level 3/4)
+{
 	db $02,$C0,$FA,$11,$7C,$00,$FA,$E3,$7C,$02,$C0,$FA,$10,$7C,$00,$FA
 	db $E4,$7C,$04,$C0,$FA,$0F,$7D,$00,$FA,$E5,$7D,$C0,$10,$FA,$7C,$00
 	db $E4,$FA,$7C,$04,$C0,$FA,$0E,$7D,$00,$FA,$E6,$7D,$C0,$0F,$FA,$7C
@@ -118,12 +120,15 @@ org $90DB9A
 	db $F5,$08,$7E,$04,$C0,$09,$00,$7E,$00,$EB,$F4,$7E,$40,$FF,$ED,$7E
 	db $80,$F5,$07,$7E,$02,$00,$08,$FF,$7F,$00,$EC,$F5,$7F,$02,$00,$07
 	db $FF,$7F,$00,$ED,$F5,$7F
-	
+}
+}
+
 ;***************************
 ;***************************
 ;Hyper Charge Charging Sprite Assembly (All 26 pointers)
 ;***************************
 org $90AD35
+{
 	db $02,$00,$FA,$15,$7F,$00,$FA,$DF,$7F,$02,$00,$FA,$14,$7F,$00,$FA
 	db $E0,$7F,$04,$00,$FA,$13,$7E,$00,$FA,$E1,$7E,$00,$14,$FA,$7F,$00
 	db $E0,$FA,$7F,$04,$00,$FA,$12,$7E,$00,$FA,$E2,$7E,$00,$13,$FA,$7F
@@ -174,37 +179,46 @@ org $90AD35
 	db $0A,$00,$FF,$00,$EA,$F4,$FF,$04,$00,$FF,$ED,$D0,$C0,$F5,$07,$D0
 	db $00,$09,$00,$FF,$00,$EB,$F4,$FF,$02,$C0,$08,$FF,$D0,$00,$EC,$F5
 	db $D0,$02,$C0,$07,$FF,$D0,$00,$ED,$F5,$D0
+}
 
-	
+
 ;***************************
 ;***************************
 ;Animation Bank & Sprite Assembly split & Dynamic Bank
-;***************************	
+;***************************
+{
 org $84B952
 	JSL DynamicAnimationBank
 	NOP #9
 	
 org $84B96E
 	JSL SplitSAAD
+	
 	STA $000C
 	ASL
 	CLC
 	ADC $000C
 	TAX
+	
 	LDA $BF8000,x
 	STA $14
+	
 	SEP #$20
 	LDA $BF8002,x
 	PHA
 	PLB
+	
 	REP #$20
 	LDA $7E000E
+}
 
 ;***************************
 ;***************************
 ;Sets animation data for capsule lightning flash and for when piece is forming on X.
-;***************************		
+;***************************
+{
 org $BFDD18 ;Sets animation data for capsule lightning flash and for when piece is forming on X.
+{
 	db $01,$00,$11
 	db $01,$00,$10
 	db $01,$00,$0F
@@ -232,16 +246,20 @@ org $BFDD18 ;Sets animation data for capsule lightning flash and for when piece 
 	db $02,$00,$1B
 	db $02,$80,$1C
 	db $FD,$FF
-	
+}	
 org $BFFD68 ;Sets animation data for capsule lightning flash and when X does his victory pose?
+{
 	db $01,$00,$14
 	db $01,$00,$14
 	db $07,$00,$14
 	db $04,$80,$14
 	db $FD,$FF
+}
 	
 org $93C3AE ;Removes the entirety of the lightning flash appearing again when PC's do their victory stance when obtaining capsule.
 	NOP #15
+}
+
 ;***************************
 ;***************************
 ;Alters a single byte in X's Vertical Dash sprite assembly as there's a bug in one frame of it being misaligned
@@ -256,87 +274,88 @@ org $8F9B28
 ;Password Screen Cursor
 ;***************************	
 org $8FF1D9 ;Base Sprite Assembly for Password Screen Cursor
-db $04		;How many pieces for Cursor Frame #1
-db $80		;Direction of sprite
-db $F1,$07	;X/Y coordinates
-db $57		;Graphic to use
+{	
+	db $04		;How many pieces for Cursor Frame #1
+	db $80		;Direction of sprite
+	db $F1,$07	;X/Y coordinates
+	db $57		;Graphic to use
 
-db $C0		;Direction of sprite
-db $25,$07	;X/Y coordinates
-db $57		;Graphic to use
+	db $C0		;Direction of sprite
+	db $25,$07	;X/Y coordinates
+	db $57		;Graphic to use
 
-db $40		;Direction of sprite
-db $25,$F2	;X/Y coordinates
-db $57		;Graphic to use
+	db $40		;Direction of sprite
+	db $25,$F2	;X/Y coordinates
+	db $57		;Graphic to use
 
-db $00		;Direction of sprite
-db $F1,$F2	;X/Y coordinates
-db $57		;Graphic to use
-
-
-
-db $04		;How many pieces for Cursor Frame #2
-db $C0		;Direction of sprite
-db $25,$07	;X/Y coordinates
-db $58		;Graphic to use
-
-db $80		;Direction of sprite
-db $F1,$07	;X/Y coordinates
-db $58		;Graphic to use
-
-db $40		;Direction of sprite
-db $25,$F2	;X/Y coordinates
-db $58		;Graphic to use
-
-db $00		;Direction of sprite
-db $F1,$F2	;X/Y coordinates
-db $58		;Graphic to use
+	db $00		;Direction of sprite
+	db $F1,$F2	;X/Y coordinates
+	db $57		;Graphic to use
 
 
 
-db $04		;How many pieces for Cursor Frame #3
-db $80		;Direction of sprite
-db $F1,$07	;X/Y coordinates
-db $59		;Graphic to use
+	db $04		;How many pieces for Cursor Frame #2
+	db $C0		;Direction of sprite
+	db $25,$07	;X/Y coordinates
+	db $58		;Graphic to use
 
-db $C0		;Direction of sprite
-db $25,$07	;X/Y coordinates
-db $59		;Graphic to use
+	db $80		;Direction of sprite
+	db $F1,$07	;X/Y coordinates
+	db $58		;Graphic to use
 
-db $40		;Direction of sprite
-db $25,$F2	;X/Y coordinates
-db $59		;Graphic to use
+	db $40		;Direction of sprite
+	db $25,$F2	;X/Y coordinates
+	db $58		;Graphic to use
 
-db $00		;Direction of sprite
-db $F1,$F2	;X/Y coordinates
-db $59		;Graphic to use
+	db $00		;Direction of sprite
+	db $F1,$F2	;X/Y coordinates
+	db $58		;Graphic to use
 
 
 
-db $04		;How many pieces for Cursor Frame #4
-db $C0		;Direction of sprite
-db $25,$07	;X/Y coordinates
-db $5A		;Graphic to use
+	db $04		;How many pieces for Cursor Frame #3
+	db $80		;Direction of sprite
+	db $F1,$07	;X/Y coordinates
+	db $59		;Graphic to use
 
-db $80		;Direction of sprite
-db $F1,$07	;X/Y coordinates
-db $5A		;Graphic to use
+	db $C0		;Direction of sprite
+	db $25,$07	;X/Y coordinates
+	db $59		;Graphic to use
 
-db $40		;Direction of sprite
-db $25,$F2	;X/Y coordinates
-db $5A		;Graphic to use
+	db $40		;Direction of sprite
+	db $25,$F2	;X/Y coordinates
+	db $59		;Graphic to use
 
-db $00		;Direction of sprite
-db $F1,$F2	;X/Y coordinates
-db $5A		;Graphic to use
+	db $00		;Direction of sprite
+	db $F1,$F2	;X/Y coordinates
+	db $59		;Graphic to use
+
+
+
+	db $04		;How many pieces for Cursor Frame #4
+	db $C0		;Direction of sprite
+	db $25,$07	;X/Y coordinates
+	db $5A		;Graphic to use
+
+	db $80		;Direction of sprite
+	db $F1,$07	;X/Y coordinates
+	db $5A		;Graphic to use
+
+	db $40		;Direction of sprite
+	db $25,$F2	;X/Y coordinates
+	db $5A		;Graphic to use
+
+	db $00		;Direction of sprite
+	db $F1,$F2	;X/Y coordinates
+	db $5A		;Graphic to use
+}
+
 ;***************************
 ;***************************
 ;Alters Frog Armor Walking Sprite Assembly pointers so it has proper walking sprite assembly (Starts at 93:8000)
 ;***************************
 org $8D96F2 ;This blanks out all walking frames for Frog Armor
-	padbyte $FF
-	pad $8D970D
-	
+{
 	dl FrogArmor_Walk1 ;Long word to load proper sprite assembly for Frog Armor walking frame #1
 	dl FrogArmor_Walk2 ;Long word to load proper sprite assembly for Frog Armor walking frame #2
 	dl FrogArmor_Walk3 ;Long word to load proper sprite assembly for Frog Armor walking frame #3
@@ -347,338 +366,339 @@ org $8D96F2 ;This blanks out all walking frames for Frog Armor
 	dl FrogArmor_Walk8 ;Long word to load proper sprite assembly for Frog Armor walking frame #8
 	dl FrogArmor_Walk9 ;Long word to load proper sprite assembly for Frog Armor walking frame #9
 
+
 	
 org $138000
-FrogArmor_Walk1:
-db $22 ;How many total chunks
-db $01,$FC,$E7,$53
-db $01,$F4,$E7,$52
-db $81,$10,$05,$4D
-db $01,$08,$05,$43
-db $01,$10,$ED,$4D
-db $01,$08,$ED,$4C
-db $21,$11,$F5,$46
-db $21,$01,$F5,$44
-db $01,$1A,$F1,$59
-db $01,$1A,$01,$58
-db $01,$1A,$F9,$48
-db $00,$F8,$17,$18
-db $00,$F8,$0F,$08
-db $20,$00,$0F,$09
-db $20,$FE,$02,$06
-db $00,$03,$FF,$2B
-db $00,$00,$F4,$2E
-db $20,$F7,$00,$04
-db $00,$F8,$F4,$2D
-db $00,$EB,$18,$18
-db $00,$EB,$10,$08
-db $20,$F3,$10,$09
-db $00,$F0,$F4,$2C
-db $20,$F2,$04,$06
-db $00,$FB,$FF,$2A
-db $00,$F3,$FF,$29
-db $20,$00,$EF,$02
-db $20,$F0,$EF,$00
-db $81,$EC,$ED,$43
-db $81,$F4,$05,$4D
-db $01,$EC,$05,$43
-db $01,$E5,$FD,$54
-db $01,$E5,$F5,$42
-db $21,$ED,$F5,$40
+	FrogArmor_Walk1:
+	db $22 ;How many total chunks
+	db $01,$FC,$E7,$53
+	db $01,$F4,$E7,$52
+	db $81,$10,$05,$4D
+	db $01,$08,$05,$43
+	db $01,$10,$ED,$4D
+	db $01,$08,$ED,$4C
+	db $21,$11,$F5,$46
+	db $21,$01,$F5,$44
+	db $01,$1A,$F1,$59
+	db $01,$1A,$01,$58
+	db $01,$1A,$F9,$48
+	db $00,$F8,$17,$18
+	db $00,$F8,$0F,$08
+	db $20,$00,$0F,$09
+	db $20,$FE,$02,$06
+	db $00,$03,$FF,$2B
+	db $00,$00,$F4,$2E
+	db $20,$F7,$00,$04
+	db $00,$F8,$F4,$2D
+	db $00,$EB,$18,$18
+	db $00,$EB,$10,$08
+	db $20,$F3,$10,$09
+	db $00,$F0,$F4,$2C
+	db $20,$F2,$04,$06
+	db $00,$FB,$FF,$2A
+	db $00,$F3,$FF,$29
+	db $20,$00,$EF,$02
+	db $20,$F0,$EF,$00
+	db $81,$EC,$ED,$43
+	db $81,$F4,$05,$4D
+	db $01,$EC,$05,$43
+	db $01,$E5,$FD,$54
+	db $01,$E5,$F5,$42
+	db $21,$ED,$F5,$40
 
-FrogArmor_Walk2:
-db $22 ;How many total chunks
-db $01,$FC,$E6,$53
-db $01,$F4,$E6,$52
-db $81,$10,$04,$4D
-db $01,$08,$04,$43
-db $01,$10,$EC,$4D
-db $01,$08,$EC,$4C
-db $21,$11,$F4,$46
-db $21,$01,$F4,$44
-db $01,$1A,$F0,$59
-db $01,$1A,$00,$58
-db $01,$1A,$F8,$48
-db $00,$F7,$16,$18
-db $00,$F7,$0E,$08
-db $20,$FF,$0E,$09
-db $20,$FD,$01,$06
-db $00,$03,$FE,$2B
-db $00,$00,$F3,$2E
-db $20,$F7,$FF,$04
-db $00,$F8,$F3,$2D
-db $00,$EB,$18,$18
-db $00,$EB,$10,$08
-db $20,$F3,$10,$09
-db $00,$F0,$F3,$2C
-db $20,$F2,$04,$06
-db $00,$FB,$FE,$2A
-db $00,$F3,$FE,$29
-db $20,$00,$EE,$02
-db $20,$F0,$EE,$00
-db $81,$EC,$EC,$43
-db $81,$F4,$04,$4D
-db $01,$EC,$04,$43
-db $01,$E5,$FC,$54
-db $01,$E5,$F4,$42
-db $21,$ED,$F4,$40
+	FrogArmor_Walk2:
+	db $22 ;How many total chunks
+	db $01,$FC,$E6,$53
+	db $01,$F4,$E6,$52
+	db $81,$10,$04,$4D
+	db $01,$08,$04,$43
+	db $01,$10,$EC,$4D
+	db $01,$08,$EC,$4C
+	db $21,$11,$F4,$46
+	db $21,$01,$F4,$44
+	db $01,$1A,$F0,$59
+	db $01,$1A,$00,$58
+	db $01,$1A,$F8,$48
+	db $00,$F7,$16,$18
+	db $00,$F7,$0E,$08
+	db $20,$FF,$0E,$09
+	db $20,$FD,$01,$06
+	db $00,$03,$FE,$2B
+	db $00,$00,$F3,$2E
+	db $20,$F7,$FF,$04
+	db $00,$F8,$F3,$2D
+	db $00,$EB,$18,$18
+	db $00,$EB,$10,$08
+	db $20,$F3,$10,$09
+	db $00,$F0,$F3,$2C
+	db $20,$F2,$04,$06
+	db $00,$FB,$FE,$2A
+	db $00,$F3,$FE,$29
+	db $20,$00,$EE,$02
+	db $20,$F0,$EE,$00
+	db $81,$EC,$EC,$43
+	db $81,$F4,$04,$4D
+	db $01,$EC,$04,$43
+	db $01,$E5,$FC,$54
+	db $01,$E5,$F4,$42
+	db $21,$ED,$F4,$40
 
-FrogArmor_Walk3:
-db $22 ;How many total chunks
-db $01,$FC,$E6,$53
-db $01,$F4,$E6,$52
-db $81,$10,$04,$4D
-db $01,$08,$04,$43
-db $01,$10,$EC,$4D
-db $01,$08,$EC,$4C
-db $21,$11,$F4,$46
-db $21,$01,$F4,$44
-db $01,$1A,$F0,$59
-db $01,$1A,$00,$58
-db $01,$1A,$F8,$48
-db $00,$F4,$16,$18
-db $00,$F4,$0E,$08
-db $20,$FC,$0E,$09
-db $20,$FB,$01,$06
-db $00,$03,$FE,$2B
-db $00,$00,$F3,$2E
-db $20,$F7,$FF,$04
-db $00,$F8,$F3,$2D
-db $00,$EF,$18,$18
-db $00,$EF,$10,$08
-db $20,$F7,$10,$09
-db $00,$F0,$F3,$2C
-db $20,$F5,$04,$06
-db $00,$FB,$FE,$2A
-db $00,$F3,$FE,$29
-db $20,$00,$EE,$02
-db $20,$F0,$EE,$00
-db $81,$EC,$EC,$43
-db $81,$F4,$04,$4D
-db $01,$EC,$04,$43
-db $01,$E5,$FC,$54
-db $01,$E5,$F4,$42
-db $21,$ED,$F4,$40
+	FrogArmor_Walk3:
+	db $22 ;How many total chunks
+	db $01,$FC,$E6,$53
+	db $01,$F4,$E6,$52
+	db $81,$10,$04,$4D
+	db $01,$08,$04,$43
+	db $01,$10,$EC,$4D
+	db $01,$08,$EC,$4C
+	db $21,$11,$F4,$46
+	db $21,$01,$F4,$44
+	db $01,$1A,$F0,$59
+	db $01,$1A,$00,$58
+	db $01,$1A,$F8,$48
+	db $00,$F4,$16,$18
+	db $00,$F4,$0E,$08
+	db $20,$FC,$0E,$09
+	db $20,$FB,$01,$06
+	db $00,$03,$FE,$2B
+	db $00,$00,$F3,$2E
+	db $20,$F7,$FF,$04
+	db $00,$F8,$F3,$2D
+	db $00,$EF,$18,$18
+	db $00,$EF,$10,$08
+	db $20,$F7,$10,$09
+	db $00,$F0,$F3,$2C
+	db $20,$F5,$04,$06
+	db $00,$FB,$FE,$2A
+	db $00,$F3,$FE,$29
+	db $20,$00,$EE,$02
+	db $20,$F0,$EE,$00
+	db $81,$EC,$EC,$43
+	db $81,$F4,$04,$4D
+	db $01,$EC,$04,$43
+	db $01,$E5,$FC,$54
+	db $01,$E5,$F4,$42
+	db $21,$ED,$F4,$40
 
-FrogArmor_Walk4:
-db $22 ;How many total chunks
-db $01,$FC,$E7,$53
-db $01,$F4,$E7,$52
-db $81,$10,$05,$4D
-db $01,$08,$05,$43
-db $01,$10,$ED,$4D
-db $01,$08,$ED,$4C
-db $21,$11,$F5,$46
-db $21,$01,$F5,$44
-db $01,$1A,$F1,$59
-db $01,$1A,$01,$58
-db $01,$1A,$F9,$48
-db $00,$F2,$18,$18
-db $00,$F2,$10,$08
-db $20,$FA,$10,$09
-db $20,$F9,$03,$06
-db $00,$03,$FF,$2B
-db $00,$00,$F4,$2E
-db $20,$F7,$00,$04
-db $00,$F8,$F4,$2D
-db $00,$F0,$18,$18
-db $00,$F0,$10,$08
-db $20,$F8,$10,$09
-db $00,$F0,$F4,$2C
-db $20,$F6,$04,$06
-db $00,$FB,$FF,$2A
-db $00,$F3,$FF,$29
-db $20,$00,$EF,$02
-db $20,$F0,$EF,$00
-db $81,$EC,$ED,$43
-db $81,$F4,$05,$4D
-db $01,$EC,$05,$43
-db $01,$E5,$FD,$54
-db $01,$E5,$F5,$42
-db $21,$ED,$F5,$40
+	FrogArmor_Walk4:
+	db $22 ;How many total chunks
+	db $01,$FC,$E7,$53
+	db $01,$F4,$E7,$52
+	db $81,$10,$05,$4D
+	db $01,$08,$05,$43
+	db $01,$10,$ED,$4D
+	db $01,$08,$ED,$4C
+	db $21,$11,$F5,$46
+	db $21,$01,$F5,$44
+	db $01,$1A,$F1,$59
+	db $01,$1A,$01,$58
+	db $01,$1A,$F9,$48
+	db $00,$F2,$18,$18
+	db $00,$F2,$10,$08
+	db $20,$FA,$10,$09
+	db $20,$F9,$03,$06
+	db $00,$03,$FF,$2B
+	db $00,$00,$F4,$2E
+	db $20,$F7,$00,$04
+	db $00,$F8,$F4,$2D
+	db $00,$F0,$18,$18
+	db $00,$F0,$10,$08
+	db $20,$F8,$10,$09
+	db $00,$F0,$F4,$2C
+	db $20,$F6,$04,$06
+	db $00,$FB,$FF,$2A
+	db $00,$F3,$FF,$29
+	db $20,$00,$EF,$02
+	db $20,$F0,$EF,$00
+	db $81,$EC,$ED,$43
+	db $81,$F4,$05,$4D
+	db $01,$EC,$05,$43
+	db $01,$E5,$FD,$54
+	db $01,$E5,$F5,$42
+	db $21,$ED,$F5,$40
 
-FrogArmor_Walk5:
-db $22 ;How many total chunks
-db $01,$FC,$E8,$53
-db $01,$F4,$E8,$52
-db $81,$10,$06,$4D
-db $01,$08,$06,$43
-db $01,$10,$EE,$4D
-db $01,$08,$EE,$4C
-db $21,$11,$F6,$46
-db $21,$01,$F6,$44
-db $01,$1A,$F2,$59
-db $01,$1A,$02,$58
-db $01,$1A,$FA,$48
-db $00,$F2,$18,$18
-db $00,$F2,$10,$08
-db $20,$FA,$10,$09
-db $20,$F9,$04,$06
-db $00,$03,$00,$2B
-db $00,$00,$F5,$2E
-db $20,$F7,$01,$04
-db $00,$F8,$F5,$2D
-db $00,$F0,$18,$18
-db $00,$F0,$10,$08
-db $20,$F8,$10,$09
-db $00,$F0,$F5,$2C
-db $20,$F6,$04,$06
-db $00,$FB,$00,$2A
-db $00,$F3,$00,$29
-db $20,$00,$F0,$02
-db $20,$F0,$F0,$00
-db $81,$EC,$EE,$43
-db $81,$F4,$06,$4D
-db $01,$EC,$06,$43
-db $01,$E5,$FE,$54
-db $01,$E5,$F6,$42
-db $21,$ED,$F6,$40
+	FrogArmor_Walk5:
+	db $22 ;How many total chunks
+	db $01,$FC,$E8,$53
+	db $01,$F4,$E8,$52
+	db $81,$10,$06,$4D
+	db $01,$08,$06,$43
+	db $01,$10,$EE,$4D
+	db $01,$08,$EE,$4C
+	db $21,$11,$F6,$46
+	db $21,$01,$F6,$44
+	db $01,$1A,$F2,$59
+	db $01,$1A,$02,$58
+	db $01,$1A,$FA,$48
+	db $00,$F2,$18,$18
+	db $00,$F2,$10,$08
+	db $20,$FA,$10,$09
+	db $20,$F9,$04,$06
+	db $00,$03,$00,$2B
+	db $00,$00,$F5,$2E
+	db $20,$F7,$01,$04
+	db $00,$F8,$F5,$2D
+	db $00,$F0,$18,$18
+	db $00,$F0,$10,$08
+	db $20,$F8,$10,$09
+	db $00,$F0,$F5,$2C
+	db $20,$F6,$04,$06
+	db $00,$FB,$00,$2A
+	db $00,$F3,$00,$29
+	db $20,$00,$F0,$02
+	db $20,$F0,$F0,$00
+	db $81,$EC,$EE,$43
+	db $81,$F4,$06,$4D
+	db $01,$EC,$06,$43
+	db $01,$E5,$FE,$54
+	db $01,$E5,$F6,$42
+	db $21,$ED,$F6,$40
 
-FrogArmor_Walk6:
-db $22 ;How many total chunks
-db $01,$FC,$E7,$53
-db $01,$F4,$E7,$52
-db $81,$10,$05,$4D
-db $01,$08,$05,$43
-db $01,$10,$ED,$4D
-db $01,$08,$ED,$4C
-db $21,$11,$F5,$46
-db $21,$01,$F5,$44
-db $01,$1A,$F1,$59
-db $01,$1A,$01,$58
-db $01,$1A,$F9,$48
-db $00,$F3,$18,$18
-db $00,$F3,$10,$08
-db $20,$FB,$10,$09
-db $20,$FA,$04,$06
-db $00,$03,$FF,$2B
-db $00,$00,$F4,$2E
-db $20,$F7,$00,$04
-db $00,$F8,$F4,$2D
-db $00,$EF,$17,$18
-db $00,$EF,$0F,$08
-db $20,$F7,$0F,$09
-db $00,$F0,$F4,$2C
-db $20,$F4,$02,$06
-db $00,$FB,$FF,$2A
-db $00,$F3,$FF,$29
-db $20,$00,$EF,$02
-db $20,$F0,$EF,$00
-db $81,$EC,$ED,$43
-db $81,$F4,$05,$4D
-db $01,$EC,$05,$43
-db $01,$E5,$FD,$54
-db $01,$E5,$F5,$42
-db $21,$ED,$F5,$40
+	FrogArmor_Walk6:
+	db $22 ;How many total chunks
+	db $01,$FC,$E7,$53
+	db $01,$F4,$E7,$52
+	db $81,$10,$05,$4D
+	db $01,$08,$05,$43
+	db $01,$10,$ED,$4D
+	db $01,$08,$ED,$4C
+	db $21,$11,$F5,$46
+	db $21,$01,$F5,$44
+	db $01,$1A,$F1,$59
+	db $01,$1A,$01,$58
+	db $01,$1A,$F9,$48
+	db $00,$F3,$18,$18
+	db $00,$F3,$10,$08
+	db $20,$FB,$10,$09
+	db $20,$FA,$04,$06
+	db $00,$03,$FF,$2B
+	db $00,$00,$F4,$2E
+	db $20,$F7,$00,$04
+	db $00,$F8,$F4,$2D
+	db $00,$EF,$17,$18
+	db $00,$EF,$0F,$08
+	db $20,$F7,$0F,$09
+	db $00,$F0,$F4,$2C
+	db $20,$F4,$02,$06
+	db $00,$FB,$FF,$2A
+	db $00,$F3,$FF,$29
+	db $20,$00,$EF,$02
+	db $20,$F0,$EF,$00
+	db $81,$EC,$ED,$43
+	db $81,$F4,$05,$4D
+	db $01,$EC,$05,$43
+	db $01,$E5,$FD,$54
+	db $01,$E5,$F5,$42
+	db $21,$ED,$F5,$40
 
-FrogArmor_Walk7:
-db $22 ;How many total chunks
-db $01,$FC,$E6,$53
-db $01,$F4,$E6,$52
-db $81,$10,$04,$4D
-db $01,$08,$04,$43
-db $01,$10,$EC,$4D
-db $01,$08,$EC,$4C
-db $21,$11,$F4,$46
-db $21,$01,$F4,$44
-db $01,$1A,$F0,$59
-db $01,$1A,$00,$58
-db $01,$1A,$F8,$48
-db $00,$F3,$18,$18
-db $00,$F3,$10,$08
-db $20,$FB,$10,$09
-db $20,$FA,$04,$06
-db $00,$03,$FE,$2B
-db $00,$00,$F3,$2E
-db $20,$F7,$FF,$04
-db $00,$F8,$F3,$2D
-db $00,$EE,$16,$18
-db $00,$EE,$0E,$08
-db $20,$F6,$0E,$09
-db $00,$F0,$F3,$2C
-db $20,$F3,$01,$06
-db $00,$FB,$FE,$2A
-db $00,$F3,$FE,$29
-db $20,$00,$EE,$02
-db $20,$F0,$EE,$00
-db $81,$EC,$EC,$43
-db $81,$F4,$04,$4D
-db $01,$EC,$04,$43
-db $01,$E5,$FC,$54
-db $01,$E5,$F4,$42
-db $21,$ED,$F4,$40
+	FrogArmor_Walk7:
+	db $22 ;How many total chunks
+	db $01,$FC,$E6,$53
+	db $01,$F4,$E6,$52
+	db $81,$10,$04,$4D
+	db $01,$08,$04,$43
+	db $01,$10,$EC,$4D
+	db $01,$08,$EC,$4C
+	db $21,$11,$F4,$46
+	db $21,$01,$F4,$44
+	db $01,$1A,$F0,$59
+	db $01,$1A,$00,$58
+	db $01,$1A,$F8,$48
+	db $00,$F3,$18,$18
+	db $00,$F3,$10,$08
+	db $20,$FB,$10,$09
+	db $20,$FA,$04,$06
+	db $00,$03,$FE,$2B
+	db $00,$00,$F3,$2E
+	db $20,$F7,$FF,$04
+	db $00,$F8,$F3,$2D
+	db $00,$EE,$16,$18
+	db $00,$EE,$0E,$08
+	db $20,$F6,$0E,$09
+	db $00,$F0,$F3,$2C
+	db $20,$F3,$01,$06
+	db $00,$FB,$FE,$2A
+	db $00,$F3,$FE,$29
+	db $20,$00,$EE,$02
+	db $20,$F0,$EE,$00
+	db $81,$EC,$EC,$43
+	db $81,$F4,$04,$4D
+	db $01,$EC,$04,$43
+	db $01,$E5,$FC,$54
+	db $01,$E5,$F4,$42
+	db $21,$ED,$F4,$40
 
-FrogArmor_Walk8:
-db $22 ;How many total chunks
-db $01,$FC,$E6,$53
-db $01,$F4,$E6,$52
-db $81,$10,$04,$4D
-db $01,$08,$04,$43
-db $01,$10,$EC,$4D
-db $01,$08,$EC,$4C
-db $21,$11,$F4,$46
-db $21,$01,$F4,$44
-db $01,$1A,$F0,$59
-db $01,$1A,$00,$58
-db $01,$1A,$F8,$48
-db $00,$F5,$18,$18
-db $00,$F5,$10,$08
-db $20,$FD,$10,$09
-db $20,$FC,$04,$06
-db $00,$03,$FE,$2B
-db $00,$00,$F3,$2E
-db $20,$F7,$FF,$04
-db $00,$F8,$F3,$2D
-db $00,$EC,$16,$18
-db $00,$EC,$0E,$08
-db $20,$F4,$0E,$09
-db $00,$F0,$F3,$2C
-db $20,$F2,$01,$06
-db $00,$FB,$FE,$2A
-db $00,$F3,$FE,$29
-db $20,$00,$EE,$02
-db $20,$F0,$EE,$00
-db $81,$EC,$EC,$43
-db $81,$F4,$04,$4D
-db $01,$EC,$04,$43
-db $01,$E5,$FC,$54
-db $01,$E5,$F4,$42
-db $21,$ED,$F4,$40
+	FrogArmor_Walk8:
+	db $22 ;How many total chunks
+	db $01,$FC,$E6,$53
+	db $01,$F4,$E6,$52
+	db $81,$10,$04,$4D
+	db $01,$08,$04,$43
+	db $01,$10,$EC,$4D
+	db $01,$08,$EC,$4C
+	db $21,$11,$F4,$46
+	db $21,$01,$F4,$44
+	db $01,$1A,$F0,$59
+	db $01,$1A,$00,$58
+	db $01,$1A,$F8,$48
+	db $00,$F5,$18,$18
+	db $00,$F5,$10,$08
+	db $20,$FD,$10,$09
+	db $20,$FC,$04,$06
+	db $00,$03,$FE,$2B
+	db $00,$00,$F3,$2E
+	db $20,$F7,$FF,$04
+	db $00,$F8,$F3,$2D
+	db $00,$EC,$16,$18
+	db $00,$EC,$0E,$08
+	db $20,$F4,$0E,$09
+	db $00,$F0,$F3,$2C
+	db $20,$F2,$01,$06
+	db $00,$FB,$FE,$2A
+	db $00,$F3,$FE,$29
+	db $20,$00,$EE,$02
+	db $20,$F0,$EE,$00
+	db $81,$EC,$EC,$43
+	db $81,$F4,$04,$4D
+	db $01,$EC,$04,$43
+	db $01,$E5,$FC,$54
+	db $01,$E5,$F4,$42
+	db $21,$ED,$F4,$40
 
-FrogArmor_Walk9:
-db $22 ;How many total chunks
-db $01,$FC,$E7,$53
-db $01,$F4,$E7,$52
-db $81,$10,$05,$4D
-db $01,$08,$05,$43
-db $01,$10,$ED,$4D
-db $01,$08,$ED,$4C
-db $21,$11,$F5,$46
-db $21,$01,$F5,$44
-db $01,$1A,$F1,$59
-db $01,$1A,$01,$58
-db $01,$1A,$F9,$48
-db $00,$F7,$18,$18
-db $00,$F7,$10,$08
-db $20,$FF,$10,$09
-db $20,$FE,$04,$06
-db $00,$03,$FF,$2B
-db $00,$00,$F4,$2E
-db $20,$F7,$00,$04
-db $00,$F8,$F4,$2D
-db $00,$EA,$17,$18
-db $00,$EA,$0F,$08
-db $20,$F2,$0F,$09
-db $00,$F0,$F4,$2C
-db $20,$F0,$02,$06
-db $00,$FB,$FF,$2A
-db $00,$F3,$FF,$29
-db $20,$00,$EF,$02
-db $20,$F0,$EF,$00
-db $81,$EC,$ED,$43
-db $81,$F4,$05,$4D
-db $01,$EC,$05,$43
-db $01,$E5,$FD,$54
-db $01,$E5,$F5,$42
-db $21,$ED,$F5,$40
-
+	FrogArmor_Walk9:
+	db $22 ;How many total chunks
+	db $01,$FC,$E7,$53
+	db $01,$F4,$E7,$52
+	db $81,$10,$05,$4D
+	db $01,$08,$05,$43
+	db $01,$10,$ED,$4D
+	db $01,$08,$ED,$4C
+	db $21,$11,$F5,$46
+	db $21,$01,$F5,$44
+	db $01,$1A,$F1,$59
+	db $01,$1A,$01,$58
+	db $01,$1A,$F9,$48
+	db $00,$F7,$18,$18
+	db $00,$F7,$10,$08
+	db $20,$FF,$10,$09
+	db $20,$FE,$04,$06
+	db $00,$03,$FF,$2B
+	db $00,$00,$F4,$2E
+	db $20,$F7,$00,$04
+	db $00,$F8,$F4,$2D
+	db $00,$EA,$17,$18
+	db $00,$EA,$0F,$08
+	db $20,$F2,$0F,$09
+	db $00,$F0,$F4,$2C
+	db $20,$F0,$02,$06
+	db $00,$FB,$FF,$2A
+	db $00,$F3,$FF,$29
+	db $20,$00,$EF,$02
+	db $20,$F0,$EF,$00
+	db $81,$EC,$ED,$43
+	db $81,$F4,$05,$4D
+	db $01,$EC,$05,$43
+	db $01,$E5,$FD,$54
+	db $01,$E5,$F5,$42
+	db $21,$ED,$F5,$40
+}

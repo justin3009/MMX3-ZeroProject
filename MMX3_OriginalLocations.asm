@@ -22,52 +22,55 @@ incsrc MMX3_NewCode_Locations.asm
 incsrc MMX3_VariousAddresses.asm
 ;***************************
 ;***************************
-; Sets game to FastROM (Have to find a way to make it load RAM as $80+
+; Sets game to FastROM (Have to find a way to make it load RAM as $80+)
 ;***************************
-; org $808000 ;Loads original code location that's loaded right when the game is started. (Loads a new location to foce the game as FastROM!)
+org $808000 ;Loads original code location that's loaded right when the game is started. (Loads a new location to foce the game as FastROM!)
 ;A ton of modification has to be done still. ALL RAM needs to load from $80+! There's a ton of PHA PLB commands in the ROM everywhere.
 ;Might be easier to do a mass replace in the ROM file with this.
-; {
-	; JML $80FF75
-	; REP #$20
-	; SEP #$10
-	; PHK
-	; PLB
-	; LDY #$80
-	; STY $4301
+{
+	JML $80FF75
+	REP #$20
+	SEP #$10
+	PHK
+	PLB
+	LDY #$80
+	STY $4301
 	
-	; SEP #$30
-	; NOP
-; }
-; org $80FF75 ;Loads original code location that sets the game to start. (Updated so it sets the game to FastROM!)
-; {
-	; SEI
-	; CLC
-	; XCE
-	; REP #$30
-	; LDX #$01FF
-	; TXS
-	; LDA #$0000
-	; TCD
+	SEP #$30
+	NOP
+}
+org $80FF75 ;Loads original code location that sets the game to start. (Updated so it sets the game to FastROM!)
+{
+	SEI
+	CLC
+	XCE
+	REP #$30
+	LDX #$01FF
+	TXS
+	LDA #$0000
+	TCD
 	
-	; SEP #$20
-	; LDA #$01 ;Load #$01
-	; STA $420D ;Stores to $420D to initiate FastROM
+	SEP #$20
+	LDA #$01 ;Load #$01
+	STA $420D ;Stores to $420D to initiate FastROM
 	
-	; LDA #$80
-	; STA $2100
+	LDA #$80
+	STA $2100
 	
-	; LDA #$00
-	; STA $4200
-	; STZ $420C
-	; STZ $420B
+	LDA #$00
+	STA $4200
+	STZ $420C
+	STZ $420B
 	
-	; LDA #$00
-	; STA $7EFFFF
+	LDA #$00
+	STA $7EFFFF
 	
-	; JML $808004
-; }
+	JML $808004
+}
+
+
 	
+
 ;***************************
 ;***************************
 ; Fix pitching of Brass instrument

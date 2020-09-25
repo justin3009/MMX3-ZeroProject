@@ -2814,37 +2814,21 @@ PCChargeAndSwitchSubWeaponsSetup: ;Routine that determines who can charge regula
 	
 	X_ChargeAndSwitchSubWeapons:
 		SEP #$20
-		LDA !BossesDefeated1_7EF4E2
-		BNE CheckCurrentWeapon
-		LDA !RideChipsOrigin_7E1FD7_Short
-		BIT #$20 ;Check if Hper Charge available
-		BEQ PC_NoSubWeaponsAvailable
-		
-	CheckCurrentWeapon:
 		LDA !CurrentPCSubWeaponShort_33 ;Load current sub-weapon short
 		CMP #$09 ;Check if it's #$09 (Hyper Charge)
 		RTS
 		
-	PC_NoSubWeaponsAvailable:
-		INC ;Do not clear buster charge state
-		RTS
-		
 	Zero_ChargeAndSwitchSubWeapons:
-		LDA !BossesDefeated1_7EF4E2
-		BEQ PC_NoSubWeaponsAvailable
-
-		;Clear buster charge state
+		LDA !CurrentPCSubWeapon_0A0B
+		
 		STZ !CurrentPCChargeLevel4_0A66 ;Split Shot #1/2
 		STZ !CurrentPCCharge_0A30 ;PC Charge level
 		STZ !SetFlashForPC_0A32 ;Set PC to flash
-		
 		SEP #$20
 		STZ $0B58 ;Palette of bubbles
 		STZ $0B5E ;Current level of bubble
 		STZ $0B66 ;Charge timer extra storage
 		STZ $0A8F ;Removes Z-Saber
-		
-		LDA !CurrentPCSubWeapon_0A0B
 		RTS
 		
 	PC3_ChargeAndSwitchSubWeapons:
@@ -7211,8 +7195,9 @@ PCVictoryShingXCoordinate: ;Routine that sets X/Y coordinates of the 'SHING' eff
 }
 
 ;*********************************************************************************
-; Sets Sprite Assembly for 1-up icon in-game
+; All data related to 1-up icon rewriting. (Allows for each PC to have their own icon) (Enables/Disables them from appearing on screen based on circumstances by going through $7E:1518 [$7E:1522 specifically])
 ;*********************************************************************************
+{
 PC1Up_InGameIcon_SpriteAssembly:
 {
 	LDA !CurrentPCCheck_1FFF
@@ -7245,10 +7230,6 @@ PC1Up_InGameIcon_SpriteAssembly:
 		LDA #$11
 		RTS
 }
-		
-;*********************************************************************************
-; Routine that'll sift through $7E:1518 ($7E:1522 specifically) and check for 1-up icons to disable/enable them
-;*********************************************************************************	
 PC1UpIcon_CheckAndDisable: ;Disables the PC 1-up on screen when swapping characters
 {
 	REP #$30
@@ -7259,9 +7240,10 @@ PC1UpIcon_CheckAndDisable: ;Disables the PC 1-up on screen when swapping charact
 	AND #$00FF
 	CMP #$0003 ;Check for 1-up icon (No idea why they use two separate values but they do)
 	BEQ PC1UpIcon_Disable
-	CMP #$0004 ;Check for 1-up icon (No idea why they use two separate values but they do)
-	BEQ PC1UpIcon_Disable
-	BRA PC1UpIcon_IgnoreDisable
+	
+		CMP #$0004 ;Check for 1-up icon (No idea why they use two separate values but they do)
+		BEQ PC1UpIcon_Disable
+			BRA PC1UpIcon_IgnoreDisable
 	
 	PC1UpIcon_Disable:
 	SEP #$20
@@ -7287,7 +7269,6 @@ PC1UpIcon_CheckAndDisable: ;Disables the PC 1-up on screen when swapping charact
 	SEP #$30
 	RTL
 }
-	
 PC1UpIcon_CheckAndEnable: ;Disables the PC 1-up on screen when swapping characters
 {
 	REP #$30
@@ -7298,9 +7279,10 @@ PC1UpIcon_CheckAndEnable: ;Disables the PC 1-up on screen when swapping characte
 	AND #$00FF
 	CMP #$0003 ;Check for 1-up icon (No idea why they use two separate values but they do)
 	BEQ PC1UpIcon_Enable
-	CMP #$0004 ;Check for 1-up icon (No idea why they use two separate values but they do)
-	BEQ PC1UpIcon_Enable
-	BRA PC1UpIcon_IgnoreEnable
+	
+		CMP #$0004 ;Check for 1-up icon (No idea why they use two separate values but they do)
+		BEQ PC1UpIcon_Enable
+			BRA PC1UpIcon_IgnoreEnable
 	
 	PC1UpIcon_Enable:
 	SEP #$20
@@ -7319,7 +7301,8 @@ PC1UpIcon_CheckAndEnable: ;Disables the PC 1-up on screen when swapping characte
 	SEP #$30
 	RTL
 }
-	
+
+}
 ;*********************************************************************************
 ; Sets PC's height when they're teleporting in through PC swapping
 ;*********************************************************************************		
@@ -7419,6 +7402,7 @@ WormSeeker_DamageTableSwitch:
 ;*********************************************************************************
 ; Various PC RAM combining routines
 ;*********************************************************************************
+{
 PCCombineHeartTanks:
 	LDA !XHeartTank_7EF41C
 	ORA !ZeroHeartTank_7EF44C
@@ -7432,7 +7416,7 @@ PCCombineSubTanks:
 	ORA !PC3SubTankCollect_7EF47D
 	ORA !PC4SubTankCollect_7EF4AD
 	RTL
-	
+}
 	
 ;*********************************************************************************
 ; Crush Crawfish's platform. Has it's own check routine instead of sharing to prevent various crashes.
@@ -7532,6 +7516,7 @@ PC_HelmetHologram:
 ;*********************************************************************************
 ; New code that loads the READY sprites for each PC and possibly writes their palettes into RAM as well.
 ;*********************************************************************************
+{
 PC_Ready_Sprites:
 {
 	SEP #$20
@@ -7686,6 +7671,8 @@ PC_Ready_Intro_Palette: ;Loads palette slot code for 'READY' text.
 		RTS
 }
 
+}
+
 ;*********************************************************************************
 ; Sets new data for Hangar in introduction level and Mac
 ;*********************************************************************************
@@ -7698,7 +7685,7 @@ PC_Ready_Intro_Palette: ;Loads palette slot code for 'READY' text.
 ;$0022 - Current Save Page
 ;$0024 - Total SRAM (May not be needed, but mainly for changing pages to keep track of everything in total)
 ;$0026 - BIT flag to initiate blanking out all text if there is no save.
-
+{
 
 LoadScreen_PresetAllData: ;Loads all data as the Loading screen is loading up so everything is preset.
 {
@@ -7774,7 +7761,6 @@ LoadScreen_PresetAllData: ;Loads all data as the Loading screen is loading up so
 	JSL !PaletteAlternate
 	RTL
 }
-
 SaveScreen_PresetAllData: ;Loads all data as the Loading screen is loading up so everything is preset.
 {
 	LDY #$AC ;Load Ride Chip sprites (Decompressed)
@@ -7850,7 +7836,41 @@ SaveScreen_PresetAllData: ;Loads all data as the Loading screen is loading up so
 	RTL
 }
 
-
+DisplaySavedData_CheckForBadSave: ;Routine that checks whether a save has data or not.
+{
+	REP #$30
+	STZ $0026
+	LDA $0020
+	STA $0000
+	LDY #$0000
+	
+	DisplaySavedData_CheckForBadSave_Loop:
+	LDX $0000
+	LDA $700000,x
+	PHA
+	TXA
+	SEC
+	SBC $0020
+	TAX
+	PLA
+	CMP $80FFC0,x
+	BNE DisplaySavedData_CheckForBadSave_BadSave
+	INC $0000
+	INC $0000
+	INY
+	CPY #$000B
+	BNE DisplaySavedData_CheckForBadSave_Loop
+	SEP #$30
+	LDA #$00
+	STA $0026
+	RTL
+	
+	DisplaySavedData_CheckForBadSave_BadSave:
+	SEP #$30
+	LDA #$01
+	STA $0026
+	RTL
+}
 DisplaySavedData_AllTextData: ;Loads routine to display all main text data
 {
 	JSL DisplaySavedData_CheckForBadSave
@@ -8518,7 +8538,6 @@ DisplayNewMenu_SubWeaponIcon: ;Sets and draws data for sub-weapon icon X/Y coord
 }
 
 }
-
 DisplayNewMenu_AllSprites: ;Routine that loads all sprites on screen
 {
 	LDA $0026
@@ -9026,7 +9045,6 @@ DisplayNewMenu_AllSprites_XSprites:
 }
 
 }
-
 DisplaySavedData_SetSaveSlot: ;Sets save slot so it can gather proper SRAM
 {
 	REP #$20
@@ -9070,8 +9088,6 @@ DisplaySavedData_SetSaveSlot: ;Sets save slot so it can gather proper SRAM
 	SEP #$30
 	RTL
 }
-
-
 
 LoadScreen_KeyPresses: ;Loads routine that determines what happens with key presses on screen.
 {
@@ -9263,44 +9279,6 @@ LoadScreen_KeyPresses: ;Loads routine that determines what happens with key pres
 	LoadScreen_KeyPresses_End:
 	RTL	
 }
-	
-DisplaySavedData_CheckForBadSave: ;Routine that checks whether a save has data or not.
-{
-	REP #$30
-	STZ $0026
-	LDA $0020
-	STA $0000
-	LDY #$0000
-	
-	DisplaySavedData_CheckForBadSave_Loop:
-	LDX $0000
-	LDA $700000,x
-	PHA
-	TXA
-	SEC
-	SBC $0020
-	TAX
-	PLA
-	CMP $80FFC0,x
-	BNE DisplaySavedData_CheckForBadSave_BadSave
-	INC $0000
-	INC $0000
-	INY
-	CPY #$000B
-	BNE DisplaySavedData_CheckForBadSave_Loop
-	SEP #$30
-	LDA #$00
-	STA $0026
-	RTL
-	
-	DisplaySavedData_CheckForBadSave_BadSave:
-	SEP #$30
-	LDA #$01
-	STA $0026
-	RTL
-}
-	
-	
 LoadScreen_LoadFileKeyPresses: ;Key presses for the 'Load this file?' text
 {
 	LoadScreen_LoadFileKeyPresses_LeftArrow:
@@ -9417,7 +9395,6 @@ LoadScreen_LoadFileKeyPresses: ;Key presses for the 'Load this file?' text
 	LoadScreen_LoadFileKeyPresses_End:
 	RTL	
 }
-	
 LoadScreen_SelectionCursor: ;Loads cursor for selecting Yes or No
 {	
 	PHD
@@ -9475,8 +9452,6 @@ LoadScreen_SelectionCursor: ;Loads cursor for selecting Yes or No
 	PLD
 	RTL
 }
-	
-	
 LoadScreen_EraseFileKeyPresses: ;Key presses for the 'Load this file?' text
 {
 	LoadScreen_EraseFileKeyPresses_LeftArrow:
@@ -9621,8 +9596,6 @@ LoadScreen_EraseFileKeyPresses: ;Key presses for the 'Load this file?' text
 	LoadScreen_EraseFileKeyPresses_End:
 	RTL	
 }	
-	
-	
 LoadScreen_SendSRAMToRAM: ;Loads SRAM data to store into RAM
 {
 	PHP
@@ -9677,7 +9650,6 @@ LoadScreen_SendSRAMToRAM: ;Loads SRAM data to store into RAM
 	RTL
 }	
 	
-
 SaveScreen_KeyPresses: ;Loads routine that determines what happens with key presses on screen.
 {
 	SEP #$20
@@ -9838,7 +9810,6 @@ SaveScreen_KeyPresses: ;Loads routine that determines what happens with key pres
 	SaveScreen_KeyPresses_End:
 	RTL
 }	
-	
 SaveScreen_SaveFileKeyPresses: ;Key presses for the 'Load this file?' text
 {
 	SaveScreen_SaveFileKeyPresses_LeftArrow:
@@ -10049,6 +10020,8 @@ SaveScreen_SendRAMToSRAM: ;Stores RAM data into SRAM
 }	
 
 
+}
+
 ;*********************************************************************************
 ; Rewrites the 'Thank you for playing' scene
 ;*********************************************************************************
@@ -10057,6 +10030,7 @@ SaveScreen_SendRAMToSRAM: ;Stores RAM data into SRAM
 ;B100
 ;B112
 ;B11C
+{
 
 EndingCredits_ThankYouForPlaying:
 {
@@ -10206,13 +10180,12 @@ EndingCredits_ThankYouForPlaying:
 	RTS
 }
 
-
-
-
+}
 
 ;*********************************************************************************
 ; Recoded X spiral buster so it supports Zero as well
 ;*********************************************************************************
+{
 PC_BusterShot_Level4_5_FirstShot:
 {
 	STX $0010
@@ -10928,11 +10901,12 @@ Zero_SpiralBusterSpirals:
 		
 		
 		}
-
+}
 
 ;*********************************************************************************
 ; Various sub-weapon alterations
-;*********************************************************************************	
+;*********************************************************************************
+{
 PC_SetGravityWell_Physics: ;Sets PC physics when Charged Gravity Well is in progress.
 {
 	LDX !CurrentPC_0A8E
@@ -11073,9 +11047,12 @@ PC_GravityWell_Bubbles: ;Sets code for when underwater and $7E:1F40 is set
 	RTL
 }
 
+}
+
 ;*********************************************************************************
 ; Modifying various enemy events and such.
 ;*********************************************************************************	
+{
 MacEventNoLifeBar:
 {
 	LDA #$04
@@ -11146,4 +11123,6 @@ MaohTheGiant_AI:
 		JSL $82DF64
 		JML $82E876
 		RTL
+}
+
 }

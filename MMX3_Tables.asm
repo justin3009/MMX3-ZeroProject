@@ -1644,86 +1644,92 @@ PCIconBytes: ;Loads a table to set the PC's icon bytes for their health bar and 
 
 ;All 4 PC's tables to determine whether they can swap or not on specific levels.
 { 
-		XMenuSwapLevelTable: ;X's level table to determine when character switch available; (00 = Yes, 01 = No)
-			db $01 ;Introduction Level
-			db $00 ;Blast Hornet
-			db $00 ;Blizzard Buffalo
-			db $00 ;Gravity Beetle
-			db $00 ;Toxic Seahorse
-			db $00 ;Volt Catfish
-			db $00 ;Crush Crawfish
-			db $00 ;Tunnel Rhino
-			db $00 ;Neon Tiger
-			db $01 ;Abandoned Factory (Vile)
-			db $00 ;Doppler Stage #1 (Golden Armor)
-			db $00 ;Doppler Stage #2 (Intact - Z-Saber)
-			db $01 ;Doppler Stage #3 (Doppler)
-			db $01 ;Sigma (Final Level)
-			db $00 ;Doppler Stage #2 (Destroyed - Refight Vile)
-			db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-			db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-
-		ZeroMenuSwapLevelTable: ;Zero's level table to determine when character switch available; (00 = Yes, 01 = No)
-			db $01 ;Introduction Level
-			db $00 ;Blast Hornet
-			db $00 ;Blizzard Buffalo
-			db $00 ;Gravity Beetle
-			db $00 ;Toxic Seahorse
-			db $00 ;Volt Catfish
-			db $00 ;Crush Crawfish
-			db $00 ;Tunnel Rhino
-			db $00 ;Neon Tiger
-			db $01 ;Abandoned Factory (Vile)
-			db $00 ;Doppler Stage #1 (Golden Armor)
-			db $00 ;Doppler Stage #2 (Intact - Z-Saber)
-			db $01 ;Doppler Stage #3 (Doppler)
-			db $01 ;Sigma (Final Level)
-			db $00 ;Doppler Stage #2 (Destroyed - Refight Vile)
-			db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-			db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-
-		PC3MenuSwapLevelTable: ;PC3's level table to determine when character switch available; (00 = Yes, 01 = No)
-			db $01 ;Introduction Level
-			db $00 ;Blast Hornet
-			db $00 ;Blizzard Buffalo
-			db $00 ;Gravity Beetle
-			db $00 ;Toxic Seahorse
-			db $00 ;Volt Catfish
-			db $00 ;Crush Crawfish
-			db $00 ;Tunnel Rhino
-			db $00 ;Neon Tiger
-			db $01 ;Abandoned Factory (Vile)
-			db $00 ;Doppler Stage #1 (Golden Armor)
-			db $00 ;Doppler Stage #2 (Intact - Z-Saber)
-			db $01 ;Doppler Stage #3 (Doppler)
-			db $01 ;Sigma (Final Level)
-			db $00 ;Doppler Stage #2 (Destroyed - Refight Vile)
-			db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-			db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-
-		PC4MenuSwapLevelTable: ;PC4's level table to determine when character switch available; (00 = Yes, 01 = No)
-			db $01 ;Introduction Level
-			db $00 ;Blast Hornet
-			db $00 ;Blizzard Buffalo
-			db $00 ;Gravity Beetle
-			db $00 ;Toxic Seahorse
-			db $00 ;Volt Catfish
-			db $00 ;Crush Crawfish
-			db $00 ;Tunnel Rhino
-			db $00 ;Neon Tiger
-			db $01 ;Abandoned Factory (Vile)
-			db $00 ;Doppler Stage #1 (Golden Armor)
-			db $00 ;Doppler Stage #2 (Intact - Z-Saber)
-			db $01 ;Doppler Stage #3 (Doppler)
-			db $01 ;Sigma (Final Level)
-			db $00 ;Doppler Stage #2 (Destroyed - Refight Vile)
-			db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-			db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	XMenuSwapLevelTable: ;X's level table to determine when character switch available; (00 = Yes, 01 = No)
+	{
+		db $01 ;Introduction Level
+		db $00 ;Blast Hornet
+		db $00 ;Blizzard Buffalo
+		db $00 ;Gravity Beetle
+		db $00 ;Toxic Seahorse
+		db $00 ;Volt Catfish
+		db $00 ;Crush Crawfish
+		db $00 ;Tunnel Rhino
+		db $00 ;Neon Tiger
+		db $01 ;Abandoned Factory (Vile)
+		db $00 ;Doppler Stage #1 (Golden Armor)
+		db $00 ;Doppler Stage #2 (Intact - Z-Saber)
+		db $01 ;Doppler Stage #3 (Doppler)
+		db $01 ;Sigma (Final Level)
+		db $00 ;Doppler Stage #2 (Destroyed - Refight Vile)
+		db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Extra data
+		db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Extra data
+	}
+	ZeroMenuSwapLevelTable: ;Zero's level table to determine when character switch available; (00 = Yes, 01 = No)
+	{
+		db $01 ;Introduction Level
+		db $00 ;Blast Hornet
+		db $00 ;Blizzard Buffalo
+		db $00 ;Gravity Beetle
+		db $00 ;Toxic Seahorse
+		db $00 ;Volt Catfish
+		db $00 ;Crush Crawfish
+		db $00 ;Tunnel Rhino
+		db $00 ;Neon Tiger
+		db $01 ;Abandoned Factory (Vile)
+		db $00 ;Doppler Stage #1 (Golden Armor)
+		db $00 ;Doppler Stage #2 (Intact - Z-Saber)
+		db $01 ;Doppler Stage #3 (Doppler)
+		db $01 ;Sigma (Final Level)
+		db $00 ;Doppler Stage #2 (Destroyed - Refight Vile)
+		db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Extra data
+		db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Extra data
+	}
+	PC3MenuSwapLevelTable: ;PC3's level table to determine when character switch available; (00 = Yes, 01 = No)
+	{
+		db $01 ;Introduction Level
+		db $00 ;Blast Hornet
+		db $00 ;Blizzard Buffalo
+		db $00 ;Gravity Beetle
+		db $00 ;Toxic Seahorse
+		db $00 ;Volt Catfish
+		db $00 ;Crush Crawfish
+		db $00 ;Tunnel Rhino
+		db $00 ;Neon Tiger
+		db $01 ;Abandoned Factory (Vile)
+		db $00 ;Doppler Stage #1 (Golden Armor)
+		db $00 ;Doppler Stage #2 (Intact - Z-Saber)
+		db $01 ;Doppler Stage #3 (Doppler)
+		db $01 ;Sigma (Final Level)
+		db $00 ;Doppler Stage #2 (Destroyed - Refight Vile)
+		db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Extra data
+		db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Extra data
+	}
+	PC4MenuSwapLevelTable: ;PC4's level table to determine when character switch available; (00 = Yes, 01 = No)
+	{
+		db $01 ;Introduction Level
+		db $00 ;Blast Hornet
+		db $00 ;Blizzard Buffalo
+		db $00 ;Gravity Beetle
+		db $00 ;Toxic Seahorse
+		db $00 ;Volt Catfish
+		db $00 ;Crush Crawfish
+		db $00 ;Tunnel Rhino
+		db $00 ;Neon Tiger
+		db $01 ;Abandoned Factory (Vile)
+		db $00 ;Doppler Stage #1 (Golden Armor)
+		db $00 ;Doppler Stage #2 (Intact - Z-Saber)
+		db $01 ;Doppler Stage #3 (Doppler)
+		db $01 ;Sigma (Final Level)
+		db $00 ;Doppler Stage #2 (Destroyed - Refight Vile)
+		db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Extra data
+		db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Extra data
+	}
 }
 
 ;PC's Single Byte Weapon Table to get X/Y coordinates of sub-weapon projectiles.
 {
 XSubWeapSingleByte: ;X's single-byte ADC to get X/Y coordinates of sub-weapon projectiles
+{
 	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$02,$04,$06
 	db $08,$0A,$0C,$0E,$10,$12,$14,$00,$00,$00,$00,$00,$00,$00,$00,$00
 	db $16,$18,$1A,$1C,$1E,$20,$22,$00,$00,$00,$00,$00,$24,$26,$28,$2A
@@ -1739,9 +1745,9 @@ XSubWeapSingleByte: ;X's single-byte ADC to get X/Y coordinates of sub-weapon pr
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-
-	
+}
 ZeroSubWeapSingleByte: ;Zero's single-byte ADC to get X/Y coordinates of sub-weapon projectiles
+{
 	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$02,$04,$06
 	db $08,$0A,$0C,$0E,$10,$12,$14,$00,$00,$00,$00,$00,$00,$00,$00,$00
 	db $16,$16,$16,$16,$16,$16,$16,$00,$00,$00,$00,$00,$18,$1A,$1C,$1E
@@ -1758,25 +1764,9 @@ ZeroSubWeapSingleByte: ;Zero's single-byte ADC to get X/Y coordinates of sub-wea
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-
+}
 PC3SubWeapSingleByte: ;PC3's single-byte ADC to get X/Y coordinates of sub-weapon projectiles
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$02,$04,$06
-	db $08,$0A,$0C,$0E,$10,$12,$14,$00,$00,$00,$00,$00,$00,$00,$00,$00
-	db $16,$18,$1A,$1C,$1E,$20,$22,$00,$00,$00,$00,$00,$24,$26,$28,$2A
-	db $2C,$2E,$30,$00,$00,$00,$00,$00,$00,$32,$34,$36,$00,$00,$00,$00
-	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$38,$00,$00,$00,$00,$00
-	db $00,$00,$00,$00,$3A,$3A,$00,$00,$00,$3A,$3A,$00,$00,$3A,$3A,$00
-	db $00,$3A,$3A,$00,$00
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	
-PC4SubWeapSingleByte: ;PC4's single-byte ADC to get X/Y coordinates of sub-weapon projectiles
+{
 	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$02,$04,$06
 	db $08,$0A,$0C,$0E,$10,$12,$14,$00,$00,$00,$00,$00,$00,$00,$00,$00
 	db $16,$18,$1A,$1C,$1E,$20,$22,$00,$00,$00,$00,$00,$24,$26,$28,$2A
@@ -1793,10 +1783,29 @@ PC4SubWeapSingleByte: ;PC4's single-byte ADC to get X/Y coordinates of sub-weapo
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 }
-	
+PC4SubWeapSingleByte: ;PC4's single-byte ADC to get X/Y coordinates of sub-weapon projectiles
+{
+	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$02,$04,$06
+	db $08,$0A,$0C,$0E,$10,$12,$14,$00,$00,$00,$00,$00,$00,$00,$00,$00
+	db $16,$18,$1A,$1C,$1E,$20,$22,$00,$00,$00,$00,$00,$24,$26,$28,$2A
+	db $2C,$2E,$30,$00,$00,$00,$00,$00,$00,$32,$34,$36,$00,$00,$00,$00
+	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$38,$00,$00,$00,$00,$00
+	db $00,$00,$00,$00,$3A,$3A,$00,$00,$00,$3A,$3A,$00,$00,$3A,$3A,$00
+	db $00,$3A,$3A,$00,$00
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+}
+}
 ;PC's X/Y coordinates of sub-weapon projectiles.
 {
 XSubWeapXCoord: ;X's X/Y sub-weapon coordinates
+{
 	db $00,$00,$FA,$E6,$F9,$E6,$FB,$E6,$FA,$E6,$FA,$E6,$FA,$E6,$F9,$E6
 	db $FC,$E6,$FB,$E6,$FB,$E6,$F9,$E3,$F7,$E9,$F7,$EA,$F8,$E9,$F9,$E9
 	db $FA,$E7,$FB,$E8,$F9,$E9,$FC,$EC,$FE,$EE,$FA,$EC,$F7,$E9,$FC,$F2
@@ -1809,9 +1818,9 @@ XSubWeapXCoord: ;X's X/Y sub-weapon coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-
-	
+}
 ZeroSubWeapXCoord: ;Zero's X/Y sub-weapon coordinates
+{
 	db $00,$00,$00,$EA,$FF,$E8,$00,$E8,$01,$E8,$01,$E8,$00,$E8,$FF,$E8
 	db $00,$E8,$01,$E8,$01,$E8,$FC,$E8,$FF,$E3,$05,$F0,$03,$E5,$FD,$EA
 	db $FB,$ED,$01,$E5,$01,$E9,$03,$E3,$0C,$D7,$01,$EB,$F8,$F8,$03,$E3
@@ -1825,8 +1834,9 @@ ZeroSubWeapXCoord: ;Zero's X/Y sub-weapon coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	
+}
 PC3SubWeapXCoord: ;PC3's X/Y sub-weapon coordinates
+{
 	db $00,$00,$FA,$E6,$F9,$E6,$FB,$E6,$FA,$E6,$FA,$E6,$FA,$E6,$F9,$E6
 	db $FC,$E6,$FB,$E6,$FB,$E6,$F9,$E3,$F7,$E9,$F7,$EA,$F8,$E9,$F9,$E9
 	db $FA,$E7,$FB,$E8,$F9,$E9,$FC,$EC,$FE,$EE,$FA,$EC,$F7,$E9,$FC,$F2
@@ -1839,8 +1849,9 @@ PC3SubWeapXCoord: ;PC3's X/Y sub-weapon coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	
+}
 PC4SubWeapXCoord: ;PC4's X/Y sub-weapon coordinates
+{
 	db $00,$00,$FA,$E6,$F9,$E6,$FB,$E6,$FA,$E6,$FA,$E6,$FA,$E6,$F9,$E6
 	db $FC,$E6,$FB,$E6,$FB,$E6,$F9,$E3,$F7,$E9,$F7,$EA,$F8,$E9,$F9,$E9
 	db $FA,$E7,$FB,$E8,$F9,$E9,$FC,$EC,$FE,$EE,$FA,$EC,$F7,$E9,$FC,$F2
@@ -1855,9 +1866,11 @@ PC4SubWeapXCoord: ;PC4's X/Y sub-weapon coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 }
 
+}
 ;PC's Single Byte setup for Tornado Fang to get it's X/Y/Animation setup data.
 {
 XDrillSingleBye:
+{
 	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$03,$06,$09
 	db $0C,$0F,$12,$15,$18,$1B,$1E,$00,$00,$00,$00,$00,$00,$00,$00,$00
 	db $21,$24,$27,$2A,$2D,$30,$33,$00,$36,$39,$00,$00,$3C,$3F,$42,$45
@@ -1873,8 +1886,9 @@ XDrillSingleBye:
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	
+}
 ZeroDrillSingleByte:
+{
 	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$03,$06,$09
 	db $0C,$0C,$09,$06,$09,$0C,$03,$00,$00,$00,$00,$00,$00,$24,$00,$00
 	db $12,$12,$12,$15,$18,$1B,$1E,$00,$36,$2A,$00,$00,$30,$3F,$42,$30
@@ -1890,8 +1904,9 @@ ZeroDrillSingleByte:
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-
+}
 PC3DrillSingleByte:
+{
 	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$03,$06,$09
 	db $0C,$0F,$12,$15,$18,$1B,$1E,$00,$00,$00,$00,$00,$00,$00,$00,$00
 	db $21,$24,$27,$2A,$2D,$30,$33,$00,$36,$39,$00,$00,$3C,$3F,$42,$45
@@ -1907,8 +1922,9 @@ PC3DrillSingleByte:
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-
+}
 PC4DrillSingleByte:
+{
 	db $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$03,$06,$09
 	db $0C,$0F,$12,$15,$18,$1B,$1E,$00,$00,$00,$00,$00,$00,$00,$00,$00
 	db $21,$24,$27,$2A,$2D,$30,$33,$00,$36,$39,$00,$00,$3C,$3F,$42,$45
@@ -1926,9 +1942,11 @@ PC4DrillSingleByte:
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 }
 
+}
 ;PC's X/Y/Animation coordinates of Tornado Fang.
 {
 XDrillYCoord: ;X's Y/X/Animation drill setup
+{
 	db $00,$00,$00,$FB,$E7,$0C,$FA,$E7,$0C,$FB,$E7,$10,$FC,$E7,$11,$FC
 	db $E7,$0C,$FB,$E7,$0C,$FA,$E7,$0C,$FC,$E7,$0C,$FC,$E7,$0C,$FC,$E7
 	db $0C,$FA,$E8,$0C,$F8,$E8,$0C,$F8,$E9,$0C,$F9,$E8,$0C,$FA,$E8,$0C
@@ -1943,8 +1961,9 @@ XDrillYCoord: ;X's Y/X/Animation drill setup
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	
+}
 ZeroDrillYCoord: ;Zero's Y/X/Animation drill setup
+{
 	db $00,$00,$00,$00,$E6,$10,$FF,$E6,$0C,$00,$E6,$0C,$01,$E6,$0C,$00
 	db $E6,$0C,$FB,$EA,$0C,$FB,$E7,$0C,$FA,$E6,$0C,$F9,$E8,$0C,$FF,$E8
 	db $0C,$FF,$E9,$0C,$04,$EA,$0C,$0A,$D7,$0C,$F0,$09,$0E,$FB,$07,$0D
@@ -1957,9 +1976,9 @@ ZeroDrillYCoord: ;Zero's Y/X/Animation drill setup
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-
-
+}
 PC3DrillYCoord: ;PC #3's Y/X/Animation drill setup
+{
 	db $00,$00,$00,$FB,$E7,$0C,$FA,$E7,$0C,$FB,$E7,$10,$FC,$E7,$11,$FC
 	db $E7,$0C,$FB,$E7,$0C,$FA,$E7,$0C,$FC,$E7,$0C,$FC,$E7,$0C,$FC,$E7
 	db $0C,$FA,$E8,$0C,$F8,$E8,$0C,$F8,$E9,$0C,$F9,$E8,$0C,$FA,$E8,$0C
@@ -1974,8 +1993,9 @@ PC3DrillYCoord: ;PC #3's Y/X/Animation drill setup
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-	
+}
 PC4DrillYCoord: ;PC #4's Y/X/Animation drill setup
+{
 	db $00,$00,$00,$FB,$E7,$0C,$FA,$E7,$0C,$FB,$E7,$10,$FC,$E7,$11,$FC
 	db $E7,$0C,$FB,$E7,$0C,$FA,$E7,$0C,$FC,$E7,$0C,$FC,$E7,$0C,$FC,$E7
 	db $0C,$FA,$E8,$0C,$F8,$E8,$0C,$F8,$E9,$0C,$F9,$E8,$0C,$FA,$E8,$0C
@@ -1990,6 +2010,8 @@ PC4DrillYCoord: ;PC #4's Y/X/Animation drill setup
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+}
+
 }
 
 ;Table that dictates BIT settings used for bosses defeated.
@@ -2415,6 +2437,7 @@ PC4PortraitPalettePointers:
 ;PC sub-weapon text X/Y coordinates in menu.
 {
 XSubTextCoord: ;X's Menu Sub-Weapon Text X/Y coordinates
+{
 	dw $50A6 ;Acid Burst		Text Coordinates
 	dw $50E6 ;Parasitic Bomb	Text Coordinates
 	dw $5126 ;Triad Thunder		Text Coordinates
@@ -2435,9 +2458,9 @@ XSubTextCoord: ;X's Menu Sub-Weapon Text X/Y coordinates
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Text Coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Text Coordinates
-	
-	
+}
 ZeroSubTextCoord: ;Zero's Menu Sub-Weapon Text X/Y coordinates
+{
 	dw $50A6 ;Acid Burst		Text Coordinates
 	dw $50E6 ;Parasitic Bomb	Text Coordinates
 	dw $5126 ;Triad Thunder		Text Coordinates
@@ -2458,9 +2481,9 @@ ZeroSubTextCoord: ;Zero's Menu Sub-Weapon Text X/Y coordinates
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Text Coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Text Coordinates
-	
-	
+}
 PC3SubTextCoord: ;PC3's Menu Sub-Weapon Text X/Y coordinates
+{
 	dw $50A6 ;Acid Burst		Text Coordinates
 	dw $50E6 ;Parasitic Bomb	Text Coordinates
 	dw $5126 ;Triad Thunder		Text Coordinates
@@ -2481,9 +2504,9 @@ PC3SubTextCoord: ;PC3's Menu Sub-Weapon Text X/Y coordinates
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Text Coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Text Coordinates
-
-	
+}
 PC4SubTextCoord: ;PC4's Menu Sub-Weapon Text X/Y coordinates
+{
 	dw $50A6 ;Acid Burst		Text Coordinates
 	dw $50E6 ;Parasitic Bomb	Text Coordinates
 	dw $5126 ;Triad Thunder		Text Coordinates
@@ -2506,9 +2529,11 @@ PC4SubTextCoord: ;PC4's Menu Sub-Weapon Text X/Y coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Text Coordinates
 }
 
+}
 ;PC sub-weapon icon X/Y coordinates in menu
 {
 XSubIconCoord: ;X's sub-weapon icon coordinates
+{
 	dw $50A3 ;Acid Burst		Icon X/Y coordinates
 	dw $50E3 ;Parasitic Bomb	Icon X/Y coordinates
 	dw $5123 ;Triad Thunder		Icon X/Y coordinates
@@ -2530,8 +2555,9 @@ XSubIconCoord: ;X's sub-weapon icon coordinates
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon X/Y coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon X/Y coordinates
-	
+}
 ZeroSubIconCoord: ;Zero's sub-weapon icon coordinates
+{
 	dw $50A3 ;Acid Burst		Icon X/Y coordinates
 	dw $50E3 ;Parasitic Bomb	Icon X/Y coordinates
 	dw $5123 ;Triad Thunder		Icon X/Y coordinates
@@ -2553,9 +2579,9 @@ ZeroSubIconCoord: ;Zero's sub-weapon icon coordinates
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon X/Y coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon X/Y coordinates
-
-	
+}
 PC3SubIconCoord: ;PC3's sub-weapon icon coordinates
+{
 	dw $50A3 ;Acid Burst		Icon X/Y coordinates
 	dw $50E3 ;Parasitic Bomb	Icon X/Y coordinates
 	dw $5123 ;Triad Thunder		Icon X/Y coordinates
@@ -2577,9 +2603,9 @@ PC3SubIconCoord: ;PC3's sub-weapon icon coordinates
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon X/Y coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon X/Y coordinates
-
-	
+}
 PC4SubIconCoord: ;PC4's sub-weapon icon coordinates
+{
 	dw $50A3 ;Acid Burst		Icon X/Y coordinates
 	dw $50E3 ;Parasitic Bomb	Icon X/Y coordinates
 	dw $5123 ;Triad Thunder		Icon X/Y coordinates
@@ -2603,9 +2629,11 @@ PC4SubIconCoord: ;PC4's sub-weapon icon coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon X/Y coordinates
 }
 
+}
 ;PC sub-weapon icon graphic setup in menu
 {
 XSubIconGraph: ;X's sub-weapon icon graphics
+{
 	dw $0032 ;Acid Burst		Icon Graphics
 	dw $0034 ;Parasitic Bomb	Icon Graphics
 	dw $0036 ;Triad Thunder		Icon Graphics
@@ -2627,9 +2655,9 @@ XSubIconGraph: ;X's sub-weapon icon graphics
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon Graphics
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon Graphics
-
-	
+}
 ZeroSubIconGraph: ;Zero's sub-weapon icon graphics
+{
 	dw $00F6 ;Acid Burst		Icon Graphics
 	dw $00FC ;Parasitic Bomb	Icon Graphics
 	dw $0112 ;Triad Thunder		Icon Graphics
@@ -2651,9 +2679,9 @@ ZeroSubIconGraph: ;Zero's sub-weapon icon graphics
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon Graphics
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon Graphics
-	
-	
+}
 PC3SubIconGraph: ;PC3's sub-weapon icon graphics
+{
 	dw $00F8 ;Acid Burst		Icon Graphics
 	dw $00FE ;Parasitic Bomb	Icon Graphics
 	dw $0114 ;Triad Thunder		Icon Graphics
@@ -2675,9 +2703,9 @@ PC3SubIconGraph: ;PC3's sub-weapon icon graphics
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon Graphics
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon Graphics
-	
-	
+}
 PC4SubIconGraph: ;PC4's sub-weapon icon graphics
+{
 	dw $00FA ;Acid Burst		Icon Graphics
 	dw $0110 ;Parasitic Bomb	Icon Graphics
 	dw $0116 ;Triad Thunder		Icon Graphics
@@ -2701,9 +2729,11 @@ PC4SubIconGraph: ;PC4's sub-weapon icon graphics
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Icon Graphics
 }
 
+}
 ;PC Sub-weapon ammo bar X/Y coordinates in menu
 {
 XLifeBarCoord: ;X's sub-weapon life bar coordinate
+{
 	dw $50C5 ;Acid Burst		Life Bar X/Y coordinates
 	dw $5105 ;Parasitic Bomb	Life Bar X/Y coordinates
 	dw $5145 ;Triad Thunder		Life Bar X/Y coordinates
@@ -2725,9 +2755,9 @@ XLifeBarCoord: ;X's sub-weapon life bar coordinate
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Life Bar X/Y coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Life Bar X/Y coordinates
-
-	
+}
 ZeroLifeBarCoord: ;Zero's sub-weapon life bar coordinate
+{
 	dw $50C5 ;Acid Burst		Life Bar X/Y coordinates
 	dw $5105 ;Parasitic Bomb	Life Bar X/Y coordinates
 	dw $5145 ;Triad Thunder		Life Bar X/Y coordinates
@@ -2749,9 +2779,9 @@ ZeroLifeBarCoord: ;Zero's sub-weapon life bar coordinate
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Life Bar X/Y coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Life Bar X/Y coordinates
-
-	
+}
 PC3LifeBarCoord: ;PC3's sub-weapon life bar coordinate
+{
 	dw $50C5 ;Acid Burst		Life Bar X/Y coordinates
 	dw $5105 ;Parasitic Bomb	Life Bar X/Y coordinates
 	dw $5145 ;Triad Thunder		Life Bar X/Y coordinates
@@ -2773,9 +2803,9 @@ PC3LifeBarCoord: ;PC3's sub-weapon life bar coordinate
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Life Bar X/Y coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Life Bar X/Y coordinates
-
-	
+}
 PC4LifeBarCoord: ;PC4's sub-weapon life bar coordinate
+{
 	dw $50C5 ;Acid Burst		Life Bar X/Y coordinates
 	dw $5105 ;Parasitic Bomb	Life Bar X/Y coordinates
 	dw $5145 ;Triad Thunder		Life Bar X/Y coordinates
@@ -2797,6 +2827,8 @@ PC4LifeBarCoord: ;PC4's sub-weapon life bar coordinate
 
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Life Bar X/Y coordinates
 	db $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF ;Excess Life Bar X/Y coordinates
+}
+
 }	
 	
 ;PC Stage select icon pointer setup
@@ -2844,10 +2876,7 @@ PCStageSelectPC4:
 	dw $0B03 ;Overwrite this file?	(Layer 3)			Text Coordinates
 	dw $0B03 ;Erase this file?		(Layer 3)			Text Coordinates
 	dw $51F5 ;Clear			Text Coordinates
-	
-		
 }
-
 ;Load Save/Load screen Menu text Pointers/text for Layer #1/#2/#3
 {
 	DisplayNewText_Pointers:
@@ -2880,17 +2909,16 @@ PCStageSelectPC4:
 	Pointer07: db $85,$78,$7B,$74,$00 ;Vile
 	Pointer08: db $82,$78,$76,$7C,$70,$00 ;Sigma
 	Pointer09: db $89,$8B,$82,$70,$71,$74,$81,$00 ;Z-Saber
-	Pointer0A: db "Select a file to load. ",$00 ;Select a file to load (Layer 3)
-	Pointer0B: db "Load this file?  ",$00 ;Load this file? (7 spaces)
-	Pointer0C: db "Yes  No ",$00 ;Yes  No (Layer 3)
-	Pointer0D: db " ",$00 ;  (Layer 3) (Used to blank out Yes No)
+	Pointer0A: db "Select a file to load.   ",$00 ;Select a file to load (Layer 3)
+	Pointer0B: db "Load this file?          ",$00 ;Load this file? (7 spaces)
+	Pointer0C: db "Yes  No                  ",$00 ;Yes  No (Layer 3)
+	Pointer0D: db "                         ",$00 ;  (Layer 3) (Used to blank out Yes No)
 	Pointer0E: db "Select a file to save to.",$00 ;(Layer 3)
-	Pointer0F: db "Overwrite this file? ",$00 ;(Layer 3)
-	Pointer10: db "Erase this file? ",$00 ;(Layer 3)
+	Pointer0F: db "Overwrite this file?     ",$00 ;(Layer 3)
+	Pointer10: db "Erase this file?         ",$00 ;(Layer 3)
 	Pointer11: db $72,$7B,$74,$70,$81,$00 	;Clear
 
 }
-
 ;Load Save/Load screen menu sub-weapon icons X/Y coordinates & Graphics
 {
 	DisplayNewMenu_SubWeaponIcon_XYCoordinates:
@@ -2918,7 +2946,6 @@ PCStageSelectPC4:
 	dw $0052 ;Hyper Charge		Icon Graphics
 	dw $015C ;Z-Saber			Icon Graphics
 }
-
 SaveMenu_SubTankXY: ;Load Save/Load screen menu sub-tank icons X/Y coordinates
 {
 	dw $5915 ;Sub-Tank #1
@@ -2930,22 +2957,15 @@ SaveMenu_SubTankXY: ;Load Save/Load screen menu sub-tank icons X/Y coordinates
 X_ChargingPalettesSetup: ;Loads X's charging palette table
 {
 	dw $0136,$0000 ;Level 1
-	
 	dw $0144,$0000 ;Hyper Charge
-	
-	dw $013A,$0000 ;Levle 3
-	
+	dw $013A,$0000 ;Level 3
 	dw $0138,$0000 ;Level 2
 }
-
 Zero_ChargingPalettesSetup: ;Loads X's charging palette table
 {
 	dw $024C,$0000 ;Level 1
-	
 	dw $0000,$0000 ;Hyper Charge
-	
-	dw $0250,$0000 ;Levle 3
-	
+	dw $0250,$0000 ;Level 3
 	dw $024E,$0000 ;Level 2
 }
 
