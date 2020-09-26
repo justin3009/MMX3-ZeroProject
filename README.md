@@ -7,12 +7,8 @@ http://www.romhacking.net/utilities/224/ - Atlas
 
 https://github.com/RPGHacker/asar - Asar
 
-http://www.romhacking.net/utilities/27/ - Lunar Expand
-
 ## Requirements
-* Lunar Expand is needed to expand the ROM to 4MB before compiling.
-* Atlas is needed to insert various table files and text data.
-  * It is highly recommended to do this first after ROM expansion so you won't need to constantly recompile after any coding changes.
+* Run "Asar MMX3.bat" and it'll expand the ROM and apply all coding changes. After, drop the file into the Atlas folder and run "Atlas.exe - X3 (Everything).bat" which will apply all text changes. After that, you're good to go!
 * Asar must be used as the compiler.
 * MUST have a clean unheadered Mega Man X3 (U) ROM renamed to a .sfc header as this notates that it's unheadered for Asar.
 
@@ -33,6 +29,7 @@ http://www.romhacking.net/utilities/27/ - Lunar Expand
 * Zero will get warned by X about Mosquitus in the first Doppler Lab level. This is done so the player don't accidentally walk in with Zero and lose the Z-Saber.
 * Zero has his own unique 'GET WEAPON' portrait. (Thanks to Metalwario64 for his gracious work!)
 * Zero has his own 1-up icon in game now.
+* Zero can use the Z-Saber Projectile like X can ONLY if NG+ is initiated and if the Black Armor is obtained.
 
 ## Features (X)
 
