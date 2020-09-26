@@ -7910,10 +7910,12 @@ DisplaySavedData_CheckForBadSave: ;Routine that checks whether a save has data o
 	PLA
 	CMP $80FFC0,x
 	BNE DisplaySavedData_CheckForBadSave_BadSave
-	INC $0000
-	INC $0000
-	INY
-	CPY #$000B
+	
+		INC $0000
+		INC $0000
+		INY
+		CPY #$000B
+		
 	BNE DisplaySavedData_CheckForBadSave_Loop
 	SEP #$30
 	LDA #$00
@@ -8009,7 +8011,6 @@ DisplaySavedData_NonEnemyText: ;$7E:1E5F = Which row you're on (Currently is whi
 	JSL DisplaySavedData_PageCounter
 	RTL
 }
-
 DisplaySavedData_EnemyText: ;Loads routine that shows Bit/Byte/Vile text on screen to determine who's been defeated or not
 {
 	SEP #$20
@@ -8098,7 +8099,6 @@ DisplaySavedData_EnemyText: ;Loads routine that shows Bit/Byte/Vile text on scre
 		JSL AllowBankSendToVRAM
 		RTL
 }
-
 DisplaySavedData_WeaponsIcons: ;Loads routine that displays all sub-weapons PC has obtained in the save.
 {
 	STZ $0004
@@ -8162,7 +8162,6 @@ DisplaySavedData_WeaponsIcons: ;Loads routine that displays all sub-weapons PC h
 	BNE DisplaySavedData_LoopWeaponIcons
 	RTL
 }
-
 DisplaySavedData_HeartTankCounter: ;Routine that draws how many Heart Tanks you have in total
 {
 	SEP #$20
@@ -8241,7 +8240,6 @@ DisplaySavedData_HeartTankCounter: ;Routine that draws how many Heart Tanks you 
 	STA $2119
 	RTL
 }
-
 DisplaySavedData_1UpCounter: ;Routine that draws how many Heart Tanks you have in total
 {
 	LDA #$80
@@ -8291,7 +8289,6 @@ DisplaySavedData_1UpCounter: ;Routine that draws how many Heart Tanks you have i
 	STA $2119
 	RTL
 }
-	
 DisplaySavedData_Upgrades: ;Loads routine that displays the Z-Saber icon.
 {
 	SEP #$20
@@ -8352,7 +8349,6 @@ DisplaySavedData_Upgrades: ;Loads routine that displays the Z-Saber icon.
 	JSL DisplayNewMenuText
 	RTL
 }
-		
 DisplaySavedData_SubTanks: ;Loads routine to draw sub-tanks onto the menu
 {
 	STZ $0002 ;Counter for Sub-Tanks
@@ -8479,7 +8475,6 @@ DisplaySavedData_SubTanks: ;Loads routine to draw sub-tanks onto the menu
 	RTL
 }
 }
-
 DisplaySavedData_PageCounter: ;Loads routine to display page counter
 {
 	LDA #$80
@@ -8498,7 +8493,6 @@ DisplaySavedData_PageCounter: ;Loads routine to display page counter
 	STA $2119
 	RTL
 }
-
 DisplayNewMenuText: ;Routine that draws Layer #1/#2 menu text onto screen (Set Y to #$01 and it'll draw blank text)
 {
 	STA $0002
@@ -8508,6 +8502,7 @@ DisplayNewMenuText: ;Routine that draws Layer #1/#2 menu text onto screen (Set Y
 	STA $0000
 	ASL
 	TAX
+	
 	LDA DisplayNewText_XYCoordinates,x
 	STA $2116
 	LDA $0000
@@ -8515,6 +8510,7 @@ DisplayNewMenuText: ;Routine that draws Layer #1/#2 menu text onto screen (Set Y
 	CLC
 	ADC $0000
 	TAX
+	
 	LDA DisplayNewText_Pointers,x
 	STA $10
 	INX #2
@@ -8526,27 +8522,28 @@ DisplayNewMenuText: ;Routine that draws Layer #1/#2 menu text onto screen (Set Y
 	DisplayNewText_LoadText: ;Routine now checks if Y is #$01. If so, it'll blank out strings as they're drawn.
 	LDA [$10]
 	BEQ DisplayNewText_End	
-	CPY #$01
-	BEQ DisplayNewText_LoadBlankText
 	
-	LDY $0026
-	BEQ DisplayNewText_LoadNormalText
-	
-	DisplayNewText_LoadBlankText:
-	LDA #$0F
-	DisplayNewText_LoadNormalText:
-	STA $2118
-	LDA $0002
-	STA $2119
-	REP #$20
-	INC $10
-	SEP #$20
-	BRA DisplayNewText_LoadText
+		CPY #$01
+		BEQ DisplayNewText_LoadBlankText
+		
+			LDY $0026
+			BEQ DisplayNewText_LoadNormalText
+		
+		DisplayNewText_LoadBlankText:
+		LDA #$0F
+		
+		DisplayNewText_LoadNormalText:
+		STA $2118
+		LDA $0002
+		STA $2119
+		REP #$20
+		INC $10
+		SEP #$20
+		BRA DisplayNewText_LoadText
 	
 	DisplayNewText_End:
 	RTL
 }
-	
 DisplayNewMenu_SubWeaponIcon: ;Sets and draws data for sub-weapon icon X/Y coordinates and graphics
 {
 	STA $0003
@@ -8620,11 +8617,12 @@ DisplayNewMenu_AllSprites: ;Routine that loads all sprites on screen
 	SEP #$30
 	BIT #$40
 	BEQ DisplayNewMenu_AllSprites_CheckForX
-	INC $0010
-	JSL DisplayNewMenu_AllSprites_XSprites
-	JSL DisplayNewMenu_AllSprites_1UpIcon_X
-	DEC $0010
-	BRA DisplayNewMenu_AllSprites_NextSprite
+	
+		INC $0010
+		JSL DisplayNewMenu_AllSprites_XSprites
+		JSL DisplayNewMenu_AllSprites_1UpIcon_X
+		DEC $0010
+		BRA DisplayNewMenu_AllSprites_NextSprite
 
 	DisplayNewMenu_AllSprites_CheckForX:
 	BIT #$01
@@ -9305,27 +9303,29 @@ LoadScreen_KeyPresses: ;Loads routine that determines what happens with key pres
 	SEP #$30
 	LDA $0026
 	BNE LoadScreen_KeyPresses_NoLoad
-	STZ $0A ;Sets 'Yes No' selection to #$00 so it selects Yes by default
-	LDA #$80
-	STA $2115
-	LDX #$0B ;Load 'Load this file? (Layer 3)' text
-	LDA #$20 ;Palette of text
-	STZ $0026
-	JSL DisplayNewMenuText
 	
-	LDA #$80
-	STA $2115
-	LDX #$0C ;Load 'Yes      No (Layer 3)' text
-	LDA #$20 ;Palette of text
-	STZ $0026
-	JSL DisplayNewMenuText
-	JSL AllowBankSendToVRAM
-	
-	LDA #$06
-	STA $01 ;Sets password screen event to #$06
-	LDA #$18
-	JSL !PlaySFX
-	RTL
+		STZ $0A ;Sets 'Yes No' selection to #$00 so it selects Yes by default
+		
+		LDA #$80
+		STA $2115
+		LDX #$0B ;Load 'Load this file? (Layer 3)' text
+		LDA #$20 ;Palette of text
+		STZ $0026
+		JSL DisplayNewMenuText
+		
+		LDA #$80
+		STA $2115
+		LDX #$0C ;Load 'Yes      No (Layer 3)' text
+		LDA #$20 ;Palette of text
+		STZ $0026
+		JSL DisplayNewMenuText
+		JSL AllowBankSendToVRAM
+		
+		LDA #$06
+		STA $01 ;Sets password screen event to #$06
+		LDA #$18
+		JSL !PlaySFX
+		RTL
 	
 	LoadScreen_KeyPresses_NoLoad:
 	LDA #$1F
@@ -9480,7 +9480,7 @@ LoadScreen_SelectionCursor: ;Loads cursor for selecting Yes or No
 	
 	LoadScreen_SelectionCursor_CheckSelection:
 	LDA #$5B ;Load base X coordinates of cursor
-	STA $05
+	STA $05 ;Stores to $7E:0005 (Temp. storage for cursor X coordinate)
 	LDA #$0D
 	CMP $0B ;Compares with value at $0B
 	BEQ LoadScreen_SelectionCursor_SkipAnimationUpdate
@@ -9492,10 +9492,11 @@ LoadScreen_SelectionCursor: ;Loads cursor for selecting Yes or No
 	;Sets X coordinates of password cursor
 	LDA $1E62 ;Check temp. storage for row selected with password cursor
 	BEQ LoadScreen_SelectionCursor_IgnoreSetToNo
-	LDA $05
-	CLC
-	ADC #$48
-	STA $05
+	
+		LDA $05 ;Loads $7E:0005 (Temp. storage for cursor X coordinate)
+		CLC
+		ADC #$28 ;Adds #$28 to current value.
+		STA $05 ;Stores to $7E:0005 (Temp. storage for cursor X coordinate)
 
 	LoadScreen_SelectionCursor_IgnoreSetToNo:
 	LDA #$C9 ;Set base X coordinate for password cursor

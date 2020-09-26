@@ -211,6 +211,8 @@ V4.3
 		a.	The Helmet Chip will allow X to regenerate health as normal like the original game again.
 		b.	The Golden Armor will allow X's regeneration to double each time it's successful capping at #$08.
 03.	The Helmet Sensor will NO LONGER run at the start of a level if every single upgrade has been obtained. Although, this does NOT check for Hard Mode currently which goes unused.
+04.	Fixed some minor Save/Load screen text problems.
+05. Fixed cursor coordinates when selecting "Yes   No" in the Save/Load screen.
 
 
 
