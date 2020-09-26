@@ -17,10 +17,10 @@ Content
 	1B. Changes for X and Zero in Zero Project V4.1 (Base Mod)
 	1C. General game changes in Zero Project V4.1 (Base Mod)
 	1D. New additions in Zero Project V4.1 (Base Mod)
-2. Version Updates
-3. Unused/Unfinished Planned Features 
-4. Credits
-5. Contact
+02. Version Updates
+03. Unused/Unfinished Planned Features 
+04. Credits
+05. Contact
 
 
 
