@@ -3093,17 +3093,17 @@ org $BCC491 ;Removed code so Byte can spawn regardless if the current level was 
 	BIT #$04 ;Checks bit if Byte was fought once and was not destroyed.
 	BNE DisableByteSpawn ;If so, disable Byte's fight
 	
-	JSL $82E0FB
-	CMP #$08 ;Total bosses defeated then Byte cannot spawn
-	BEQ DisableByteSpawn
-	CMP #$02 ;Total bosses defeated before Byte spawns
-	BCC DisableByteSpawn
-	CMP #$07 ;Check if 7+ bosses defeated then determines if Byte spawns 100% or not
-	BCS CheckIfBitDead
-	
-	LDA $09CF ;RNG bit (Keeps increasing at all times)
-	LSR
-	BCC AllowByteSpawn
+		JSL $82E0FB
+		CMP #$08 ;Total bosses defeated then Byte cannot spawn
+		BEQ DisableByteSpawn
+			CMP #$02 ;Total bosses defeated before Byte spawns
+			BCC DisableByteSpawn
+				CMP #$07 ;Check if 7+ bosses defeated then determines if Byte spawns 100% or not
+				BCS CheckIfBitDead
+				
+					LDA $09CF ;RNG bit (Keeps increasing at all times)
+					AND #$01
+					BEQ AllowByteSpawn
 	
 DisableByteSpawn:
 	JML !CommonEventEnd
@@ -3121,17 +3121,17 @@ org $878F85 ;Removed code so Bit can spawn regardless if the current level was b
 	BIT #$01 ;Checks if Bit has been fought once and was not destroyed.
 	BNE DisableBitSpawn ;If so, disable Bit's fight	
 	
-	JSL $82E0FB
-	CMP #$08 ;Total bosses defeated then Bit cannot spawn
-	BEQ DisableBitSpawn
-	CMP #$02 ;Total bosses defeated before Bit spawns
-	BCC DisableBitSpawn
-	CMP #07 ;Check if 7+ bosses defeated then determines if Bit spawns 100% or not
-	BCS CheckIfByteDead
-	
-	LDA $09CF ;RNG bit (Keeps increasing at all times)
-	LSR
-	BCS AllowBitSpawn
+		JSL $82E0FB
+		CMP #$08 ;Total bosses defeated then Bit cannot spawn
+		BEQ DisableBitSpawn
+			CMP #$02 ;Total bosses defeated before Bit spawns
+			BCC DisableBitSpawn
+				CMP #07 ;Check if 7+ bosses defeated then determines if Bit spawns 100% or not
+				BCS CheckIfByteDead
+				
+					LDA $09CF ;RNG bit (Keeps increasing at all times)
+					AND #$01
+					BNE AllowBitSpawn
 
 DisableBitSpawn:
 	JML !CommonEventEnd
