@@ -2647,7 +2647,22 @@ DamageTableGravityWellSetup: ;Routine that sets up the damage for Gravity Well s
 	RTL
 }
 	
+GeneralDamage_CheckEnemyState: ;New routine that checks for the enemy state specifically.
+;The original checked for anything above #$04 then stopped palette increasing. This has been altered to check SPECIFICALLY for #$0A then also check for anything above #$04.
+{
+	LDA $1F54 ;Loads $7E:1F54 (Enemy state)
+	CMP #$0A ;Checks for #$0A (Z-Saber wave hit)
+	BEQ GeneralDamage_CheckEnemyState_DoPalette
+		CMP #$04 ;Checks for #$04 (Death)
+		BCS GeneralDamage_CheckEnemyState_End
 	
+			GeneralDamage_CheckEnemyState_DoPalette:
+			INC $11
+			INC $11
+			
+	GeneralDamage_CheckEnemyState_End:
+	RTL
+}
 CheckZSaberDamage: ;Routine that determines whether the Z-Saber can damage an enemy or not.
 ;There's a #$00 storage for ZSaberDamageTest in the General Sprites section so it prevents Z-Saber from hitting multiple times)\
 {
@@ -11073,8 +11088,9 @@ Mac_AI_0A: ;Loads routine to get Mac's AI event for when he's hit by Z-Saber or 
 	LDA $01
 	CMP #$04 ;Z-Saber Wave
 	BNE Mac_AI_0A_NotZSaber
-	JML $93E699
-	RTL
+	
+		JML $93E699
+		RTL
 	
 	Mac_AI_0A_NotZSaber:
 	JSL $84D8D5

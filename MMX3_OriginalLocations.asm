@@ -1556,6 +1556,7 @@ org $84CEE3 ;Load original code location to determine how the damage table is se
 	AND #$00FF
 	STA $0000
 	PLX
+	
 	SEP #$20
 	JSL CheckZSaberDamage ;Load routine to determine if the Z-Saber is able to hit multiple times or not.
 	PHA
@@ -1650,6 +1651,16 @@ org $84E097 ;Checks for Volt Catfish to be defeated so Elevator in Vile's Factor
 ; All of them for bosses has been removed so bosses CAN be hit multiple times depending on the circumstance.
 ;*********************************************************************************
 {
+org $81D3B0 ;Original code location that alters enemy palette when struck with the Z-Saber? (This is.. odd?)
+{
+	LDX $1E ;Loads $7E:18xx (Storage of which RAM enemy pointer projectile hit)
+	LDA $0011,x ;Loads $7E:0Dx9 (Loads palette)
+	STA $11
+	
+	JSL GeneralDamage_CheckEnemyState
+	NOP #7
+	
+}
 org $B99E43 ;Blast hornet damage table switch
 	JSL BossCheckDisableZSaber
 org $83CA8E ;Blizzard Buffalo damage table switch
@@ -1735,21 +1746,22 @@ org $85CE4D ;Loads new routine to check specifics on Hangar
 	LDA !CurrentLevel_1FAE
 	BEQ Hangar_CheckForData_CheckForMac
 	
-	Hangar_CheckForData_AllowDamage:
-	JSL $84CB74
-	BEQ Hangar_CheckForData_IgnoreDamage
-	BMI Hangar_CheckForData_EndAll
-	LDA #$0E
-	TRB $11
-	
-	Hangar_CheckForData_IgnoreDamage:
-	JSL !EventLoop
-	
-	Hangar_CheckForData_End:
-	JML !VRAMRoutineAlt
-	
-	Hangar_CheckForData_EndAll:
-	BRL Hangar_CheckIntroBack
+		Hangar_CheckForData_AllowDamage:
+		JSL $84CB74
+		BEQ Hangar_CheckForData_IgnoreDamage
+		
+			BMI Hangar_CheckForData_EndAll
+			LDA #$0E
+			TRB $11
+			
+		Hangar_CheckForData_IgnoreDamage:
+		JSL !EventLoop
+		
+		Hangar_CheckForData_End:
+		JML !VRAMRoutineAlt
+		
+		Hangar_CheckForData_EndAll:
+		BRL Hangar_CheckIntroBack
 
 	Hangar_CheckForData_CheckForMac:
 	LDA $0D22 ;Checks specific location
