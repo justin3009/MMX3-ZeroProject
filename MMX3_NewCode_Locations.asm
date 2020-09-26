@@ -2694,7 +2694,7 @@ GeneralDamage_CheckEnemyState: ;New routine that checks for the enemy state spec
 	CMP #$0A ;Checks for #$0A (Z-Saber wave hit)
 	BEQ GeneralDamage_CheckEnemyState_DoPalette
 		CMP #$04 ;Checks for #$04 (Death)
-		BCS GeneralDamage_CheckEnemyState_End
+		BPL GeneralDamage_CheckEnemyState_End
 	
 			GeneralDamage_CheckEnemyState_DoPalette:
 			INC $11
