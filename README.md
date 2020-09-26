@@ -40,16 +40,17 @@ http://www.romhacking.net/utilities/27/ - Lunar Expand
 * X's buster animation speed has been greatly increased. His Z-Saber swing animation has been very subtly sped up as well.
 * X’s vertical dash speed has been increased slightly.
 * X no longer has a ‘shield’ with any of the armor upgrades but he does retain the overall defense increase.
-* X’s health regeneration is much quicker with the Helmet Chip and it also heals more over time. If health is regenerated successfully, it’ll double each time capping at a max of 08. So, it’ll heal 01, 02, 04, 08. This GREATLY reduces the time X must wait to refill Sub-tanks and his own health.
+* X’s health regeneration is much quicker with the Golden Armor and Helmet Chip and it also heals more over time. If the Golden Armor is retrieved and if health is regenerated successfully, it’ll double each time capping at a max of 08. So, it’ll heal 01, 02, 04, 08. This GREATLY reduces the time X must wait to refill Sub-tanks and his own health.
 * X's Helmet Upgrade has been changed to also cut the sub-weapon ammo usage in half.
 	* The code indicates that you had to have both helmet and armor upgrades, but in other instances the code only checked for the helmet. So this was altered to be apart of the helmet. The dialogue has been updated to compensate for this change as well.
+* X's Helmet Upgrade now checks whether you've obtained every upgrade possible. If they are all obtained, it will no longer display the sensor map when you enter a level.
 * X's cross-over shot has been altered so the smaller energy shots cross each other in a smaller screen range but will hit their target a lot more steadily dealing massive damage.
 * X's 'GET WEAPON' screen is slightly updated.
 	* He'll show his unused blue palette upon first loading but when the screen flashes it'll load his weapon palette.
 
 ## General Changes And Enhancements
 * The password system has been entirely removed and the game now uses 'saved game' system instead.
-	* Up to twenty games can be saved in separate files! The downside is some emulators may not work, such as bsnes due to this change. 
+	* Up to twenty games can be saved in separate files! The downside is some emulators may not work, such as bsnes due to this change. UNLESS a manifest is given.
 	* Save files will display:
 		* Sub-weapons obtained.
 		* Heart tanks obtained.
