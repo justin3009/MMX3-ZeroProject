@@ -22,6 +22,26 @@ incsrc MMX3_NewCode_Locations.asm
 incsrc MMX3_VariousAddresses.asm
 ;***************************
 ;***************************
+; Expands the ROM to 4MB
+;***************************
+org $80FFD7 ;Original offset location that sets ROM size
+{
+	db $0C ;Sets to 4MB
+}
+
+org $C08000 ;Original offset location for where all new code begins. (Now fills the entire section to expand ROM to 4MB)
+{
+check bankcross off
+	fillbyte $FF
+	fill $200000
+check bankcross on
+}
+
+
+
+
+;***************************
+;***************************
 ; Sets game to FastROM (Have to find a way to make it load RAM as $80+)
 ;***************************
 org $808000 ;Loads original code location that's loaded right when the game is started. (Loads a new location to foce the game as FastROM!)
@@ -1254,44 +1274,48 @@ org $84A81C ;Loads original location of code that determined who could use the H
 ; Loads body armor upgrade and determines who can use it (Cuts damage in half and generates a force field originally. Force field is removed!)
 ;*********************************************************************************
 org $84CE3C ;Loads original code location to determine who can use the Armor Upgrade to cut damage in half.
+{
 	LDA $09FE
 	CMP #$7F
 	BEQ EndBodyArmorRoutine
 	
-	JSL PCBodyArmor ;Loads routine to determine who can use the Armor Upgrade to cut damage in half.
-	BEQ EndBodyArmorRoutine
-	LDA $0000
-	STA $0002
-	
-	LSR $0000
-	
-	JSL PCBodyChip
-	BEQ TestBodyChipDamage
-	LDA $0002
-	BIT #$08
-	BNE DoProper75Percent
-	BRA Subtract3Instead
-	
-	DoProper75Percent:
-	LSR $0000
-	BRA TestBodyChipDamage
-	
-	Subtract3Instead:
-	DEC $0000
-	DEC $0000
-	DEC $0000
-	
-	TestBodyChipDamage:
-	LDA $0000
-	BEQ SetDamageTo01
-	BPL EndBodyArmorRoutine
-	
-	SetDamageTo01:
-	LDA #$01
-	STA $0000
-	
+		JSL PCBodyArmor ;Loads routine to determine who can use the Armor Upgrade to cut damage in half.
+		BEQ EndBodyArmorRoutine
+		
+			LDA $0000
+			STA $0002
+			
+			LSR $0000
+			
+			JSL PCBodyChip
+			BEQ TestBodyChipDamage
+			
+				LDA $0002
+				BIT #$08
+				BNE DoProper75Percent
+					BRA Subtract3Instead
+				
+				DoProper75Percent:
+				LSR $0000
+				BRA TestBodyChipDamage
+				
+				Subtract3Instead:
+				DEC $0000
+				DEC $0000
+				DEC $0000
+				
+				TestBodyChipDamage:
+				LDA $0000
+				BEQ SetDamageTo01
+				BPL EndBodyArmorRoutine
+			
+			SetDamageTo01:
+			LDA #$01
+			STA $0000
+		
 	EndBodyArmorRoutine:
 	RTS
+}
 	
 org $84869E ;Loads code to play a SFX when you're damaged and are on the ground as the routine finishes
 	JSL PC_DamageReset_SetJumpValues
