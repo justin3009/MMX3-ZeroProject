@@ -2104,8 +2104,12 @@ PCHelmetChip: ;Routine to determine which PC can use Helmet Chip Enhancement lif
 ;*********************************************************************************
 PCBodyArmor: ;Routine to determine who can use the Armor Upgrade to cut damage in half.
 {
+	REP #$20
+	LDA !CurrentPC_0A8E
+	AND #$00FF
+	TAX
+	
 	SEP #$30
-	LDX !CurrentPC_0A8E
 	JSR (PCBodyArmorPointers,x)
 	RTL
 
@@ -2125,14 +2129,14 @@ PCBodyArmor: ;Routine to determine who can use the Armor Upgrade to cut damage i
 		
 	Zero_BodyArmor:
 		LDA !RideChipsOrigin_7E1FD7 ;Check's if Zero has the Black Armor to use the 50% damage reduction.
-		AND #$F0
 		CMP #$F0
-		BEQ load01
-		LDA #$00 ;Loads blank value so Zero cannot use the 50% damage reduction
-		BRA endbodyarmor
-load01:
-		LDA #$01 ;Loads #$01 so Zero can use the 50% damage reduction
-endbodyarmor:
+		BCC Zero_BodyArmor_Disable
+		
+			LDA #$01 ;Enables 50% damage reduction
+			RTS
+
+		Zero_BodyArmor_Disable:
+		LDA #$00 ;Disables 50% damage reduction
 		RTS
 		
 	PC3_BodyArmor:
