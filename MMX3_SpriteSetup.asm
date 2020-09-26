@@ -181,6 +181,66 @@ org $90AD35
 	db $D0,$02,$C0,$07,$FF,$D0,$00,$ED,$F5,$D0
 }
 
+;***************************
+;***************************
+;Z-Saber Projectile VRAM setup and Sprite Assembly
+;***************************
+{
+;This section houses all changes for Z-Saber Projectile VRAM setup.
+{
+	org $85E672 ;Frame #1
+	{
+		db $0A ;Tiles to load?
+		dl $3AE660 ;ROM location
+		dw $6580 ;VRAM location
+		
+		db $08 ;Tiles to load
+		dl $3AE740 ;ROM location
+		dw $E680 ;VRAM location
+		
+		db $00 ;???
+	}
+	org $85E67F ;Frame #2
+	{
+		db $06 ;Tiles to load
+		dl $3AE820 ;ROM location
+		dw $6580 ;VRAM location
+		
+		db $04 ;Tiles to load
+		dl $3AE880 ;ROM location
+		dw $E680 ;VRAM location
+	}
+	org $85E68B ;Frame #3
+	{
+		db $06 ;Tiles to load
+		dl $3AE8C0 ;ROM location
+		dw $6580 ;VRAM location
+		
+		db $06 ;Tiles to load
+		dl $3AE920 ;ROM location
+		dw $E680 ;VRAM location
+	}
+	org $85E697 ;Frame #4
+	{
+		db $0A ;Tiles to load
+		dl $3AE980 ;ROM location
+		dw $6580 ;VRAM location
+		
+		db $08 ;Tiles to load
+		dl $3AEA20 ;ROM location
+		dw $E680 ;VRAM location
+	}
+}
+;This section houses all sprite assembly changes for Z-Saber Projectile. (THIS IS ALL DONE IN AN IMPORTED FILE! [X_BeamSaberWave_SpriteAssembly_8FDBA5.bin]
+{
+org $8FDBA5 ;Z-Saber Projectile Frame #1 Sprite Assembly)
+org $8FDBD6 ;Z-Saber Projectile Frame #2 Sprite Assembly)
+org $8FDBE7 ;Z-Saber Projectile Frame #3 Sprite Assembly)
+org $8FDC00 ;Z-Saber Projectile Frame #4 Sprite Assembly)
+
+}
+
+}
 
 ;***************************
 ;***************************
