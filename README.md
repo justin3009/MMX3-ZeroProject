@@ -8,9 +8,9 @@ http://www.romhacking.net/utilities/224/ - Atlas
 https://github.com/RPGHacker/asar - Asar
 
 ## Requirements
-* Run "Asar MMX3.bat" and it'll expand the ROM and apply all coding changes. After, drop the file into the Atlas folder and run "Atlas.exe - X3 (Everything).bat" which will apply all text changes. After that, you're good to go!
-* Asar must be used as the compiler.
 * MUST have a clean unheadered Mega Man X3 (U) ROM renamed to a .sfc header as this notates that it's unheadered for Asar.
+* Asar must be used as the compiler.
+* Run "Asar MMX3.bat" and it'll expand the ROM and apply all coding changes. After, drop the file into the Atlas folder and run "Atlas.exe - X3 (Everything).bat" which will apply all text changes. You're good to go!
 
 ## Features (Zero)
 
