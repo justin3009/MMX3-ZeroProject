@@ -213,8 +213,10 @@ V4.3
 03.	The Helmet Sensor will NO LONGER run at the start of a level if every single upgrade has been obtained. Although, this does NOT check for Hard Mode currently which goes unused.
 04.	Fixed some minor Save/Load screen text problems.
 05. Fixed cursor coordinates when selecting "Yes   No" in the Save/Load screen.
-
-
+06. Altered Bit & Byte spawning randomization code just a tiny bit but it effectively does the same thing.
+07. Fixed a bug in which Godkarmachine O Inary's (Bit & Byte combined) hands would not deal damage.
+08. Added in the ability for Zero to use the Z-Saber projectile.
+		a.	This is only available if you have the Black Armor and are on NG+.
 
 
 *********************************************************************************

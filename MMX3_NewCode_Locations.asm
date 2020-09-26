@@ -2262,6 +2262,67 @@ LSROnly:
 		RTS
 }
 
+;*********************************************************************************
+; Loads buster upgrade and determines if Z-Saber projectile can be launched or not.
+;*********************************************************************************
+PC_ZSaberProjectile: ;Routine to determine which PC can use halved sub-weapon ammo or not.
+{
+	SEP #$20
+	LDX !CurrentPC_0A8E
+	JSR (PC_BusterCheck_ZSaberProjectilePointers,x)
+	RTL
+
+	PC_BusterCheck_ZSaberProjectilePointers:
+		dw X_SaberProjectileCheck
+		dw Zero_SaberProjectileCheck
+		dw PC3_SaberProjectileCheck
+		dw PC4_SaberProjectileCheck
+		db $FF,$FF
+		db $FF,$FF
+	
+	
+	X_SaberProjectileCheck: ;This section checks for X and his specifics to use the Z-Saber Projectile.
+	{
+	LDA !XArmorsByte1_7EF418 ;Load X's Armor Value from new RAM
+	BIT #$02
+	BEQ X_SaberProjectileCheck_Disable
+
+		LDA #$01 ;Enable
+		RTS
+	
+	X_SaberProjectileCheck_Disable:
+	LDA #$01 ;Enable
+	RTS
+	}
+	Zero_SaberProjectileCheck: ;This section checks for Zero and his specifics to use the Z-Saber Projectile.
+	{
+	LDA !RideChipsOrigin_7E1FD7
+	CMP #$F0
+	BCC Zero_SaberProjectileCheck_Disable
+	
+		LDA !Difficulty_7EF4E0
+		BIT #$10
+		BEQ Zero_SaberProjectileCheck_Disable
+		
+			LDA #$01 ;Enable
+			RTS
+
+	Zero_SaberProjectileCheck_Disable:
+	LDA #$00 ;Disable
+	RTS
+	}
+	PC3_SaberProjectileCheck: ;This section checks for PC #3 and their specifics to use the Z-Saber Projectile.
+	{
+	LDA #$00 ;Disable
+	RTS
+	}	
+	PC4_SaberProjectileCheck: ;This section checks for PC #4 and their specifics to use the Z-Saber Projectile.
+	{
+	LDA #$00 ;Disable
+	RTS
+	}
+}
+
 
 ;*********************************************************************************
 ; Loads leg upgrade and determines who can use it and the circumstance
@@ -2785,23 +2846,27 @@ BossCheckDisableZSaber: ;Routine that determines whether the Z-Saber is capable 
 	CMP #$02 ;Check if it's #$02 (Z-Saber)
 	BNE ZSaberDamageBossEnd ;If not, jump to ZSaberDamageBossEnd and end routine
 	
-	LDX #$0F
-	REP #$20
-	TDC
-	STA $0000
-	LDA #$10D8
-	STA $0002
-BeginZSaberCheckLoop:
-	DEX
-	SEC
-	SBC #$0040
-	CMP $0000
-	STX !ZSaberCheckEnemy_1FCF
-	BNE BeginZSaberCheckLoop
-	SEP #$20
-	LDA #$01 ;Load value #$01
-	STA !ZSaberEnemyTable_7EF500,x ;Store to !ZSaberEnemyTable_7EF500 so it sets a flag that boss CANNOT be hit by Z-Saber multiple times.
-ZSaberDamageBossEnd:
+		LDX #$0F
+		REP #$20
+		TDC
+		
+		STA $0000
+		LDA #$10D8
+		STA $0002
+		
+		BeginZSaberCheckLoop:
+		DEX
+		SEC
+		SBC #$0040
+		CMP $0000
+		STX !ZSaberCheckEnemy_1FCF
+		BNE BeginZSaberCheckLoop
+		
+		SEP #$20
+		LDA #$01 ;Load value #$01
+		STA !ZSaberEnemyTable_7EF500,x ;Store to !ZSaberEnemyTable_7EF500 so it sets a flag that boss CANNOT be hit by Z-Saber multiple times.
+	
+	ZSaberDamageBossEnd:
 	RTL
 }
 	

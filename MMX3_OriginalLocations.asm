@@ -131,10 +131,10 @@ org $858E9C ;Original code location for Godkarmachine O Inary's storage for coll
 	NOP #4 ;Removed as a table handles this already
 org $B2F313 ;Original code location for Godkarmachine O Inary Parts?'s storage for collision damage.
 	NOP #4
-org $B2F331 ;Original code location for Godkarmachine O Inary's Hand #1 storage for collision damage.
-	NOP #4
-org $B2F371 ;Original code location for Godkarmachine O Inary's Hand #2 storage for collision damage.
-	NOP #4
+; org $B2F331 ;Original code location for Godkarmachine O Inary's Hand #1 storage for collision damage.
+	; NOP #4
+; org $B2F371 ;Original code location for Godkarmachine O Inary's Hand #2 storage for collision damage.
+	; NOP #4
 org $8599C6 ;Original code location for Kaiser Sigma's Parts storage for collision damage.
 	NOP #4
 org $878E78 ;Original code location for Kaiser Sigma's Parts storage for collision damage.
@@ -2818,8 +2818,9 @@ org $849FAE ;Loads original code location that checks X's armor RAM for a specif
 org $84AC6F ;Loads original code location that checks X's armor RAM for a specific piece.
 	JSR $FFBA ;Loads X's new armor value in various circumstances
 	
-org $818D60 ;Loads original code location that checks X's armor RAM for a specific piece.
-	JSR $FF90
+org $818D60 ;Loads original code location that checks X's armor RAM for a specific piece. (Used to determine if Z-Saber projectile can be used or not)
+	JSL PC_ZSaberProjectile
+	NOP
 
 org $80CD82 ;Loads original code location that checks X's armor RAM for a specific piece.
 	JSR $FF64 ;Loads X's new armor value in various circumstances
