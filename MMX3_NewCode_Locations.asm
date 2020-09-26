@@ -635,6 +635,7 @@ SubTankHealHealthChipSTART:
 	JSL StoreToSubTank ;Load routine to store health data back to sub-tank
 	CMP #$8E
 	BCS SubTankHealHealthChipFULL
+	
 	LDA #$01
 	RTL
 	
@@ -656,19 +657,30 @@ SubTankHealHealthChipFULL:
 }
 
 PCIncreaseHealthCounter: ;Routine that determines how much health gets healed each time you heal successful with Helmet Chip.
+;This was altered so now it only doubles the value when you have the Golden Armor.
 {
 	PHA ;Push PC's current health
 	LDA !PCHealCounter_7EF4EA ;Load PC health counter
 	BEQ PCIncreaseHealthCounter01 ;Branch if it's #$00 to PCIncreaseHealthCounter01 so it increases the base value to #$01
-	CMP #$08 ;Check if the value is #$08
-	BEQ PCHealCounterIGNOREDOUBLE ;If value is #$08, then jump to PCHealCounterIGNOREDOUBLE so it doesn't double healing anymore.
-	ASL ;Double Heal Counter value once base value is > 00
-	BRA PCIncreaseHealthCounterStorage
-PCIncreaseHealthCounter01:
+	
+		LDA !RideChipsOrigin_7E1FD7
+		CMP #$F0 ;Checks for all chip upgrades
+		BCC PCHealCounterIGNOREDOUBLE
+	
+			LDA !PCHealCounter_7EF4EA ;Load PC health counter
+			CMP #$08 ;Check if the value is #$08
+			BEQ PCHealCounterIGNOREDOUBLE ;If value is #$08, then jump to PCHealCounterIGNOREDOUBLE so it doesn't double healing anymore.
+				
+				ASL ;Double Heal Counter value once base value is > 00
+				BRA PCIncreaseHealthCounterStorage
+	
+	PCIncreaseHealthCounter01:
 	INC ;Increase 'A' so the Heal Counter value goes up
-PCIncreaseHealthCounterStorage:
+	
+	PCIncreaseHealthCounterStorage:
 	STA !PCHealCounter_7EF4EA ;Store new value back to Heal Counter
-PCHealCounterIGNOREDOUBLE:
+	
+	PCHealCounterIGNOREDOUBLE:
 	PLA ;Pull PC's current health
 	RTL
 }
@@ -2003,11 +2015,38 @@ PCHelmetSensor: ;Routine to determine who could use the Helmet Sensor upon enter
 		; CMP #$F0
 		; BCS DisableHelmetSensor
 		LDA !XArmorsByte1_7EF418
-		BIT #$01
+		BIT #$01 ;Checks for "Helmet" upgrade
+		BEQ DisableHelmetSensor
+		
+			AND #$0F
+			CMP #$0F ;Checks if ALL armor upgrades are set.
+			BCC X_HelmetSensor_End
+				
+				LDA !XHeartTank_7EF41C
+				ORA !ZeroHeartTank_7EF44C
+				ORA !PC3HeartTank_7EF47C
+				ORA !PC4HeartTank_7EF4AC
+				CMP #$FF ;Checks for ALL heart tanks collected.
+				BNE X_HelmetSensor_End
+				
+					LDA !XSubTankCollect_7EF41D
+					ORA !ZeroSubTankCollect_7EF44D
+					ORA !PC3SubTankCollect_7EF47D
+					ORA !PC4SubTankCollect_7EF4AD
+					CMP #$F0
+					BCC X_HelmetSensor_End
+					
+						LDA !RideChipsOrigin_7E1FD7
+						CMP #$0F
+						BCC X_HelmetSensor_End
+							BRA DisableHelmetSensor
+		
+		X_HelmetSensor_End:
+		LDA #$01 ;Enable
 		RTS
 		
 		DisableHelmetSensor:
-		LDA #$00
+		LDA #$00 ;Disable
 		RTS
 		
 	Zero_HelmetSensor:
@@ -2020,6 +2059,43 @@ PCHelmetSensor: ;Routine to determine who could use the Helmet Sensor upon enter
 		
 	PC4_HelmetSensor:
 		LDA #$00 ;Load blank value so helmet sensor never goes off.
+		RTS
+}
+
+;*********************************************************************************
+; Loads helmet chip upgrade and determines who can use it (Regenerates life)
+;*********************************************************************************
+PCHelmetChip: ;Routine to determine which PC can use Helmet Chip Enhancement life regeneration
+{
+	SEP #$20
+	LDX !CurrentPC_0A8E
+	JSR (PCHelmetChipEnhancementPointers,x)
+	RTL
+
+	PCHelmetChipEnhancementPointers:
+		dw X_HelmetChipEnhancement
+		dw Zero_HelmetChipEnhancement
+		dw PC3_HelmetChipEnhancement
+		dw PC4_HelmetChipEnhancement
+		db $FF,$FF
+		db $FF,$FF
+	
+	
+	X_HelmetChipEnhancement:
+		LDA !RideChipsOrigin_7E1FD7 ;Load !RideChipsOrigin_7E1FD7
+		BIT #$10 ;Bit with #$10 which determines if you have the Helmet Chip or not
+		RTS
+		
+	Zero_HelmetChipEnhancement: ;Zero CANNOT use Helmet Chip Enhancement
+		LDA #$00 ;Loads blank value so PC CANNOT use helmet chip
+		RTS
+		
+	PC3_HelmetChipEnhancement: ;PC #3 CANNOT use Helmet Chip Enhancement
+		LDA #$00 ;Loads blank value so PC CANNOT use helmet chip
+		RTS
+		
+	PC4_HelmetChipEnhancement: ;PC #4 CANNOT use Helmet Chip Enhancement
+		LDA #$00 ;Loads blank value so PC CANNOT use helmet chip
 		RTS
 }
 
@@ -2186,42 +2262,6 @@ LSROnly:
 		RTS
 }
 
-;*********************************************************************************
-; Loads helmet chip upgrade and determines who can use it (Regenerates life)
-;*********************************************************************************
-PCHelmetChip: ;Routine to determine which PC can use Helmet Chip Enhancement life regeneration
-{
-	SEP #$20
-	LDX !CurrentPC_0A8E
-	JSR (PCHelmetChipEnhancementPointers,x)
-	RTL
-
-	PCHelmetChipEnhancementPointers:
-		dw X_HelmetChipEnhancement
-		dw Zero_HelmetChipEnhancement
-		dw PC3_HelmetChipEnhancement
-		dw PC4_HelmetChipEnhancement
-		db $FF,$FF
-		db $FF,$FF
-	
-	
-	X_HelmetChipEnhancement:
-		LDA !RideChipsOrigin_7E1FD7 ;Load !RideChipsOrigin_7E1FD7
-		BIT #$10 ;Bit with #$10 which determines if you have the Helmet Chip or not
-		RTS
-		
-	Zero_HelmetChipEnhancement: ;Zero CANNOT use Helmet Chip Enhancement
-		LDA #$00 ;Loads blank value so PC CANNOT use helmet chip
-		RTS
-		
-	PC3_HelmetChipEnhancement: ;PC #3 CANNOT use Helmet Chip Enhancement
-		LDA #$00 ;Loads blank value so PC CANNOT use helmet chip
-		RTS
-		
-	PC4_HelmetChipEnhancement: ;PC #4 CANNOT use Helmet Chip Enhancement
-		LDA #$00 ;Loads blank value so PC CANNOT use helmet chip
-		RTS
-}
 
 ;*********************************************************************************
 ; Loads leg upgrade and determines who can use it and the circumstance

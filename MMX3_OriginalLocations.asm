@@ -758,14 +758,16 @@ endhealth:
 org $84A9FC
 	LDA $C1 ;Check if PC on ground or doing action
 	BNE DecPCHealthTimer
-	LDA #$00 ;Loads value of #$00 so there's nothing
-	STA !PCHealCounter_7EF4EA  ;Store so PC Heal counter variable is #$00
-	INC $C1
-	REP #$20
-	LDA #$0135 ;Timer before health can be restored original
-	STA $BF
 	
-DecPCHealthTimer:
+		LDA #$00 ;Loads value of #$00 so there's nothing
+		STA !PCHealCounter_7EF4EA  ;Store so PC Heal counter variable is #$00
+		INC $C1
+		
+		REP #$20
+		LDA #$0135 ;Timer before health can be restored original
+		STA $BF
+	
+	DecPCHealthTimer:
 	REP #$20
 	DEC $BF ;Timer before health can be restored original
 	BNE SkipDisplayHealing
@@ -777,6 +779,7 @@ DecPCHealthTimer:
 	JSL PCHealthGetCMP ;Load routine to compare PC's max health to what is in a temporary variable to determine if they can heal or not.
 	BPL ContinueToSubTanks
 	JSL PCIncreaseHealthCounter ;Load routine to increase PC's current health.
+	
 	LDA !PCHealCounter_7EF4EA ;Load Heal Counter byte
 	ADC $27 ;Add PC's current health
 	STA $27 ;Store back to PC's current health
@@ -2868,52 +2871,57 @@ org $86CD74
 ;Also rewritten to fix an issue with loading X's original location for armor parts
 ;*********************************************************************************
 org $93C00B ;Original capsule location code
+{
 	LDA !RideChipsOrigin_7E1FD7
 	CMP #$F0
 	BCS EndFullCapsuleRoutine
-	LDA #$00 ;This value determines the capsule can open
-	STA $7FCFFF ;Location used to determine what capsule does. (IE: Not allow chip part, allow chip part)
-	LDA !CurrentLevel_1FAE
-	CMP #$0A
-	BEQ CapsuleCheckCapsuleChips
-	BRA CapsuleCheckLevel
 	
-	CapsuleCheckCapsuleChips:
-	LDA !CurrentPCArmorOriginShort_1FD1
-	CMP #$F0
-	BEQ ContinueFullCapsuleRoutine
-	
-	LDA !CurrentLevel_1FAE
-	CMP #$0A ;Check if Dr. Doppler Level #1
-	BNE CapsuleCheckLevel ;Checks level instead of going through the Golden Armor Check
-	JSL GoldenArmorCheck ;Load routine that checks various circumstances to see if the Golden Armor capsule will load or not.
-	
-	CapsuleCheckLevel:
-	LDX !CurrentLevel_1FAE
-	LDY $CCFA,x
-	LDA $BBFD,y
-	BIT #$F0
-	BNE IsNotGoldenArmorValue
-	AND !XArmorsByte1_7EF418
-	BEQ ContinueFullCapsuleRoutine
-	BRA EndFullCapsuleRoutine
-	
-	IsNotGoldenArmorValue:
-	AND !RideChipsOrigin_7E1FD7
-	BNE EndFullCapsuleRoutine
-	LDA $BBFD,y
-	LSR #4
-	AND !XArmorsByte1_7EF418
-	BEQ CapsuleCanContinue
-	BRA ContinueFullCapsuleRoutine
-	
-	CapsuleCanContinue:
-	LDA #$01
-	STA $7FCFFF
-	BRA ContinueFullCapsuleRoutine
-	
-	EndFullCapsuleRoutine:
-	JML !CommonEventEnd
+		LDA #$00 ;This value determines the capsule can open
+		STA $7FCFFF ;Location used to determine what capsule does. (IE: Not allow chip part, allow chip part)
+		
+		LDA !CurrentLevel_1FAE
+		CMP #$0A
+		BEQ CapsuleCheckCapsuleChips
+			BRA CapsuleCheckLevel
+		
+		CapsuleCheckCapsuleChips:
+		LDA !CurrentPCArmorOriginShort_1FD1
+		CMP #$F0
+		BEQ ContinueFullCapsuleRoutine
+		
+			LDA !CurrentLevel_1FAE
+			CMP #$0A ;Check if Dr. Doppler Level #1
+			BNE CapsuleCheckLevel ;Checks level instead of going through the Golden Armor Check
+				JSL GoldenArmorCheck ;Load routine that checks various circumstances to see if the Golden Armor capsule will load or not.
+			
+			CapsuleCheckLevel:
+			LDX !CurrentLevel_1FAE
+			LDY $CCFA,x
+			LDA $BBFD,y
+			BIT #$F0
+			BNE IsNotGoldenArmorValue
+			
+				AND !XArmorsByte1_7EF418
+				BEQ ContinueFullCapsuleRoutine
+					BRA EndFullCapsuleRoutine
+			
+			IsNotGoldenArmorValue:
+			AND !RideChipsOrigin_7E1FD7
+			BNE EndFullCapsuleRoutine
+			
+			LDA $BBFD,y
+			LSR #4
+			AND !XArmorsByte1_7EF418
+			BEQ CapsuleCanContinue
+				BRA ContinueFullCapsuleRoutine
+			
+			CapsuleCanContinue:
+			LDA #$01
+			STA $7FCFFF
+			BRA ContinueFullCapsuleRoutine
+			
+			EndFullCapsuleRoutine:
+			JML !CommonEventEnd
 	
 	ContinueFullCapsuleRoutine:
 	JSL $82E15C
@@ -2953,6 +2961,7 @@ org $93C00B ;Original capsule location code
 	LDA #$CC96
 	STA $20
 	RTL
+}
 	
 ;*********************************************************************************
 ; Stores Hyper Charge value to proper RAM area when obtaining Arm Chip capsule/Golden Armor capsule
