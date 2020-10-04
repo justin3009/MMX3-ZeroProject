@@ -196,6 +196,7 @@ V4.1
 		i.	Byte:					Collision damage increased from 01 to 02.
 		j.	Press Disposer:			Collision damage reduced from 06 to 03.
 		k.	Godkarmachine:			Collision damage reduced from 08 to 06.
+		l.	Dr. Doppler:			Collision damage reduced from 06 to 03.
 
 V4.2 + V4.2a
 -------------

@@ -153,6 +153,7 @@ HeartTank: ;Routine to determine max PC health by counting how many Heart Tanks 
 	LDY #$08
 	STZ $0000
 	STZ $0002
+	
 	LDA !Difficulty_7EF4E0
 	BIT #$01
 	BNE independenthealth ;Jumps to code for independent PC health instead of a group check.
@@ -482,8 +483,9 @@ PCMenuSwap: ;Routines to determine whether you're able to swap to a specific PC 
 				LDA !ZSaberObtained_1FB2 ;Checks Z-Saber value for value of #$01, if so, you cannot swap to X anymore.
 				BIT #$01 ;$7E:1FB2 has been updated so values 01/02 are moved for disabling music and 01 will disable X, 02 will give Zero the X-Buster upgrade.
 				BEQ Zero_MenuSwap_EnableXSwap
-				LDA #$01
-				RTS
+				
+					LDA #$01
+					RTS
 				
 				Zero_MenuSwap_EnableXSwap:
 				LDX !CurrentLevel_1FAE
@@ -2147,7 +2149,6 @@ PCBodyArmor: ;Routine to determine who can use the Armor Upgrade to cut damage i
 		LDA #$00 ;Loads blank value so PC cannot use the 50% damage reduction
 		RTS
 }
-
 PCBodyChip: ;Routine that determines who can use the Armor Chip upgrade to cut damage to 75%.
 {
 	SEP #$30
@@ -2160,8 +2161,8 @@ PCBodyChip: ;Routine that determines who can use the Armor Chip upgrade to cut d
 		dw Zero_BodyChip
 		dw PC3_BodyChip
 		dw PC4_BodyChip
-		db $FF,$FF
-		db $FF,$FF
+		dw $FFFF
+		dw $FFFF
 	
 	
 	X_BodyChip:
@@ -2170,7 +2171,7 @@ PCBodyChip: ;Routine that determines who can use the Armor Chip upgrade to cut d
 		RTS
 		
 	Zero_BodyChip:
-		LDA #$00 ;Loads #$01 so Zero cannot use the 75% damage reduction
+		LDA #$00 ;Loads #$00 so Zero cannot use the 75% damage reduction
 		RTS
 		
 	PC3_BodyChip:
@@ -2249,7 +2250,7 @@ LSROnly:
 		CMP #$F0 ;Check if value is #$F0
 		BEQ Zero_BusterUpgrade_NoDouble ;If value = #$F0 then jump to Zero_BusterUpgrade_NoDouble so sub-weapon ammo consumption is not doubled.
 		
-		ASL $0002 ;Double sub-weapon ammo usage for Zero
+			ASL $0002 ;Double sub-weapon ammo usage for Zero
 		
 		Zero_BusterUpgrade_NoDouble:
 		JSL LoadPCSplitSubWeapon
@@ -5982,14 +5983,17 @@ XBusterCheckZSaber:
 {
 	LDA !CurrentPC_0A8E
 	BNE XBusterCheckZSaber_SetIcons
-	LDA !ZSaberObtained_1FB2
-	BIT #$80
-	BEQ XBusterCheckZSaber_SetIcons
-	LDA $9F65,x
-	CMP #$0A
-	BNE XBusterCheckZSaber_SetIconSet
-	LDA #$0D
-	BRA XBusterCheckZSaber_SetIconSet
+	
+		LDA !ZSaberObtained_1FB2
+		BIT #$80
+		BEQ XBusterCheckZSaber_SetIcons
+		
+			LDA $9F65,x
+			CMP #$0A
+			BNE XBusterCheckZSaber_SetIconSet
+			
+				LDA #$0D
+				BRA XBusterCheckZSaber_SetIconSet
 	
 	XBusterCheckZSaber_SetIcons:
 	LDA $9F65,x
@@ -10218,25 +10222,30 @@ EndingCredits_ThankYouForPlaying:
 	LDA $0000
 	ORA #$10 ;Sets game to NG+
 	STA !Difficulty_7EF4E0
+	
 	LDA #$00
 	STA !BossesDefeated1_7EF4E2 ;Remove all bosses defeated
 	STZ !IntroductionLevelBIT_1FD3 ;Remove introduction bit done
+	
 	LDA !ZSaberObtained_1FB2 ;Load Z-Saber bit
 	AND #$80 ;AND #$80 so it removes everything but the #$80
 	STA !ZSaberObtained_1FB2 ;Store back to Z-Saber
+	
 	STZ !DopplerLabBIT_1FB0 ;Set Doppler Lab event to #$00
 	STZ !CurrentDopplerLevel_1FAF ;Set current Doppler level to #$00
 	STZ !SetCredits_1FB3 ;Store credits data to #$00
 	STZ !BitByteVileCheck_1FD8 ;Store bit/byte/vile to #$00
 	STZ $1FD9 ;Maybe something with Bit/Byte/Vile ;Set extra data for Bit/Byte/Vile to #$00
 	STZ !DopplerTeleporters_1FDA ;Store Doppler Boss Teleporters done to #$00
+	
 	LDA !CurrentPCCheck_1FFF ;Load current PC
 	BEQ EndingCredits_ThankYouForPlaying_Event06_NotZero
-	LDA !CapsuleIntro_7EF4E4
-	ORA #$80 ;This sets Zero as being the PC in NG for save
-	STA !CapsuleIntro_7EF4E4
-	BRA EndingCredits_ThankYouForPlaying_Event06_BeginSubWeapon
 	
+		LDA !CapsuleIntro_7EF4E4
+		ORA #$80 ;This sets Zero as being the PC in NG for save
+		STA !CapsuleIntro_7EF4E4
+		BRA EndingCredits_ThankYouForPlaying_Event06_BeginSubWeapon
+		
 	EndingCredits_ThankYouForPlaying_Event06_NotZero:
 	LDA !CapsuleIntro_7EF4E4
 	AND #$01

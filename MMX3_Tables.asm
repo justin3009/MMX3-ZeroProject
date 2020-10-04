@@ -338,7 +338,7 @@ org $86E290 ;Enemy Table Setup
 		db $4A ;Sprite Assembly
 
 	;Enemy #1F Tombort  
-		db $06 ;Collision Damage
+		db $01 ;Collision Damage [Unused]
 		db $0F ;Enemy Health
 		db $09 ;Damage Table
 		db $42 ;Enemy Value?
@@ -625,7 +625,7 @@ org $86E290 ;Enemy Table Setup
 		db $9A ;Sprite Assembly
 
 	;Enemy #48 Dr. Doppler  
-		db $06 ;Collision Damage
+		db $03 ;Collision Damage
 		db $20 ;Enemy Health
 		db $1E ;Damage Table
 		db $22 ;Enemy Value?

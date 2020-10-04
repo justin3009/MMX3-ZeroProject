@@ -24,18 +24,18 @@ incsrc MMX3_VariousAddresses.asm
 ;***************************
 ; Expands the ROM to 4MB
 ;***************************
-org $80FFD7 ;Original offset location that sets ROM size
-{
-	db $0C ;Sets to 4MB
-}
+; org $80FFD7 ;Original offset location that sets ROM size
+; {
+	; db $0C ;Sets to 4MB
+; }
 
-org $C08000 ;Original offset location for where all new code begins. (Now fills the entire section to expand ROM to 4MB)
-{
-check bankcross off
-	fillbyte $FF
-	fill $200000
-check bankcross on
-}
+; org $C08000 ;Original offset location for where all new code begins. (Now fills the entire section to expand ROM to 4MB)
+; {
+; check bankcross off
+	; fillbyte $FF
+	; fill $200000
+; check bankcross on
+; }
 
 
 
