@@ -24,9 +24,8 @@ https://github.com/RPGHacker/asar - Asar
 * Z-Saber damaged is varied per boss based on their credit roll statistics. It uses their speed + power as the general idea. Whomever has the most combined takes the least damage.
 * Zero can use Ride Armors.
 * Zero has +4 more health than X to help offset his size difference.
-* Zero CANNOT use the Hyper Charge (Hyper C.) and is unable to select it via L/R buttons or even in the menu. However, X can use it at any time if the ammo is +4. Though, X CANNOT use the Z-Saber when using the Hyper Charge. It will only use Charged Shots.
 * Zero has increased animation speed with is Z-Saber and a slight increase with his buster speed.
-* Zero will get warned by X about Mosquitus in the first Doppler Lab level. This is done so the player don't accidentally walk in with Zero and lose the Z-Saber.
+* Zero will get warned by X about Mosquitus in the first Doppler Lab level. This is done so the player doesn't accidentally walk in with Zero and lose the Z-Saber.
 * Zero has his own unique 'GET WEAPON' portrait. (Thanks to Metalwario64 for his gracious work!)
 * Zero has his own 1-up icon in game now.
 * Zero can use the Z-Saber Projectile like X can ONLY if NG+ is initiated and if the Black Armor is obtained.
