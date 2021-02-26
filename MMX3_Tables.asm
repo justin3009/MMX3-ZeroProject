@@ -2442,7 +2442,7 @@ XSubTextCoord: ;X's Menu Sub-Weapon Text X/Y coordinates
 	dw $50E6 ;Parasitic Bomb	Text Coordinates
 	dw $5126 ;Triad Thunder		Text Coordinates
 	dw $5166 ;Spinning Blades	Text Coordinates
-	dw $51A6 ;Ray Splasher			Text Coordinates
+	dw $51A6 ;Ray Splasher		Text Coordinates
 	dw $51E6 ;Gravity Well		Text Coordinates
 	dw $5226 ;Frost Shield		Text Coordinates
 	dw $5266 ;Tornado Fang		Text Coordinates
@@ -2465,7 +2465,7 @@ ZeroSubTextCoord: ;Zero's Menu Sub-Weapon Text X/Y coordinates
 	dw $50E6 ;Parasitic Bomb	Text Coordinates
 	dw $5126 ;Triad Thunder		Text Coordinates
 	dw $5166 ;Spinning Blades	Text Coordinates
-	dw $51A6 ;Ray Splasher			Text Coordinates
+	dw $51A6 ;Ray Splasher		Text Coordinates
 	dw $51E6 ;Gravity Well		Text Coordinates
 	dw $5226 ;Frost Shield		Text Coordinates
 	dw $5266 ;Tornado Fang		Text Coordinates
@@ -2488,7 +2488,7 @@ PC3SubTextCoord: ;PC3's Menu Sub-Weapon Text X/Y coordinates
 	dw $50E6 ;Parasitic Bomb	Text Coordinates
 	dw $5126 ;Triad Thunder		Text Coordinates
 	dw $5166 ;Spinning Blades	Text Coordinates
-	dw $51A6 ;Ray Splasher			Text Coordinates
+	dw $51A6 ;Ray Splasher		Text Coordinates
 	dw $51E6 ;Gravity Well		Text Coordinates
 	dw $5226 ;Frost Shield		Text Coordinates
 	dw $5266 ;Tornado Fang		Text Coordinates
@@ -2511,7 +2511,7 @@ PC4SubTextCoord: ;PC4's Menu Sub-Weapon Text X/Y coordinates
 	dw $50E6 ;Parasitic Bomb	Text Coordinates
 	dw $5126 ;Triad Thunder		Text Coordinates
 	dw $5166 ;Spinning Blades	Text Coordinates
-	dw $51A6 ;Ray Splasher			Text Coordinates
+	dw $51A6 ;Ray Splasher		Text Coordinates
 	dw $51E6 ;Gravity Well		Text Coordinates
 	dw $5226 ;Frost Shield		Text Coordinates
 	dw $5266 ;Tornado Fang		Text Coordinates

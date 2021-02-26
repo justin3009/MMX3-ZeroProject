@@ -750,8 +750,6 @@ PCSwapHealth_InMenu:
 	RTL
 }
 
-
-
 PCSHealthBar_InMenu: ;Routine that loads both X and Zero's health bars in the menu. Their order depends on which PC you are playing as
 {
 	LDA !IntroductionLevelBIT_1FD3
@@ -1061,7 +1059,6 @@ LoadPC_XYCoordinates_Menu: ;Loads coordinates for PCs in the menu based on if bo
 }
 
 
-
 ;*********************************************************************************
 ; Sets sub-tank data to RAM upon collection
 ;*********************************************************************************
@@ -1254,8 +1251,9 @@ SelectNextSubTank: ;Routine to check which sub-tank when pressing a directional 
 	LDA !Difficulty_7EF4E0
 	BIT #$01
 	BNE SoloSelectNextSubTank
-	LDA !SubTanksOrigin_1FB7,x
-	RTL
+	
+		LDA !SubTanksOrigin_1FB7,x
+		RTL
 	
 	SoloSelectNextSubTank:
 	STX $0002
@@ -2211,37 +2209,47 @@ PCBusterUpgrade: ;Routine to determine which PC can use halved sub-weapon ammo o
 		db $FF,$FF
 	
 	
-	X_BusterUpgrade:
+		X_BusterUpgrade:
 		LDX $0010 ;Load temp. variable of $0010 to get current sub-weapon
 		JSL LoadPCSplitSubWeapon ;Load routine that determines which PC RAM location to draw current sub-weapon ammo from
+		
 		STA $0010 ;Store current sub-weapon ammo to temp. variable $0010
 		;CPX #$09 ;Check if sub-weapon is #$09 (Hyper Charge) [CODE MAY BE COMPLETELY POINTLESS]
-		;BEQ LSROnly ;If so, jump to LSROnly and cut in half since it's a even number [CODE MAY BE COMPLETELY POINTLESS]
+		;BEQ X_BusterUpgrade_HalfAmmo ;If so, jump to X_BusterUpgrade_HalfAmmo and cut in half since it's a even number [CODE MAY BE COMPLETELY POINTLESS]
+		
 		LDA !XArmorsByte1_7EF418 ;Load X's Armor Value from new RAM
 		AND #$01 ;AND #$01
 		CMP #$01 ;Check if value is #$01 (Helmet Upgrade)
-		BNE ignorecutinhalf ;If not, jump to ignorecutinhalf so sub-weapon ammo usage is not halved.
-		LDA $0002 ;Load sub-weapon ammo usage from temp. variable $0002
-		AND #$01 ;AND #$01
-		BEQ LSROnly ;If == 00, jump to LSROnly to cut sub-weapon ammo usage in half if it's an even number.
-		LSR $0002 ;Cut sub-weapon ammo usage in half
-		LDA $0010 ;Load current PC sub-weapon ammo
-		BIT #$40 ;Check if it's #$40
-		BNE subweaponcutinhalf ;If it's not #$40, jump to subweaponcutinhalf and cut the sub-weapon life
-		INC $0002 ;Increaes sub-weapon ammo usage
-		ORA #$40 ;ORA with #$40 so it adds #$40 to original ammo usage
-storesubweaponlife:
-		STA $0010 ;Store new sub-weapon life back to temp. variable $0010
-		BRA ignorecutinhalf ;Always jump to ignorecutinhalf
-subweaponcutinhalf:
-		AND #$1F ;AND #$1F current sub-weapon ammo
-		BRA storesubweaponlife ;Always jump to storesubweaponlife
-ignorecutinhalf:
+		BNE X_BusterUpgrade_NormalAmmo ;If not, jump to X_BusterUpgrade_NormalAmmo so sub-weapon ammo usage is not halved.
+		
+			LDA $0002 ;Load sub-weapon ammo usage from temp. variable $0002
+			AND #$01 ;AND #$01
+			BEQ X_BusterUpgrade_HalfAmmo ;If == 00, jump to X_BusterUpgrade_HalfAmmo to cut sub-weapon ammo usage in half if it's an even number.
+			
+				LSR $0002 ;Cut sub-weapon ammo usage in half
+				LDA $0010 ;Load current PC sub-weapon ammo
+				BIT #$40 ;Check if it's #$40
+				BNE X_BusterUpgrade_SetNonHalf ;If it's not #$40, jump to X_BusterUpgrade_SetNonHalf and cut the sub-weapon life
+				
+					INC $0002 ;Increaes sub-weapon ammo usage
+					ORA #$40 ;ORA with #$40 so it adds #$40 to original ammo usage
+
+					X_BusterUpgrade_StoreAmmo:
+					STA $0010 ;Store new sub-weapon life back to temp. variable $0010
+					BRA X_BusterUpgrade_NormalAmmo ;Always jump to X_BusterUpgrade_NormalAmmo
+				
+				X_BusterUpgrade_SetNonHalf:
+				AND #$1F ;AND #$1F current sub-weapon ammo
+				BRA X_BusterUpgrade_StoreAmmo ;Always jump to X_BusterUpgrade_StoreAmmo
+			
+			X_BusterUpgrade_NormalAmmo:
+			LDA $0010 ;Load current sub-weapon ammo as here it does not get halved.
+			RTS
+		
+		X_BusterUpgrade_HalfAmmo:
+		LSR $0002 ;Load sub-weapon ammo usage and halve the value
 		LDA $0010 ;Load current sub-weapon ammo as here it does not get halved.
 		RTS
-LSROnly:
-		LSR $0002 ;Load sub-weapon ammo usage and halve the value
-		BRA ignorecutinhalf ;Always jump to ignorecutinhalf
 		
 	Zero_BusterUpgrade: ;Zero's sub-weapon ammo usage is DOUBLED unless he has the Black Armor, then it loads the normal values.
 		LDX $0010
@@ -2265,6 +2273,36 @@ LSROnly:
 		LDX $0010
 		JSL LoadPCSplitSubWeapon
 		RTS
+}
+
+SubWeapon_CheckUnderFlow: ;Routine that'll check whether a sub-weapon's ammo has underflowed so it doesn't allow usage.
+{
+	CLC ;Clear carry flag
+	CLV ;Clear overflow flag
+	
+	LDA $0010 ;Load current sub-weapon life
+	BVS SubWeapon_CheckUnderFlow_Empty ;Branches to store empty sub-weapon ammo if underflow occurs
+
+		SEC ;Set carry flag
+		SBC $0002 ;Subtract sub-weapon ammo usage from current sub-weapon ammo
+		STA $0010 ;Store new sub-weapon ammo to temp. variable $0010
+		CMP #$40 ;Check if it's #$40
+		BCC SubWeapon_CheckUnderFlow_CheckOver ;If it's == #$40, jump to StoreEmptySubWeapon so the game knows you have the sub-weapon, but it's empty.
+		
+			SubWeapon_CheckUnderFlow_CheckAmmo:
+			LDA $0010 ;Load current sub-weapon life
+			BNE SubWeapon_CheckUnderFlow_Store ;If > 00, jump to IgnoreSubWeaponStoreEmpty to store sub-weapon life properly back to which PC.
+
+				SubWeapon_CheckUnderFlow_Empty:
+				LDA #$C0 ;Load value of #$C0 so the game knows you have a sub-weapon but it's empty.
+
+				SubWeapon_CheckUnderFlow_Store:
+				RTL
+			
+	SubWeapon_CheckUnderFlow_CheckOver:
+	CMP #$1D ;Check if weapon ammo is #$1D+
+	BCS SubWeapon_CheckUnderFlow_Empty
+	BRA SubWeapon_CheckUnderFlow_CheckAmmo
 }
 
 ;*********************************************************************************
@@ -2296,7 +2334,7 @@ PC_ZSaberProjectile: ;Routine to determine which PC can use halved sub-weapon am
 		RTS
 	
 	X_SaberProjectileCheck_Disable:
-	LDA #$01 ;Enable
+	LDA #$00 ;Enable
 	RTS
 	}
 	Zero_SaberProjectileCheck: ;This section checks for Zero and his specifics to use the Z-Saber Projectile.
@@ -2489,7 +2527,8 @@ DashDecreaseJumpDashAmount: ;Routine that decreases JumpDashAmount_7EF4E6 when d
 	LDA !JumpDashAmount_7EF4E6
 	DEC
 	BPL DashDecreaseJumpDashAmount_IgnoreStorage
-	LDA #$00
+	
+		LDA #$00
 	
 	DashDecreaseJumpDashAmount_IgnoreStorage:
 	STA !JumpDashAmount_7EF4E6
@@ -2614,17 +2653,19 @@ SetJumpValues: ;Routine that gets called to set JumpDashAmount_7EF4E6 on various
 		LDA !RideChipsOrigin_7E1FD7 ;Load !RideChipsOrigin_7E1FD7
 		AND #$80 ;AND #$80 to check if you have the Leg Chip Enhancement
 		BNE Store02forJumpX ;If so, jump to Store02forJumpX so X has the ability to maneuver in the air twice
-		LDA !XArmorsByte1_7EF418 ;Load X's Armor value from new RAM
-		AND #$08 ;Check if X has the leg upgrade
-		BNE Store01forJumpX ;If so, jump skipstore00x so X can't maneuver in the air at all.
-		LDA #$00 ;Load #$00
-		STA !JumpDashAmount_7EF4E6 ;Store to !JumpDashAmount_7EF4E6 so X CANNOT maneuver in the air at all.
-		BRA EndSetJumpDashAmountX ;Branch to end of routine checking
 		
-		Store01forJumpX:
-		LDA #$01
-		STA !JumpDashAmount_7EF4E6
-		BRA EndSetJumpDashAmountX
+			LDA !XArmorsByte1_7EF418 ;Load X's Armor value from new RAM
+			AND #$08 ;Check if X has the leg upgrade
+			BNE Store01forJumpX ;If so, jump skipstore00x so X can't maneuver in the air at all.
+			
+				LDA #$00 ;Load #$00
+				STA !JumpDashAmount_7EF4E6 ;Store to !JumpDashAmount_7EF4E6 so X CANNOT maneuver in the air at all.
+				BRA EndSetJumpDashAmountX ;Branch to end of routine checking
+			
+			Store01forJumpX:
+			LDA #$01
+			STA !JumpDashAmount_7EF4E6
+			BRA EndSetJumpDashAmountX
 		
 		Store02forJumpX:
 		LDA #$02
@@ -3710,7 +3751,7 @@ PCDashhitbox: ;Routine that specifies PC's hitbox depending on any general circu
 		STA !CurrentPCHitbox_09F8
 		RTS
 }
-		
+
 ;*********************************************************************************
 ; Stage Select: Allow X to change to Zero
 ;*********************************************************************************
@@ -4192,10 +4233,8 @@ DynamicAnimationBank: ;Routine that allows PCs to have their own data from the r
 	STA $000E
 	LDA $16
 	AND #$00FF
-	SEP #$20
 	TAX
 	LDA SplitSAADTable,x
-	REP #$30
 	AND #$00FF
 	STA $000C
 	ASL
@@ -4403,27 +4442,31 @@ PCStartWalkingDashDistanceSpeed: ;Routine to set PC walking speed, dash speed an
 	Zero_StartWalkingDashDistanceSpeed:
 		LDA #$20
 		STA $52
+		
 		LDX $0010
 		REP #$20
 		LDA $B272,x
 		STA $0010
 		BEQ ZeroStartWalkEnd
-		LDA !RideChipsOrigin_7E1FD7
-		AND #$00F0
-		CMP #$00F0
-		BEQ ZeroFasterStartWalk
-		LDA $0010
-		BRA ZeroStartWalkEnd
 		
-		ZeroFasterStartWalk:
-		SEP #$20
-		CPX #$00
-		BEQ ZeroStopWalk
-		REP #$20
-		LDA $0010
-		CLC
-		ADC #$0060
-		
+			LDA !RideChipsOrigin_7E1FD7
+			AND #$00F0
+			CMP #$00F0
+			BEQ ZeroFasterStartWalk
+			
+				LDA $0010
+				BRA ZeroStartWalkEnd
+			
+			ZeroFasterStartWalk:
+			SEP #$20
+			CPX #$00
+			BEQ ZeroStopWalk
+			
+				REP #$20
+				LDA $0010
+				CLC
+				ADC #$0060
+			
 		ZeroStartWalkEnd:
 		RTS
 		
@@ -4746,11 +4789,13 @@ RideArmors_DashingCheck:
 	CMP #$03 ;Checks if Frog Armor
 	BNE RideArmors_DashingCheck_IsNotUnderWater ;If not, completely ignore underwater swim check.
 
-	LDA $1F53 ;BIT to determine if Armor is underwater or not
-	BIT #$01
-	BEQ RideArmors_DashingCheck_IsNotUnderWater
-	LDA #$00 ;This will allow it to swim underwater if it's underwater.
-	RTL
+		;LDA $1F53 ;BIT to determine if Armor is underwater or not
+		;BIT #$01
+		LDA $4C ;Loads $7E:0CC8 + 4C (Determines whether Ride Armor is in water or not)
+		BEQ RideArmors_DashingCheck_IsNotUnderWater
+		
+			LDA #$00 ;This will allow it to swim underwater if it's underwater.
+			RTL
 	
 	RideArmors_DashingCheck_IsNotUnderWater: ;This allows Armors to dash when not in water.
 	LDA #$01
@@ -4795,7 +4840,7 @@ BossDefeatedStoreSubWeapon: ;Load routine that stores the bosses sub-weapon to t
 		STA !PCSubWeaponsBase_7EF403,x
 		RTL
 }
-			
+
 
 ;*********************************************************************************
 ; Check whether you have sub-weapons and modifying routines so sub-weapon life is 00-1C (Set to C0 if empty)
@@ -4878,18 +4923,7 @@ SplitStorePCSubWeapon:
 	LDX $0010
 	RTL
 }
-;*********************************************************************************
-;*********************************************************************************
-; Routine to play Triad Thunder SFX at proper time since events were altered heavily.
-;*********************************************************************************
-TriadThunderSFX: ;Routine to play Triad Thunder SFX since the coding was heavily altered.
-{
-	JSL $84C0F7
-	LDA #$28
-	JSL !PlaySFX
-	RTL	
-}
-	
+
 ;*********************************************************************************
 ;Store's armor value when capsule animation is done
 ;*********************************************************************************
@@ -5988,7 +6022,7 @@ XBusterCheckZSaber:
 		BIT #$80
 		BEQ XBusterCheckZSaber_SetIcons
 		
-			LDA $9F65,x
+			LDA $80CEB0,x
 			CMP #$0A
 			BNE XBusterCheckZSaber_SetIconSet
 			
@@ -5996,7 +6030,7 @@ XBusterCheckZSaber:
 				BRA XBusterCheckZSaber_SetIconSet
 	
 	XBusterCheckZSaber_SetIcons:
-	LDA $9F65,x
+	LDA $80CEB0,x
 	
 	XBusterCheckZSaber_SetIconSet:
 	TAX
@@ -7431,6 +7465,7 @@ PC1UpIcon_CheckAndEnable: ;Disables the PC 1-up on screen when swapping characte
 }
 
 }
+
 ;*********************************************************************************
 ; Sets PC's height when they're teleporting in through PC swapping
 ;*********************************************************************************		
@@ -10348,10 +10383,11 @@ PC_BusterShot_Level4_5_FirstShot:
 		LDA !ZSaberObtained_1FB2
 		BIT #$02
 		BNE Zero_BusterShot_Level4_5_FirstShot_Spiral
-		LDA $8E
-		TAX
-		LDA Zero_Level4_5_Shots,x
-		RTS
+		
+			LDA $8E
+			TAX
+			LDA Zero_Level4_5_Shots,x
+			RTS
 		
 		Zero_BusterShot_Level4_5_FirstShot_Spiral:
 		LDA $8E
@@ -10402,12 +10438,13 @@ PC_BusterShot_Level4_5_SecondShot:
 		LDA !ZSaberObtained_1FB2
 		BIT #$02
 		BNE Zero_BusterShot_Level4_5_SecondShot_Spiral
-		LDA $8F
-		CLC
-		ADC #$04
-		TAX
-		LDA Zero_Level4_5_Shots,x
-		RTS
+		
+			LDA $8F
+			CLC
+			ADC #$04
+			TAX
+			LDA Zero_Level4_5_Shots,x
+			RTS
 		
 		Zero_BusterShot_Level4_5_SecondShot_Spiral:
 		LDA $8F
@@ -10438,8 +10475,9 @@ Zero_SpiralBuster_SetMissile:
 {
 	LDA !CurrentPC_0A8E
 	BNE Zero_SpiralBuster_SetMissile_27
-	LDA #$1D ;Set X's missile to be #$1D
-	BRA Zero_SpiralBuster_SetMissile_End
+	
+		LDA #$1D ;Set X's missile to be #$1D
+		BRA Zero_SpiralBuster_SetMissile_End
 	
 	Zero_SpiralBuster_SetMissile_27:
 	LDA #$27 ;Set Zero's missile to #$27
@@ -10495,10 +10533,14 @@ Zero_SpiralBusterWIP: ;Loads main central buster (Will probably need to recode t
 			
 			LDA #$02
 			STA $01
+			
 			LDA #$FF
 			STA $10
+			
 			INC $0A55
+			
 			STZ $30
+			
 			LDA #$04
 			STA $12
 			LDA #$08
@@ -10515,7 +10557,8 @@ Zero_SpiralBusterWIP: ;Loads main central buster (Will probably need to recode t
 			LDA #$0200 ;Beginning speed of buster shot
 			BIT $10
 			BVS Zero_SpiralBusterWIP_MissileEvent00_IgnoreSpeedChange
-			LDA #$FE00
+			
+				LDA #$FE00
 			
 			Zero_SpiralBusterWIP_MissileEvent00_IgnoreSpeedChange:
 			STA $1A
@@ -10531,35 +10574,36 @@ Zero_SpiralBusterWIP: ;Loads main central buster (Will probably need to recode t
 			
 			SEP #$20
 			REP #$10
-			LDY #$0002 ;How many sub-missiles to load around the buster [MUST CHANGE BACK TO #$02 once the other missiles are loaded!]
+			; LDY #$0002 ;How many sub-missiles to load around the buster [MUST CHANGE BACK TO #$02 once the other missiles are loaded!]
 			
-			Zero_SpiralBusterWIP_MissileEvent00_CheckMissileRoom:
-			JSL !CheckMissileRoom
-			BNE Zero_SpiralBusterWIP_MissileEvent00_IgnoreLoadingMissile
+			; Zero_SpiralBusterWIP_MissileEvent00_CheckMissileRoom:
+			; JSL !CheckMissileRoom
+			; BNE Zero_SpiralBusterWIP_MissileEvent00_IgnoreLoadingMissile
 			
-			INC $0000,x
-			LDA #$27 ;Set sub-missile data (Probably set to #$27)
-			STA $000A,x
-			TYA
-			STA $000B,x
-			LDA $11
-			STA $0011,x
-			LDA $18
-			STA $0018,x
+				; INC $0000,x
+				
+				; LDA #$27 ;Set sub-missile data (Probably set to #$27)
+				; STA $000A,x
+				; TYA
+				; STA $000B,x
+				; LDA $11
+				; STA $0011,x
+				; LDA $18
+				; STA $0018,x
+				
+				; REP #$20
+				; TDC
+				; STA $000C,x
+				; LDA $05
+				; STA $0005,x
+				; LDA $08
+				; STA $0008,x
+				
+				; SEP #$20
+				; DEY
+				; BNE Zero_SpiralBusterWIP_MissileEvent00_CheckMissileRoom
 			
-			REP #$20
-			TDC
-			STA $000C,x
-			LDA $05
-			STA $0005,x
-			LDA $08
-			STA $0008,x
-			
-			SEP #$20
-			DEY
-			BNE Zero_SpiralBusterWIP_MissileEvent00_CheckMissileRoom
-			
-			Zero_SpiralBusterWIP_MissileEvent00_IgnoreLoadingMissile:
+			; Zero_SpiralBusterWIP_MissileEvent00_IgnoreLoadingMissile:
 			SEP #$10
 			LDA #$4E ;Sprite assembly (Using default from X3)
 			STA $16
@@ -10573,21 +10617,22 @@ Zero_SpiralBusterWIP: ;Loads main central buster (Will probably need to recode t
 		{
 			LDA $0E
 			BNE Zero_SpiralBusterWIP_MissileEvent02_SkipSet0A
-			LDA #$0A
-			STA $01
-			RTL
 			
+				LDA #$0A
+				STA $01
+				RTL
+				
 			Zero_SpiralBusterWIP_MissileEvent02_SkipSet0A:
 			BIT $11
 			BVS Zero_SpiralBusterWIP_MissileEvent02_Check82D719
 			JSL !CheckForGround
 			
-			REP #$20
-			LDA #$F800
-			CMP $1A
-			BMI Zero_SpiralBusterWIP_MissileEvent02_SkipStore1A
-			STA $1A
-			BRA Zero_SpiralBusterWIP_MissileEvent02_SkipStore1A
+				REP #$20
+				LDA #$F800
+				CMP $1A
+				BMI Zero_SpiralBusterWIP_MissileEvent02_SkipStore1A
+					STA $1A
+					BRA Zero_SpiralBusterWIP_MissileEvent02_SkipStore1A
 			
 			Zero_SpiralBusterWIP_MissileEvent02_Check82D719:
 			JSL $82D719 ;Possibly Check For Air?
@@ -10596,7 +10641,8 @@ Zero_SpiralBusterWIP: ;Loads main central buster (Will probably need to recode t
 			LDA #$0800
 			CMP $1A
 			BPL Zero_SpiralBusterWIP_MissileEvent02_SkipStore1A
-			STA $1A
+			
+				STA $1A
 			
 			Zero_SpiralBusterWIP_MissileEvent02_SkipStore1A:
 			SEP #$20
@@ -10613,15 +10659,17 @@ Zero_SpiralBusterWIP: ;Loads main central buster (Will probably need to recode t
 		{
 			LDX $02
 			BNE Zero_SpiralBusterWIP_MissileEvent04_Check0F
-			INC $02
-			LDA #$03
-			JSL !AnimationOneFrame
+			
+				INC $02
+				LDA #$03
+				JSL !AnimationOneFrame
 			
 			Zero_SpiralBusterWIP_MissileEvent04_Check0F:
 			LDA $0F
 			BPL Zero_SpiralBusterWIP_MissileEvent04_End
-			LDA #$0A
-			STA $01
+			
+				LDA #$0A
+				STA $01
 			
 			Zero_SpiralBusterWIP_MissileEvent04_End:
 			JSL !VRAMRoutineAlt
@@ -11181,6 +11229,14 @@ PC_GravityWell_Bubbles: ;Sets code for when underwater and $7E:1F40 is set
 	RTL
 }
 
+TriadThunderSFX: ;Routine to play Triad Thunder SFX since the coding was heavily altered.
+{
+	JSL $84C0F7
+	LDA #$28
+	JSL !PlaySFX
+	RTL	
+}
+	
 }
 
 ;*********************************************************************************

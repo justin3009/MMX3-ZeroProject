@@ -118,25 +118,25 @@ AmmoRefillObjectPointers:
 		AND #$7F
 		BEQ AmmoRefillObject_Event_IncreaseEvent01
 		
-		LDX #$08 ;Max ammo to refill for LARGE ammo capsule
-		
-		LDA $0B ;Check what type of ammo capsule (Big or small)
-		AND #$7F
-		BEQ AmmoRefillObject_Event_IgnoreSmallCapsule01
-		LDX #$02
-		
-		AmmoRefillObject_Event_IgnoreSmallCapsule01:
-		STX $27
-		
-		LDY !CurrentPCSubWeapon_0A0B
-		BEQ AmmoRefillObject_Event_SubWeaponIsEqual
-		CPY #$09 ;Check for Hyper Chip
-		BCS AmmoRefillObject_Event_SubWeaponIsEqual
-		
-		BRA AmmoRefillObject_Event_HealCurrentWeapon
-		
-		AmmoRefillObject_Event_SubWeaponIsEqual:
-		JSL RefillSubWeaponAmmo ;Routine to heal sub-weapons not equipped if current is full
+			LDX #$08 ;Max ammo to refill for LARGE ammo capsule
+			
+			LDA $0B ;Check what type of ammo capsule (Big or small)
+			AND #$7F
+			BEQ AmmoRefillObject_Event_IgnoreSmallCapsule01
+			
+				LDX #$02
+			
+			AmmoRefillObject_Event_IgnoreSmallCapsule01:
+			STX $27
+			
+			LDY !CurrentPCSubWeapon_0A0B
+			BEQ AmmoRefillObject_Event_SubWeaponIsEqual
+				CPY #$09 ;Check for Hyper Chip
+				BCS AmmoRefillObject_Event_SubWeaponIsEqual
+					BRA AmmoRefillObject_Event_HealCurrentWeapon
+			
+			AmmoRefillObject_Event_SubWeaponIsEqual:
+			JSL RefillSubWeaponAmmo ;Routine to heal sub-weapons not equipped if current is full
 		
 		AmmoRefillObject_Event_IncreaseEvent01:
 		LDA #$04 ;Increase to next event?
@@ -180,56 +180,59 @@ AmmoRefillObjectPointers:
 		LDA !CurrentHealth_09FF
 		AND #$7F
 		BEQ HealSubWeaponIncreaseEvent
-		DEC $26 ;Delay between each pellet of health healing
-		BNE HealSubWeaponSkipNextEvent
 		
-		LDA #$1D
-		STA $0004
+			DEC $26 ;Delay between each pellet of health healing
+			BNE HealSubWeaponSkipNextEvent
+			
+				LDA #$1D
+				STA $0004
 
-		LDA #$04 ;How many frames to wait per pellet of health
-		STA $26
-		
-		LDX !CurrentPCSubWeapon_0A0B
-		JSL LoadPCSplitSubWeapon
-		INC
-		BIT #$40
-		BEQ HealSubWeaponCheckFor5C
-		PHA
-		LDA #$5D
-		STA $0004
-		PLA
-		
-		HealSubWeaponCheckFor5C:
-		CMP $0004
-		BCC HealSubWeapon
-		
-		HealSubWeaponVarious:
-		LDA $27 ;Load current life left to store into sub-weapon health
-		DEC
-		BEQ HealSubWeaponIgnoreHealVarious
-		
-		STA $27
-		JSL RefillSubWeaponAmmo ;Load routine to heal other sub-weapons if current one becomes full
-		
-		HealSubWeaponIgnoreHealVarious:
-		LDX #$04
-		STX $03
-		LDX !CurrentPCSubWeapon_0A0B
-		JSL LoadPCSplitSubWeapon
-		
-		HealSubWeapon:
-		JSL StorePCSplitSubWeapon
-		
-		LDA #$15
-		JSL !PlaySFX
-		
-		DEC $27
-		BNE HealSubWeaponSkipNextEvent
-		
-		HealSubWeaponIncreaseEvent:
-		LDA #$04
-		STA $03
-		
+				LDA #$04 ;How many frames to wait per pellet of health
+				STA $26
+				
+				LDX !CurrentPCSubWeapon_0A0B
+				JSL LoadPCSplitSubWeapon
+				AND #$7F
+				INC
+				BIT #$40
+				BEQ HealSubWeaponCheckFor5C
+				
+					PHA
+					LDA #$5D
+					STA $0004
+					PLA
+				
+				HealSubWeaponCheckFor5C:
+				CMP $0004
+				BCC HealSubWeapon
+				
+				HealSubWeaponVarious:
+				LDA $27 ;Load current life left to store into sub-weapon health
+				DEC
+				BEQ HealSubWeaponIgnoreHealVarious
+				
+					STA $27
+					JSL RefillSubWeaponAmmo ;Load routine to heal other sub-weapons if current one becomes full
+				
+				HealSubWeaponIgnoreHealVarious:
+				LDX #$04
+				STX $03
+				LDX !CurrentPCSubWeapon_0A0B
+				JSL LoadPCSplitSubWeapon
+				
+				HealSubWeapon:
+				JSL StorePCSplitSubWeapon
+				
+				LDA #$15
+				JSL !PlaySFX
+				
+				DEC $27
+				BNE HealSubWeaponSkipNextEvent
+			
+			HealSubWeaponIncreaseEvent:
+			LDA #$04
+			STA $03
+			
 		HealSubWeaponSkipNextEvent:
 		RTL
 		

@@ -31,6 +31,10 @@ org $869FAA ;Original code location for all sub-weapon icon, graphics, text, amm
 org $8D96F2 ;This blanks out all walking frames for Frog Armor
 	padbyte $FF
 	pad $8D970D
+	
+org $80C715 ;Original offset location for each pointer to each menu command)
+	padbyte $FF
+	pad $80C72B
 
 org $B9C1BC ;Original code location for all dialogue pointers and the dialogue itself.
 	padbyte $FF ;All of it was removed as it has been moved and split up based on which PC you are.

@@ -22,26 +22,6 @@ incsrc MMX3_NewCode_Locations.asm
 incsrc MMX3_VariousAddresses.asm
 ;***************************
 ;***************************
-; Expands the ROM to 4MB
-;***************************
-; org $80FFD7 ;Original offset location that sets ROM size
-; {
-	; db $0C ;Sets to 4MB
-; }
-
-; org $C08000 ;Original offset location for where all new code begins. (Now fills the entire section to expand ROM to 4MB)
-; {
-; check bankcross off
-	; fillbyte $FF
-	; fill $200000
-; check bankcross on
-; }
-
-
-
-
-;***************************
-;***************************
 ; Sets game to FastROM (Have to find a way to make it load RAM as $80+)
 ;***************************
 org $808000 ;Loads original code location that's loaded right when the game is started. (Loads a new location to foce the game as FastROM!)
@@ -124,203 +104,6 @@ org $86904F ;PASS WORD
 org $86905C ;OPTION MODE
 	db "Options    "
 }
-
-;*********************************************************************************
-;This section deals with handling each PC's health along with any "Heart Tank" code
-;*********************************************************************************
-{
-org $80A1CB ;Original code location that sets PC's max health upon entering a level.
-{
-	LDA #$FF
-	STA $09FF
-}
-
-org $8099B5 ;Original code here set PC's health upon selecting 'New Game'. Removed as this is already handled by the 'Heart Tank' routine.
-{
-	NOP #5
-}
-
-org $8480C3	;Altered the original code just slightly so it doesn't empty the PC check. It loads !CurrentPCCheck_1FFF and stores to !CurrentPC_0A8E.
-{
-	LDA !CurrentPCCheck_1FFF
-	STA !CurrentPCShort_B6
-	JSL HeartTank ;Load brand new routine that determines each PC's max health based on how many heart tanks obtained.
-}
-	
-org $8480D6	;Sets each PC's Max Health to 'FF' upon entering a level so a non-active PC's life won't be blank when swapping out.
-;This prevents the other PC's from causing a death upon switch since their max life will be determined as you swap with them.
-;This code also sets the JumpDashFlag to 01 to allow the PC's air dash/jumping total be able to be set.
-{
-	JSL SetLifeAndSwapHealth
-	NOP
-}
-
-org $809B7C ;Sets PC's max health upon entering a level.
-{
-	JSL HeartTank ;Load the main Heart Tank routine to determine PC's max health.
-}
-org $8480C8 ;Set's PC max health after a cut-scene.
-{
-	JSL HeartTank ;Load the main Heart Tank routine to determine PC's max health.
-}
-	
-org $81E9D1 ;Loads code location that originally increased PC's max health when obtaining a Heart Tank.
-;This is now based on difficulty. [Normal - Both PC's] [Hard - Only one PC]
-{
-	JSL HeartTankGet ;Load routine to set PC's new max health upon obtaining a Heart Tank.
-	INC !CurrentHealth_09FF
-}
-	
-org $81E968 ;Load code location that originally increased Heart Tank counter.
-{
-	JSL HeartTankStore ;Load routine to increase the Heart Tank counter for each PC.
-}
-	
-
-org $839058 ;Loads original code location that draws PC's health bar to screen.
-{
-	JSL HealthDraw ;Load routine to draw PC's health on screen
-	LDA #$FF
-	STA $10
-	LDA #$09
-	STA $11
-	
-	LDA !CurrentHealth_09FF
-	BMI PCHealth_Underflow
-	JMP $9194
-	
-	PCHealth_Underflow:
-	AND #$7F
-	JSL HealthCompare ;Load routine to compare the PC's health to their current health on screen
-	
-	BCC PCHealth_Over80
-	JSL HealthCMPStore ;Load routine to store PC's Max health to their current health if they have full health.
-	NOP #2
-	
-	PCHealth_Over80:
-}
-
-
-org $81D830 ;Load code location to check for general PC healing (Large health)
-{
-	NOP
-	JSL PCHealthGetCMP ;Load routine to determine if PC's health gets filled or not.
-}
-org $81D8D9 ;Load code location to check for general PC healing (Small health)
-{
-	INC
-	JSL PCHealthGetCMP ;Load routine to compare PC's max health to what is in a temporary variable to determine if they can heal or not.
-	BCC PCHealth_StoreHP
-
-		LDA #$04 ;How much health to heal
-		STA $03
-		LDA $0004
-
-	PCHealth_StoreHP:
-	NOP #3
-	STA $09FF
-}
-
-org $84A9FC ;Loads original code location that compres PC's current health to their max health and determines whether PC's health can regenerate or whether a sub-tank can continue healing.
-{
-	LDA $C1 ;Check if PC on ground or doing action
-	BNE DecPCHealthTimer
-	
-		LDA #$00 ;Loads value of #$00 so there's nothing
-		STA !PCHealCounter_7EF4EA  ;Store so PC Heal counter variable is #$00
-		INC $C1
-		
-		REP #$20
-		LDA #$0135 ;Timer before health can be restored original
-		STA $BF
-	
-	DecPCHealthTimer:
-	REP #$20
-	DEC $BF ;Timer before health can be restored original
-	BNE SkipDisplayHealing
-	
-		LDA #$00B5 ;Timer before health can be restored
-		STA $BF
-
-		SEP #$20
-		LDA $27 ;Loads current PC health
-		JSL PCHealthGetCMP ;Load routine to compare PC's max health to what is in a temporary variable to determine if they can heal or not.
-		BPL ContinueToSubTanks
-		
-			JSL PCIncreaseHealthCounter ;Load routine to increase PC's current health.
-			
-			LDA !PCHealCounter_7EF4EA ;Load Heal Counter byte
-			ADC $27 ;Add PC's current health
-			STA $27 ;Store back to PC's current health
-			BRA DisplayHealingAndSound
-
-	ContinueToSubTanks:
-		JSL PCSubTankHealHealthChip ;Load routine to use the PC's Health Chip to heal current health.
-		BNE DisplayHealing
-			BRA SkipDisplayHealing
-		
-		DisplayHealingAndSound:
-			LDA #$16
-			JSL !PlaySFX
-			
-	DisplayHealing:
-		JSR $B6A7
-	
-SkipDisplayHealing:
-	SEP #$20
-	RTS
-}
-
-org $8385D2 ;Original code location that checks for any Heart Tanks obtained on stages in the "Stage Select" menu
-{
-	PHA : PHX
-	LDA !Difficulty_7EF4E0
-	BIT #$01
-	BNE CheckStageSelectHeartTankSolo
-	
-	
-	LDA !XHeartTank_7EF41C
-	ORA !ZeroHeartTank_7EF44C
-	ORA !PC3HeartTank_7EF47C
-	ORA !PC4HeartTank_7EF4AC
-	STA $0000
-	
-	StageSelectHeartTankCommon:
-	LDA $9C0C,x
-	TAX
-	LDA $0000
-	DEX
-	BIT !BasicBITTable,x
-	BNE StageSelectHeartTankEndRoutine
-	
-	StageSelectHeartTankIncreaseEnd:
-	PLX : PLA
-	INC
-	RTS
-	
-	StageSelectHeartTankEndRoutine:
-	PLX : PLA
-	RTS
-	
-	CheckStageSelectHeartTankSolo:
-	STX $0002
-	LDA !CurrentPCCheck_1FFF
-	ASL #3
-	STA $0000
-	ASL
-	CLC
-	ADC $0000
-	TAX
-	LDA !XHeartTank_7EF41C,x
-	STA $0000
-	
-	LDX $0002
-	BRA StageSelectHeartTankCommon
-}
-
-}
-
-
 ;***************************
 ;***************************
 ; Various enemy AI changes that remove the hardcoded collision damage that gets set in the AI.
@@ -348,10 +131,10 @@ org $858E9C ;Original code location for Godkarmachine O Inary's storage for coll
 	NOP #4 ;Removed as a table handles this already
 org $B2F313 ;Original code location for Godkarmachine O Inary Parts?'s storage for collision damage.
 	NOP #4
-; org $B2F331 ;Original code location for Godkarmachine O Inary's Hand #1 storage for collision damage.
-	; NOP #4
-; org $B2F371 ;Original code location for Godkarmachine O Inary's Hand #2 storage for collision damage.
-	; NOP #4
+org $B2F331 ;Original code location for Godkarmachine O Inary's Hand #1 storage for collision damage.
+	NOP #4
+org $B2F371 ;Original code location for Godkarmachine O Inary's Hand #2 storage for collision damage.
+	NOP #4
 org $8599C6 ;Original code location for Kaiser Sigma's Parts storage for collision damage.
 	NOP #4
 org $878E78 ;Original code location for Kaiser Sigma's Parts storage for collision damage.
@@ -375,7 +158,6 @@ org $85A30C ;Original code location for Vile (Ride Armor) Mini-Boss's storage fo
 ;***************************
 ; Loads Zero's death scene at Dr. Cain's lab. (Removed as it's no longer needed)
 ;***************************
-{
 org $849340
 	NOP #12
 org $8492AB
@@ -387,18 +169,22 @@ org $849282
 	LDA #$7A
 	JSR $B8F4
 	NOP #14
-}
 	
+;***************************
+;***************************
+; Sets PC's CURRENT health to max upon entering a level
+;***************************
+org $80A1CB
+	LDA #$FF
+	STA $09FF
 	
 ;***************************
 ;***************************
 ; Plays SFX in menu when you decide to switch characters. (Loads same code but now sets $7E1F12 to 04 so the life bar is not on screen when menu closes)
 ;***************************
-{
 org $80C9FC ;Original code location that plays SFX when switching characters.
 	JSL PCSwapNoBar ;Loads routine that does the same thing but then disables the life bar as well so it does not appear on screen.
 	NOP #2
-}
 
 ;***************************
 ;***************************
@@ -431,6 +217,7 @@ org $84CD82 ;Prevents Zero from using Body Armor upgrade
 	NOP #5
 }
 
+	
 ;***************************
 ;***************************
 ; Sets new sprite assembly for small & large health capsules and changes VRAM refresh to load decompressed graphics from ROM instead.
@@ -442,7 +229,6 @@ org $84CD82 ;Prevents Zero from using Body Armor upgrade
 ;CC = FD
 ;CD = FE
 ;Changing Sprite Assembly of small health capsule
-{
 org $8DF1F4 ;Frame #1
 {
 	db $02 ;How many chunks to draw
@@ -496,13 +282,11 @@ org $80A2BA ;Loads general VRAM (Compressed) when starting game/loading levels.
 org $80CCD5 ;Loads general VRAM (Compressed) when leaving menu. (Changed to load decompressed graphics routine)
 	JSL GeneralVRAMLeaveMenu
 	NOP
-}
 
 ;***************************
 ;***************************
 ; Some PC settings when entering a level
 ;***************************
-{
 org $8481CD ;Loads PC sprite setup upon game start or level start
 	JMP NewStartArmorLocation ;Now properly loads new location
 	
@@ -544,23 +328,18 @@ SkipSetPCArmor:
 	SEP #$30
 	RTS
 }
-
-}
-
+	
 ;***************************
 ;***************************
 ; Removes excess code not needed for X or Zero
 ;***************************
-{
 org $93C5E9 ;Removes storage of #$80 to !CurrentHealth
 	NOP #5
-}
 	
 ;***************************
 ;***************************
 ; Set sprite priority of Ride Armors
 ;***************************
-{
 org $839432 ;Checks if you're using the F Ride Armor, if so, set the sprite priority to be ABOVE sprites, othewise, behind.
 	JSL SetJumpValues
 	JSL RideArmor_SpritePriorities
@@ -570,22 +349,18 @@ org $85C5F7 ;Sprite priority of junker maverick that holds Ride Armor in Blast H
 	
 org $8395EB ;Sprite priority of Ride Armor in Blast Hornet's level when you first retrieve it.
 	LDA #$02
-}
 	
 ;***************************
 ;***************************
 ; Set ladder coordinates
 ;***************************
-{
 org $849F3F ;Fixes PC's being way above ladder after they get off
 	ADC #$001C
-}
 
 ;***************************
 ;***************************
 ; Ride Armor Pad alterations
 ;***************************
-{
 org $83D75C ;Now checks if you have ANY Ride Armor Chip instead of the first
 	LDA !RideChipsOrigin_7E1FD7
 	BEQ $25
@@ -619,21 +394,19 @@ SkipRideArmorEnd:
 	JMP $D890
 	JMP $DAA4
 }
-}
+
 
 ;***************************
 ; Stores PC icon into VRAM when PC data is loaded whatsoever on screen.
 ;***************************
-{
 org $80A2C3
 	JSL PCIconBase
-}
 
+;***************************
 ;***************************
 ; Removes original palette data pointers location and moves it to bank $C8
 ; Alters palette code so it has a larger bank usage instead of $86 as it's base.
 ;***************************	
-{
 org $81806B
 {
 	LDA #$8C ;Bank of where palettes are loaded
@@ -647,12 +420,9 @@ org $81806B
 	NOP
 	SEP #$30
 }
-}
-
 ;*********************************************************************************
 ;Loads normal game routine but then after loads a new routine to blank out PC RAM area.
 ;*********************************************************************************
-{
 org $8080B0 ;Load routine to end clearing RAM routine at start of game
 	JSR $FA3F
 
@@ -660,7 +430,26 @@ org $80FA3F ;Jump to here to allow routine to finish
 	JSR $8590
 	JSL ClearPCRAM ;Load routine to clear PC RAM
 	RTS
+	
+
+;*********************************************************************************
+;Routines to check PC's life and update it upon entering levels, swapping characters, pre-setting life before entering a level, etc...
+;*********************************************************************************
+org $8099B5 ;Original code here set PC's health upon selecting 'New Game'. Removed as this is already handled by the 'Heart Tank' routine.
+	NOP #5
+
+org $8480C3	;Altered the original code just slightly so it doesn't empty the PC check. It loads !CurrentPCCheck_1FFF and stores to !CurrentPC_0A8E.
+{
+	LDA !CurrentPCCheck_1FFF
+	STA !CurrentPCShort_B6
+	JSL HeartTank ;Load brand new routine that determines each PC's max health based on how many heart tanks obtained.
 }
+	
+org $8480D6	;Sets each PC's Max Health to 'FF' upon entering a level so a non-active PC's life won't be blank when swapping out.
+;This prevents the other PC's from causing a death upon switch since their max life will be determined as you swap with them.
+;This code also sets the JumpDashFlag to 01 to allow the PC's air dash/jumping total be able to be set.
+	JSL SetLifeAndSwapHealth
+	NOP
 	
 ;*********************************************************************************
 ; Sets PCs life when swapping characters in a level.
@@ -813,31 +602,53 @@ org $848D6D ;Loads entire routine for swapping PCs in-game
 	JMP $A75B
 }
 }
-
+;*********************************************************************************
+; Sets PC's max health upon level load or after a cut-scene is done when it switches characters by using the Heart Tank routine.
+; The original code locations had a storage for their max health but that is removed as the new HeartTank routine covers that.
+;*********************************************************************************
+org $809B7C ;Sets PC's max health upon entering a level
+	JSL HeartTank ;Load the main Heart Tank routine to determine PC's max health.
+org $8480C8 ;Set's PC max health after a cut-scene
+	JSL HeartTank ;Load the main Heart Tank routine to determine PC's max health.
+	
+;*********************************************************************************
+; Routine to increase PC's health upon retrieving a Heart Tank.
+; Does the same thing but now it increases ALL PC's max health.
+; DIFFICULTY BASED:
+; Normal = Increase ALL PC's max health!
+; Hard or above = Increase only CURRENT PC's max health!
+;*********************************************************************************	
+org $81E9D1 ;Loads code location that originally increased PC's max health when obtaining a Heart Tank.
+	JSL HeartTankGet ;Load routine to set PC's new max health upon obtaining a Heart Tank.
+	INC !CurrentHealth_09FF
+	
 ;*********************************************************************************
 ; Sets command to NOT remove the #$80+ value on PC action command when PCs get paused
 ; THIS IS EXTREMELY EXPERIMENTAL
-;*********************************************************************************
-{
+;*********************************************************************************	
 org $84D151 ;This removes a specific check to see if anything was above PC command #$54, if so, it'd FORCE animation reset instead of letting it resume.
 	NOP #4
-}
+	
+	
+;*********************************************************************************
+; Routine to increase the "Heart Tank" counter when one is obtained.
+; Now increases the Heart Tank counter depending on who collects it.
+;*********************************************************************************	
+org $81E968 ;Load code location that originally increased Heart Tank counter. 
+	JSL HeartTankStore ;Load routine to increase the Heart Tank counter for each PC.
 	
 ;*********************************************************************************
 ; Routine to compare PC's max health to current health to determine if they use to their "low health" animation or not.
 ; Now checks each PC's max health separately incase of varying health.
 ;*********************************************************************************
-{
 org $84B104 ;Load code location that originally checked the PC's health to determine if they use their "low health" animation or not.
 	JSL PCLowHealthAni ;Load routine to check PC's health to determine if they do their low health animation or not.
 ;*********************************************************************************
 	NOP
-}
 	
 ;*********************************************************************************	
 ; Loads PC's icon when jumping out of a Ride Armor and when opening/closing menu
 ;*********************************************************************************
-{
 org $83A253 ;Loads code location to set PC icon when jumping out of Ride Armor.
 	JSL PCIconRoutine  ;Loads routine to set which icon PC will use when jumping out of a Ride Armor.
 	NOP #2
@@ -858,7 +669,6 @@ org $80D664
 ; Now moved and has a separate table for each character to determine when they can switch.
 ; Now has a separate routine to determine the portraits of the characters you can swap too as well.
 ; Now can swap WITH Z-Saber if on New Game+ as long as the Z-Saber value is $E0+
-; Now moves all menu commands to new location to allow adding new code to disable chips at will.
 ;*********************************************************************************
 org $80CBB2 ;Routine to send Ride Chip sprites into VRAM. Then sets routine to determine if you can swap PCs or not. Also loads their portraits.
 {
@@ -897,75 +707,108 @@ org $80CBB2 ;Routine to send Ride Chip sprites into VRAM. Then sets routine to d
 	PCSwapping_IgnoreStaticAndDisabling:
 }
 
+	
 org $80D035 ;Original code that checks for BIT being set for Mosquitus warning then sets Layer 1 priority.
 ;Changed so now it sets Layer 1 priority to what it should be and then sets the Layer 1 coordinates to #$8DFF so it appears on screen properly.
-{
 	JSL MosquitusWarningSetLayerProperties
+	
+;*********************************************************************************
+; Routine to draw PC's max health bar on screen.
+;*********************************************************************************
+org $839058 ;Loads original code location that draws PC's health bar to screen.
+{
+	JSL HealthDraw ;Load routine to draw PC's health on screen
+	LDA #$FF
+	STA $10
+	LDA #$09
+	STA $11
+	LDA !CurrentHealth_09FF
+	BMI ignoreJMP9194
+	JMP $9194
+	
+ignoreJMP9194:
+	AND #$7F
+	JSL HealthCompare ;Load routine to compare the PC's health to their current health on screen
+	BCC $06
+	JSL HealthCMPStore ;Load routine to store PC's Max health to their current health if they have full health.
+	NOP #2
 }
 	
-org $80C712 ;Original code location that loads pointers to each menu command.
-{
-	JMP ($FA85,x)
-}
+;*********************************************************************************
+; Compares PC's current health to max health to determine if they need to heal or not when retrieving a healing object
+;*********************************************************************************
+org $81D830 ;Load code location to check for general PC healing (Possibly large capsule)
+	NOP
+	JSL PCHealthGetCMP ;Load routine to determine if PC's health gets filled or not.
 
-org $80FA85 ;New code location that has all pointers to each menu command.
-{
-	dw $C75E ;Sub-weapons
-	dw $C830 ;Sub-tanks
-	dw $C93F ;Exit
-	dw $C996 ;"R" button scrolling BG1
-	dw $C9EF ;Exchange PC screen
-	dw $CA3F ;Draw exchange text
-	dw $CA61 ;Finished exchange text
-	dw $C9C6 ;???
-	dw $CA2E ;Wait timer for Mosquitus warning
-	dw $CA3F ;Draw Mosquitus warning text
-	dw $CA61 ;Finished Misquitus warning text
+org $81D8D9 ;Load code location to check for general PC healing (Possibly small capsule)
+	INC
+	JSL PCHealthGetCMP ;Load routine to compare PC's max health to what is in a temporary variable to determine if they can heal or not.
+	BCC endhealth
+	LDA #$04 ;How much health to heal
+	STA $03
+	LDA $0004
+endhealth:
+	NOP #3
+	STA $09FF
+
+;*********************************************************************************
+; Compares PC's current health to max health to determine if they need to heal or not when regenerating from capsule part then continues to sub-tanks
+;*********************************************************************************
+org $84A9FC
+	LDA $C1 ;Check if PC on ground or doing action
+	BNE DecPCHealthTimer
 	
-	;NEW
-}
+		LDA #$00 ;Loads value of #$00 so there's nothing
+		STA !PCHealCounter_7EF4EA  ;Store so PC Heal counter variable is #$00
+		INC $C1
+		
+		REP #$20
+		LDA #$0135 ;Timer before health can be restored original
+		STA $BF
+	
+	DecPCHealthTimer:
+	REP #$20
+	DEC $BF ;Timer before health can be restored original
+	BNE SkipDisplayHealing
+	
+	LDA #$00B5 ;Timer before health can be restored
+	STA $BF 
+	SEP #$20
+	LDA $27 ;Loads current PC health
+	JSL PCHealthGetCMP ;Load routine to compare PC's max health to what is in a temporary variable to determine if they can heal or not.
+	BPL ContinueToSubTanks
+	JSL PCIncreaseHealthCounter ;Load routine to increase PC's current health.
+	
+	LDA !PCHealCounter_7EF4EA ;Load Heal Counter byte
+	ADC $27 ;Add PC's current health
+	STA $27 ;Store back to PC's current health
+	BRA DisplayHealingAndSound
 
-org $80CEB0 ;Load single byte data for moving in Main Menu setting which command does what.
-{
-	db $0A ;Sub-weapons to sub-tanks
-	db $00 ;X-Buster
-	db $01 ;Sub-weapon #1
-	db $02 ;Sub-weapon #2
-	db $03 ;Sub-weapon #3
-	db $04 ;Sub-weapon #4
-	db $05 ;Sub-weapon #5
-	db $06 ;Sub-weapon #6
-	db $07 ;Sub-weapon #7
-	db $08 ;Sub-weapon #8
-	db $08 ;Hyper Chip?
-	db $FF ;0B
-	db $FF ;0C
-	db $FF ;0D
-	db $FF ;0E
-	db $FF ;0F
-	db $FF ;10
-	db $FF ;11
-	db $FF ;12
-	db $FF ;13
-	db $FF ;14
-	db $FF ;15
-	db $FF ;16
-	db $FF ;17
-	db $FF ;18
-}
-}
-
+ContinueToSubTanks:
+	JSL PCSubTankHealHealthChip ;Load routine to use the PC's Health Chip to heal current health.
+	BNE DisplayHealing
+	BRA SkipDisplayHealing
+	
+DisplayHealingAndSound:
+	LDA #$16
+	JSL !PlaySFX
+DisplayHealing:
+	JSR $B6A7
+	
+SkipDisplayHealing:
+	SEP #$20
+	RTS
+	
 ;*********************************************************************************
 ; Sets new X/Y coordinate for health bar in menu then loads new RAM locations for PC's max health.
 ; Also sets X/Y coordinates of lives counter and PC
 ;*********************************************************************************
 org $80CC74 ;Loads original code location to load a JSR to get PC Health Bar in menu routine
-{
 	JSL PCSHealthBar_InMenu ;Routine that loads X and Zero's Health Bars in the menu
 	NOP #4
-}
+
 org $80D521 ;Loads original code location for entire routine to load PC's health bar in the menu
-{
 	PCHealthBar_LoopLoadHealth:
 	LDA $0004
 	BEQ PCHealthBar_Load11
@@ -1025,38 +868,32 @@ org $80D451 ;Loads original code to set X/Y coordinates and counter for PC lives
 org $80CE3B ;Original code location to set PC's X/Y coordinates in the menu
 	JSL LoadPC_XYCoordinates_Menu
 	NOP #4
-}	
+	
 	
 	
 ;*********************************************************************************
 ; Sets sub-tank data to RAM upon collection
 ;*********************************************************************************
-{
 org $81DC33 ;Load original code location to load a sub-tank to determine if you have one or not.
-{
 	JSR $FF77
 	
 	org $81FF77
 		JSL LoadSubTank ;Load routine to load a sub-tank to determine if you have one or not.
 		RTS
-}
+
 org $81DC3A ;Load original code location to store sub-tanks upon collecting.
-{
 	JSR $FF7C
 	
 	org $81FF7C
 		JSL StoreSubTank ;Load routine to store sub-tanks upon collecting.
 		RTS
-}
+		
 org $81DC3F ;Load original code location to collect the sub-tank and set new values to state which one has been collected.
-{
 	JSR $FF81
 	
 	org $81FF81
 		JSL CollectSubTank ;Load routine to collect the sub-tank and set new values to state which one has been collected.
 		RTS
-}
-}
 
 ;*********************************************************************************
 ; Load sub-tanks up properly in Main Menu for multiple PCs. This is based on difficulty!
@@ -1064,7 +901,6 @@ org $81DC3F ;Load original code location to collect the sub-tank and set new val
 ; Hard or above = Display only the sub-tanks CURRENT PC has collected!
 ;*********************************************************************************
 org $80D485 ;Original routine NOP out
-{
 	STZ $0002 ;Sub-Tank counter
 	
 	BeginSubTankDraw:
@@ -1075,13 +911,13 @@ org $80D485 ;Original routine NOP out
 	CMP #$04
 	BNE BeginSubTankDraw
 	RTS
-}
+	
 org $80D520 ;Change draw sub-tank routine to RTL
 	RTL
+
 ;*********************************************************************************
 ; Select sub-tanks in Main Menu depending on PC having sub-tanks
 ;*********************************************************************************
-{
 org $80C955 ;Checks sub-tanks when moving 'left' from exit icon.
 	JSR IgnoreStoreTo ;Load routine that loads another routine to check which sub-tank to load when pressing 'Left'
 	BPL $EC
@@ -1095,67 +931,53 @@ org $80FA4F
 	IgnoreStoreTo:
 	JSL SelectSubTankMenu ;Load routine for selecting sub-tanks in the menu
 	RTS
-}
 	
 ;*********************************************************************************
 ; Select sub-tank and check HP on having sub-tanks
 ;*********************************************************************************
-{
 org $80C8F0 ;Check sub-tank and change the highlighting when selecting
-{
 	JSL SelectCheckSubTank
 	CMP #$0F
 	BCC highlightsubtank
 	LDY #$0E
-	
-	highlightsubtank:
+highlightsubtank:
 	LDA #$2C
 	JSL $80D4AF
 	RTS
-}
+	
 org $80C8D8 ;Check sub-tank and change the highlighting when selecting
-{
 	JSL SelectCheckSubTank
 	CMP #$0F
 	BCC highlightsubtank2
 	LDY #$0E
-	
-	highlightsubtank2:
+highlightsubtank2:
 	LDA #$38
 	JSL $80D4AF
 	RTS
-}
-}
 	
 ;*********************************************************************************
 ; Select sub-tank and check another sub-tank for highlighting
 ;*********************************************************************************
 org $80C886 ;Check sub-tank and draw change the highlighting when selecting
-{
 	JSR $FF55
 	
-	org $80FF55
-		JSL SelectNextSubTank
-		RTS
-}
+org $FF55
+	JSL SelectNextSubTank
+	RTS
 	
 ;*********************************************************************************
 ; Using sub-tank to recover HP on PC
 ; DIFFICULTY BASED
 ;*********************************************************************************
-{
-org $80C8A8 ;Load routine to check PC's Max Health when recovering HP using a sub-tank.
-{
-	JSL CheckPCMaxHealth
+org $80C8A8
+	JSL CheckPCMaxHealth ;Load routine to check PC's Max Health when recovering HP using a sub-tank.
 	NOP #4
-}
+	
 org $80C8B4 ;Check sub-tank when USING it.
-{
 	JSL UsingSubTank ;Load routine to check what sub-tank you're using while the sub-tank is in use to restore HP.
 	NOP
-}
+	
 org $80C901 ;Routine to rewrite the sub-tank healing routine for PC health (Removed the routine to re-order sub-tanks after use)
-{
 	DEC $2A
 	BNE SubTankFinished
 	
@@ -1192,38 +1014,35 @@ org $80C901 ;Routine to rewrite the sub-tank healing routine for PC health (Remo
 	JSL LoadMainPCHealthBar
 	JSR $D485
 	RTS
-}
-}
+	
 	
 
 ;*********************************************************************************
 ; Filling sub-tank when collecting HP capsules and you have full life
 ;*********************************************************************************
-{
 org $81D837
 	NOP #5
 	
 org $81D84A ;Loads sub-tank to check if health can be stored into it.
 	JSR $FF86
+	
+org $81FF86
+	JSL SelectSubTank
+	RTS
+	
 org $81D85C ;Stores health value into sub-tank
 	JSR $FF8B
-org $81D869 ;Stores health value into sub-tank again
-	JSR $FF8B
-	
 	
 org $81FF8B
 	JSL StoreToSubTank
 	RTS
 	
-org $81FF86
-	JSL SelectSubTank
-	RTS
-}
+org $81D869 ;Stores health value into sub-tank again
+	JSR $FF8B
 
 ;*********************************************************************************
 ; Setting sub-weapon projectile X/Y coordinates with PC's
 ;*********************************************************************************
-{
 org $818C38 ;Load original code location to get each PC's single-byte sub-weapon data to get their X/Y coordinates.
 	JSL PCSingleByteSubWeapSetup ;Load routine to get each PC's single-byte sub-weapon data to get their X/Y coordinates.
 	
@@ -1335,12 +1154,10 @@ org $81965B
 org $81BECA ;Routine altered so now charged drill can be used by anyone
 	NOP #8
 	SEP #$20
-}
 	
 ;*********************************************************************************
 ; Load routine to determine if Hyper Charge can be used
 ;*********************************************************************************
-{
 org $84AA46 ;Loads original code location to determine if Hyper Charge has enough life to be used by PC
 	JSL CheckForHyperChargeData ;Loads new routine to specifically check for certain circumstances for Hyper Charge to not work
 	NOP
@@ -1424,137 +1241,131 @@ org $818851 ;Load original code location to allow which PC to load Hyper Charge 
 
 org $84AAFF ;Load original code location that allowed X to use the Z-Saber with Hyper Charge
 	NOP #9 ;Removed now so X CANNOT use the Z-Saber with the Hyper Charge.
-}
+	
 ;*********************************************************************************
 ; Loads helmet sensor and determines who can use it
 ;*********************************************************************************
-{
 org $84A81C ;Loads original location of code that determined who could use the Helmet Sensor upon entering a level.
 	SEP #$30
 	JSL PCHelmetSensor ;Load routine to determine who could use the Helmet Sensor upon entering a level.
 	NOP
-}
-;*********************************************************************************
-; Loads helmet chip upgrade and determines who can use it (Regenerates life)
-;*********************************************************************************
-{
-org $84A9E0 ;Load original code location to determine which PC was able to use Helmet Chip Enhancement  life regeneration
-	JSL PCHelmetChip ;Load routine to determine which PC can use Helmet Chip Enhancement life regeneration
-	NOP #5
-}
+
 ;*********************************************************************************
 ; Loads body armor upgrade and determines who can use it (Cuts damage in half and generates a force field originally. Force field is removed!)
 ;*********************************************************************************
-{
 org $84CE3C ;Loads original code location to determine who can use the Armor Upgrade to cut damage in half.
-{
 	LDA $09FE
 	CMP #$7F
 	BEQ EndBodyArmorRoutine
 	
-		JSL PCBodyArmor ;Loads routine to determine who can use the Armor Upgrade to cut damage in half.
-		BEQ EndBodyArmorRoutine
-		
-			LDA $0000
-			STA $0002
-			
-			LSR $0000
-			
-			JSL PCBodyChip
-			BEQ TestBodyChipDamage
-			
-				LDA $0002
-				BIT #$08
-				BNE DoProper75Percent
-					BRA Subtract3Instead
-				
-				DoProper75Percent:
-				LSR $0000
-				BRA TestBodyChipDamage
-				
-				Subtract3Instead:
-				DEC $0000
-				DEC $0000
-				DEC $0000
-				
-				TestBodyChipDamage:
-				LDA $0000
-				BEQ SetDamageTo01
-				BPL EndBodyArmorRoutine
-			
-			SetDamageTo01:
-			LDA #$01
-			STA $0000
-		
+	JSL PCBodyArmor ;Loads routine to determine who can use the Armor Upgrade to cut damage in half.
+	BEQ EndBodyArmorRoutine
+	LDA $0000
+	STA $0002
+	
+	LSR $0000
+	
+	JSL PCBodyChip
+	BEQ TestBodyChipDamage
+	LDA $0002
+	BIT #$08
+	BNE DoProper75Percent
+	BRA Subtract3Instead
+	
+	DoProper75Percent:
+	LSR $0000
+	BRA TestBodyChipDamage
+	
+	Subtract3Instead:
+	DEC $0000
+	DEC $0000
+	DEC $0000
+	
+	TestBodyChipDamage:
+	LDA $0000
+	BEQ SetDamageTo01
+	BPL EndBodyArmorRoutine
+	
+	SetDamageTo01:
+	LDA #$01
+	STA $0000
+	
 	EndBodyArmorRoutine:
 	RTS
-}
 	
 org $84869E ;Loads code to play a SFX when you're damaged and are on the ground as the routine finishes
 	JSL PC_DamageReset_SetJumpValues
 	NOP #2
-}
+	
+	
 ;*********************************************************************************
 ; Loads buster upgrade and determines who can use it (Cuts sub-weapon ammo usage in half)
 ;*********************************************************************************	
-{
 org $84A566 ;Loads sub-weapon ammo usage then determine who can use buster upgrade for halving sub-weapon ammo usage
 {
 	SEP #$20
 	LDX !CurrentPCSubWeapon_0A0B ;Loads PC's current sub-weapon
 	BEQ EndSubWeaponHalving01 ;If !CurrentPCSubWeapon_0A0B == 00, jump to EndSubWeaponHalving01 and end routine.
 	
-		LDA $0006 ;Loads $7E:0006 (Determines if weapon is charged or not)
-		CMP #$04
-		BEQ LoadChargeSubWeaponAmmo
-		
-			LDA $B353,x ;Load table to get the sub-weapon ammo usage UNCHARGED
-			STA $0002 ;Store sub-weapon ammo usage to temp. variable $0002
-			STX $0010 ;Store current sub-weapon to temp. variable $0010
-			JSL PCBusterUpgrade ;Load routine to determine who is capable of having their sub-weapon ammo usage halved.
-			
-			STA $0010 ;Store value to temp. variable $0010
-			AND #$1F ;AND #$1F value
-			BEQ EndSubWeaponHalving02 ;If == 00, jump to EndSubWeaponHalving02 and end routine.
-			
-				JSL SubWeapon_CheckUnderFlow ;Jump to SubWeapon_CheckUnderFlow to halve the ammo usage of all sub-weapons.
-				JSR $FFB0 ;Load jump to $84FFB0 to load routine to store the PC's sub-weapon ammo back to whichever PC used it it.
-				LDA #$00
-				XBA
-				
-				STZ $0004
-				LDA $0006
-				CMP #$04
-				BNE EndSubWeaponHalving01
+	LDA !CurrentPCChargeTime_0A2F ;Loads the current charge time of PC
+	CMP #$8C ;Check if the value is #$8C
+	BCS LoadChargeSubWeaponAmmo ;If value is >= #$8C, then it loads the LoadChargedSubWeaponAmmo to get the charged ammo usage.
+	
+	LDA $B353,x ;Load table to get the sub-weapon ammo usage UNCHARGED
+	STA $0002 ;Store sub-weapon ammo usage to temp. variable $0002
+	STX $0010 ;Store current sub-weapon to temp. variable $0010
+	JSL PCBusterUpgrade ;Load routine to determine who is capable of having their sub-weapon ammo usage halved.
+	STA $0010 ;Store value to temp. variable $0010
+	AND #$1F ;AND #$1F value
+	BEQ EndSubWeaponHalving02 ;If == 00, jump to EndSubWeaponHalving02 and end routine.
+	JSR CutSubWeaponInHalf ;Jump to CutSubWeaponInHalf to halve the ammo usage of all sub-weapons.
+	STZ $0004
+	LDA $0006
+	CMP #$04
+	BNE EndSubWeaponHalving01
 
-					LoadChargeSubWeaponAmmo: ;Load routine for charged sub-weapon ammo
-					LDA $B368,x ;Load table to get the sub-weapon ammo usage CHARGED
-					STA $0002 ;Store sub-weapon ammo usage to temp. variable $0002
-					JSL PCBusterUpgrade ;Load routine to determine who is capable of having their sub-weapon ammo usage halved.
-					
-					STA $0010 ;Store value to temp. variable $0010
-					AND #$1F ;AND #$1F value
-					BEQ EndSubWeaponHalving02 ;If == 00, jump to EndSubWeaponHalving02 and end routine.
-					
-					JSL SubWeapon_CheckUnderFlow ;Jump to SubWeapon_CheckUnderFlow to halve the ammo usage of all sub-weapons. 
-					JSR $FFB0 ;Load jump to $84FFB0 to load routine to store the PC's sub-weapon ammo back to whichever PC used it it.
-					LDA #$00
-					XBA
-					
-					LDA #$0B
-					STA $0004
-				
-			EndSubWeaponHalving01:
-				PLP
-				PLY
-				CLC
-				RTS
-				
-		EndSubWeaponHalving02:
-			PLP
-			PLY
-			SEP #$03
-			RTS
+LoadChargeSubWeaponAmmo: ;Load routine for charged sub-weapon ammo
+	LDA $B368,x ;Load table to get the sub-weapon ammo usage CHARGED
+	STA $0002 ;Store sub-weapon ammo usage to temp. variable $0002
+	JSL PCBusterUpgrade ;Load routine to determine who is capable of having their sub-weapon ammo usage halved.
+	STA $0010 ;Store value to temp. variable $0010
+	AND #$1F ;AND #$1F value
+	BEQ EndSubWeaponHalving02 ;If == 00, jump to EndSubWeaponHalving02 and end routine.
+	JSR CutSubWeaponInHalf ;Jump to CutSubWeaponInHalf to halve the ammo usage of all sub-weapons. 
+	LDA #$0B
+	STA $0004
+	
+EndSubWeaponHalving01:
+	PLP
+	PLY
+	CLC
+	RTS
+	
+EndSubWeaponHalving02:
+	PLP
+	PLY
+	SEP #$03
+	RTS
+	
+CutSubWeaponInHalf:
+	LDA $0010 ;Load current sub-weapon life
+	BVS StoreEmptySubWeapon ;Branches to store empty sub-weapon ammo if underflow occurs
+	
+;Subtracts sub-weapon life then stores #$00C0 to if empty.	
+	SEC ;Set carry flag
+	SBC $0002 ;Subtract sub-weapon ammo usage from current sub-weapon ammo
+	STA $0010 ;Store new sub-weapon ammo to temp. variable $0010
+	CMP #$40 ;Check if it's #$40
+	BEQ StoreEmptySubWeapon ;If it's == #$40, jump to StoreEmptySubWeapon so the game knows you have the sub-weapon, but it's empty.
+	LDA $0010 ;Load current sub-weapon life
+	BNE IgnoreSubWeaponStoreEmpty ;If > 00, jump to IgnoreSubWeaponStoreEmpty to store sub-weapon life properly back to which PC.
+StoreEmptySubWeapon:
+	LDA #$C0 ;Load value of #$C0 so the game knows you have a sub-weapon but it's empty.
+IgnoreSubWeaponStoreEmpty:
+	JSR $FFB0 ;Load jump to $84FFB0 to load routine to store the PC's sub-weapon ammo back to whichever PC used it it.
+	LDA #$00
+	XBA
+	RTS
 }
 	
 org $84FFB0 ;Sets storing sub-weapon location for split PCs in bank $84
@@ -1564,12 +1375,18 @@ org $84FFB0 ;Sets storing sub-weapon location for split PCs in bank $84
 org $84FFB5 ;Sets loading sub-weapon location for split PCs in bank $84
 	JSL LoadPCSplitSubWeapon
 	RTS
-}
+
+;*********************************************************************************
+; Loads helmet chip upgrade and determines who can use it (Regenerates life)
+;*********************************************************************************
+org $84A9E0 ;Load original code location to determine which PC was able to use Helmet Chip Enhancement  life regeneration
+	JSL PCHelmetChip ;Load routine to determine which PC can use Helmet Chip Enhancement life regeneration
+	NOP #5
+	
 ;*********************************************************************************
 ; Loads leg upgrade and determines who can use it and the circumstance
 ; Loads code to determine what each character does for the Vertical Dash animation
 ;*********************************************************************************
-{
 org $84A95B ;Load original code location that determined which PC is able to use the Leg Upgrade
 	JSL PCLegUpgrade ;Load routine to determine which PC is able to use the Leg Upgrade
 	NOP #5
@@ -1603,12 +1420,13 @@ org $848BCA ;Rewrites the Vertical Dash FINISHED animation routine so it does no
 org $BFDDA4 ;Animation Data of Vertical Dash. (Altered so it doesn't have broken graphics anymore)
 	db $04,$00,$00,$01,$00,$04,$01,$00,$02,$01,$00,$03,$01,$00,$04,$01
 	db $80,$05,$EE,$FF
-}
 
+
+
+	
 ;*********************************************************************************
 ; Sets new jump/dash/air dash code and how many times you can do certain acts in the air
 ;*********************************************************************************
-{
 org $848BB3 ;Code for dashing in air. Altered so now there's no wait time to air dash.
 beginairdashalter:
 	STZ $4F
@@ -1672,12 +1490,21 @@ org $84A9D4 ;Load original code location that checked the button combo to specif
 	
 org $84948C ;Load original code location to set data for when PC is firing the 2nd time with their level 4 charge shot. (On the ground!)
 	JSL Buster_ResetJumpValue
-}
 	
+;*********************************************************************************
+; Sets max weapon select to '12' and leaves 2-bytes for value 14 blank.
+;*********************************************************************************
+org $80A3B0
+	LDX #$12
+org $80A3BE
+	LDX #$12
+
+org $80C5C7 ;Removes storage of 00 to $7E:1FCD
+	NOP #3
+
 ;*********************************************************************************
 ; Disables forcefield from ever spawning with armor upgrades
 ;*********************************************************************************
-{
 org $8487F6 ;Disables routine for Forcefield generating
 	NOP #3
 org $848691 ;Disables routine for Forcefield generating
@@ -1686,30 +1513,21 @@ org $8486C4 ;Disables routine for Forcefield generating
 	NOP #3
 org $848771 ;Disables routine for Forcefield generating
 	NOP #3
-}
 
+	
 ;*********************************************************************************
 ; Alters X-Buster Cross-Over so it actually 'crosses' instead of full screen spam
 ; Alters Level 4/Level 5 Helix shot so it doesn't spread out as far so it hits enemies easier
 ;*********************************************************************************
-{
 org $86BBA0 ;Sets upward trajectory (low byte), speed increase over time Sets speed, speed, upward trajectory (high byte) downward trajectory, palette and various other data for Cross-Over Shot
 {
 	db $00,$00,$00,$F6,$00,$00,$06,$00 ;Main Middle Buster
 	
 	db $60,$30,$00,$FF,$00,$05,$06,$00 ;1st Top Pellet
-	db $A0,$30,$00,$FF,$00,$FB,$06,$00 ;1st Bottom Pellet
+	db $A0,$30,$00,$FF,$00,$FB,$06,$00 ;2nd Bottom Pellet
 	db $70,$60,$00,$03,$00,$07,$04,$00 ;2nd Top Pellet
 	db $90,$60,$00,$03,$00,$F9,$04,$00 ;2nd Bottom Pellet
 	db $00,$08,$54,$01,$2D,$DD,$3A,$00 ;Plasma trail, graphics, object to spawn?
-	
-	; db $00,$18,$00,$00,$00,$00,$06,$00 ;Main Middle Buster
-
-	; db $00,$7F,$00,$08,$80,$01,$06,$00 ;1st Top Pellet
-	; db $00,$7F,$00,$08,$80,$FE,$06,$00 ;1st Bottom Pellet
-	; db $00,$60,$00,$06,$C0,$00,$04,$00 ;2nd Top Pellet
-	; db $00,$60,$00,$06,$40,$FF,$04,$00 ;2nd Bottom Pellet
-	; db $00,$08,$54,$01,$2D,$DD,$3A,$00 ;Plasma trail, graphics, object to spawn?
 }
 
 org $81C5AF ;Routine to have pellets spread out across the screen (Removed so now they cross one another)
@@ -1717,27 +1535,12 @@ org $81C5AF ;Routine to have pellets spread out across the screen (Removed so no
 	
 org $81C335 ;Alters Helix Shot's pellets after the first collision with enemy to stay closer to one another instead of spreading out
 	LDA #$30
-}
 	
-;*********************************************************************************
-; Sets max weapon select to '12' and leaves 2-bytes for value 14 blank.
-;*********************************************************************************
-{
-org $80A3B0
-	LDX #$12
-org $80A3BE
-	LDX #$12
-
-org $80C5C7 ;Removes storage of 00 to $7E:1FCD
-	NOP #3
-}
-
 ;*********************************************************************************
 ; Damage table routine
 ; Entire routine has been heavily updated to check for new values and instances.
 ; DIFFICULTY BASED
 ;*********************************************************************************
-{
 org $84CEE3 ;Load original code location to determine how the damage table is setup.
 {
 	LDA $000A,x
@@ -1796,13 +1599,11 @@ org $818725 ;Removes #$F0 from Weapon check
 org $93EC7F ;Loads original routine that checks for Tornado Fang on Volt Catfish
 	JSL CheckForTornadoFang
 	NOP #10
-}
 
 	
 ;*********************************************************************************
 ; Loads Head Gunner's data and checks whether you defeated Blast Hornet or not. If so, weaken the Head Gunners. Various other boss checks too
 ;*********************************************************************************
-{
 org $87C479 ;Check Headgunners to see if Blast Hornet is defeated.
 	JSL CheckForBlastHornet
 	NOP
@@ -1846,7 +1647,8 @@ org $87B03B ;Checks Blast Hornet's mid-boss to see if Gravity Beetle is defeated
 org $84E097 ;Checks for Volt Catfish to be defeated so Elevator in Vile's Factory works.
 	JSL CheckForVoltCatfish
 	NOP
-}
+	
+	
 ;*********************************************************************************
 ; Various chunks of code that sets the enemy table to the 'blank' damage table value so enemies can NOT be hit multiple times.
 ; All of them for bosses has been removed so bosses CAN be hit multiple times depending on the circumstance.
@@ -1932,11 +1734,9 @@ org $86E477 ;Mac's damage table value
 org $86E422 ;REX2000's damage table value
 	db $10 ;Changed to $10 so it shares with Mosquitus and Mao the Giant
 }
-
 ;*********************************************************************************
 ; Modifying Mac/Hangar in Introduction Level
-;*********************************************************************************
-{
+;*********************************************************************************	
 org $85C65D ;Loads original code to set damage able to be done to hangar enemy in intro level with Mac
 	; JSL Hangar_CheckForData
 	BRL Hangar_CheckIntroMac
@@ -1981,13 +1781,10 @@ org $88B7C0 ;Loads event #$0A for Mac.
 	dw $FFF0
 	org $88FFF0
 	JSL Mac_AI_0A ;Loads routine for specific sub-weapons with damage timers to properly work with Mac
-	RTL
-}
-
+	RTL	
 ;*********************************************************************************
 ; Altering data for Frog Armor so it can perform properly on ground and underwater.
 ;*********************************************************************************
-{
 org $83A279 ;Loads routine that checks whether you're using Frog Armor or not.
 	LDA #$04 ;The entire check was removed so Frog Armor can walk now.
 	STA $02
@@ -2014,12 +1811,11 @@ org $839B5A ;Loads routine to determine if Frog Armor can dash or not by checkin
 	
 org $839F9D ;Loads original code location that made the Frog Armor hop on the Ride Pad
 	NOP #33 ;NOP'd so now Frog Armor walks like all the others
-}
-
+		
+	
 ;*********************************************************************************
 ; Altering Tunnel Rhino boulders to check it's life instead of weapon type (Weapon table MUST be modified for it to properly deal damage)
 ;*********************************************************************************
-{
 org $BCAA82
 {
 	LDA $27 ;Load boulder's life
@@ -2035,13 +1831,11 @@ endbouldercheck:
 }
 org $86E390 ;Set boulder's life (Changed from 05)
 	db $07
-}
 	
 ;*********************************************************************************
 ; Altering Crush Crawfish's Triad Thunder platform to check it's life instead of weapon type (Weapon table MUST be modified for it to properly deal damage)
 ; This is actual a GENERAL code for it. The platform's code will be moved to a new location so it doesn't interfere with anything else.
 ;*********************************************************************************
-{
 org $81CE51 ;Loads original code location to get Triad Thunder/Specific weapon checks on Crush Crawfish's platform (Generally used by most objects)
 	JSL CrushCrawfish_Platform_DamageCheck
 	
@@ -2053,12 +1847,10 @@ org $86BA49 ;Loads max height of Tornado Fang multi-spread
 	
 org $81AA42 ;Loads delay before Tornado Fang multi-spread moves forward
 	LDA #$1F ;Change to #$1F so higher value allows the wider spread to move properly as well
-}
 	
 ;*********************************************************************************
 ; Modifying object and tiles in Volt Catfish's stage near the capsule
 ;*********************************************************************************
-{
 org $BCE0B8 ;Modify Gravity Well elevator to be health capsule instead
 	db $00,$80,$03,$02,$00,$40,$04
 	
@@ -2086,12 +1878,10 @@ org $BDCE00 ;Modify tiles
 	db $5A,$00,$15,$00,$16,$00,$50,$00,$51,$00,$4B,$00,$4C,$00,$4D,$00
 	db $0C,$02,$23,$00,$24,$00,$55,$00,$56,$00,$4B,$00,$4C,$00,$4D,$00
 }
-}
-
+	
 ;*********************************************************************************
 ; Loads charging sub-weapons and checks if you have weapon upgrade or not
 ;*********************************************************************************
-{
 org $84AC96 ;Load original code that allows PCs to charge sub-weapons
 	JSL PCChargeSubWeaponsSetup ;Loads routine that sets who can charge sub-weapons or not based on Buster Upgrade
 	NOP #5
@@ -2106,25 +1896,22 @@ org $84AB6E ;Removes PC check for charging sub-weapons
 org $84AB77 ;Load original code that allows PCs to charge sub-weapons
 	JSL PCChargeSubWeaponsSetup
 	NOP
-}
+	
 	
 ;*********************************************************************************
 ; Determines who can charge regular buster to final level then switch to sub-weapons and use charged versions
 ;*********************************************************************************
-{
 org $84B0F5 ;Stores #$02 to Z-Saber charge. Removed as it's completely useless
 	NOP #4
 
 org $84B0A5 ;Original code location that set the buster charge when charging to max then switching sub-weapons
 	JSL PCChargeAndSwitchSubWeaponsSetup ;Loads routine that determines who can charge regular buster to final level then switch to sub-weapons and use charged versions
-}
 
 ;*********************************************************************************
 ; Fixes 'lemon shot' bug on various circumstances. 
 ; IE: Firing as you enter a boss door, event etc.. it'll set 7E:0A30 (Current charge) to 00 at the wrong time causing the bug.
 ; This is now remedied by having it store as the shot GOES OFF instead of long before.
 ;*********************************************************************************
-{
 org $84AD4B
 	LDA #$08
 	STA $A9
@@ -2166,12 +1953,10 @@ org $84862B ;Prevents current charge from being removed when you get damaged
 	
 org $84990B ;NOP to prevents PC from grabbing onto ladder if they're firing level 4/5 in the air.
 	NOP #3
-}
 	
 ;*********************************************************************************
 ; Mosquitus warning message so Zero does not get swapped out
 ;*********************************************************************************
-{
 ; org $81CEFE ;Loads original routine that checks whether to load the 'Mosquitus Warning' entirely
 	; JSL MosquitusWarning_CheckPCS
 	; NOP #3
@@ -2204,17 +1989,15 @@ org $8895F7 ;Loads original code that checks which PC you are for Mosquitus even
 	
 ; org $88965B ;Removes check for PC so event will always continue instead of checking for X before event ends.
 	; NOP #7
-}
 	
 ;*********************************************************************************
 ; Code inside boss doors that zeros out specific values for the enemy data (IE: Current event, sub-event, life.. only a few values)
 ; Code is now altered to remove the damage timer value so mid-bosses work properly
 ;*********************************************************************************
-{
 org $84D394
 	JSL BossDoors_ClearVariousEnemyData
 	RTL
-}
+
 
 
 ;*********************************************************************************
@@ -2222,7 +2005,6 @@ org $84D394
 ; $7E:1FB2 set to 01 or 02 would disable music. That's now being moved entirely to $7E:1FB0 instead since that's ONLY used for Bit/Byte/Vile sent out and Doppler Lab Scene
 ; This has to be watched though since once it's set to #$E0, it could break things. (Probably just rewrite it so it adds +#$80 instead of #$E0)
 ;*********************************************************************************
-{
 org $8084CD ;Code to disable music once BIT flag is set.
 	LDA !DopplerLabBIT_1FB0
 	BIT #$01
@@ -2238,22 +2020,19 @@ org $85C910 ;Code to disable Music for Dr. Light capsule when BIT flag is set.
 org $809E2C ;Original code location that sets #$E0 for Doppler Lab has been found scene
 	LDA #$80 ;Sets value to +80 now
 	TSB !DopplerLabBIT_1FB0
-}
+
 
 
 ;*********************************************************************************
 ; Sets capsule text loading when finding a Dr. Light capsule
 ;*********************************************************************************
-{
 org $85C8DF ;Loads original routine for opening a Light capsule
 	JSL PCCapsuleIntroductionSetup ;Loads routine that determines if a PC has an introduction dialogue when first discovering a Light capsule.
 	NOP #10
-}
 	
 ;*********************************************************************************
 ; Determines who can use Z-Saber right away after buster shot
 ;*********************************************************************************
-{
 org $84AEE8 ;Original code that disabled the Z-Saber from being used until after the buster shots were off screen
 	JSL PCZSaberWaitSetup ;Load routine that determines who can use the Z-Saber right away after a buster shot
 	BEQ PCZSaberSkipWait
@@ -2274,12 +2053,10 @@ PCZSaberSkipBNE:
 	JMP $A896
 PCZSaberSkipEnd:
 	RTS
-}
 	
 ;*********************************************************************************
 ; New code to write palette data for PCs
 ;*********************************************************************************
-{
 org $84B6D6 ;Code location for loading the general palette routine for PCs on various circumstances
 	JSL PCGeneralPalettes ;Loads routine that determines each PC's general palette based on various circumstances
 	RTS
@@ -2300,11 +2077,10 @@ org $84B6E3
 org $84AF1F ;Original code location that loads PC's palette when charging buster.
 	JSL PC_ChargingPalettes
 	NOP #3
-}
+
 ;*********************************************************************************
 ; New code to write palette data for PCs & rewrite of sub-weapon routine when swapping with L/R
 ;*********************************************************************************
-{
 org $84A41A ;Divide sub-weapon missile value to get for how many missiles on screen
 	NOP ;Removed the LSR so now it should load proper quantity
 	
@@ -2401,10 +2177,7 @@ org $84B84F
 	JSL LoadProperSubWeaponSFX ;Loads routine to load proper sub-weapon SFX
 	
 
-org $84AFFB ;Original code location that'll reset palette and sound when pressing L+R
-{
-	BEQ SubWeaponis01
-}
+	
 org $84B001 ;Original code location that determines how sub-weapons get scrolled to via L/R
 	BEQ SubWeaponis01_Bit10
 	JSR $B0A5
@@ -2522,20 +2295,20 @@ org $80A2B2 ;Palette data for buster/sub-weapon when dying and re-entering level
 	JSL PCBusterPalette ;Loads routine that sets the PC's sub-weapon/buster/Z-Saber palette depending on circumstance.
 	SEP #$30
 	NOP #2
-}
+	
+
+	
+	
 ;*********************************************************************************
 ; New code to write palette data for PCs upon entering a capsule and it starts giving them the part.
 ;*********************************************************************************
-{
 org $93C548 ;Original code location for PC palette flashing in capsule
 	JSL PCCapsuleFlashPalette ;Loads routine that specifies each PC's palette inside the capsule when they're flashing.
 	NOP #23
-}
 	
 ;*********************************************************************************
 ; Load PC hitbox when jumping and landing, jumping out of Ride Armor, etc..
 ;*********************************************************************************
-{
 ; org $86B40E ;Changed Zero's hitbox so it's a bit smaller. May help his gameplay. (EXPERIMENTAL)
 	; db $00 ;X coordinate of Zero's hitbox
 	; db $04 ;Y coordinate of Zero's hitbox (Originally 3)
@@ -2562,21 +2335,17 @@ org $84B645 ;Original code location to reset PC's hitbox
 	NOP #10
 	SEP #$20
 	RTS
-}
 	
 ;*********************************************************************************
 ; Jumping out of Ride Armor
 ;*********************************************************************************
-{
 org $83A1F0
 	JSL PC_JumpOutRideArmor
 	NOP #2
-}
 	
 ;*********************************************************************************
 ; Stage Select: Allow X to change to Zero
 ;*********************************************************************************
-{
 org $80C27B
 	JSR $FA6F
 	
@@ -2588,12 +2357,10 @@ org $80FA6F  ;Load decompressed graphics for 'Z' icon
 org $80C4C8
 	JSL PCStageSelectIcon ;Loads routine that sets which PC you are and are switching to when hitting the 'X' or 'Z' icon
 	NOP #2
-}
 	
 ;*********************************************************************************
 ;Splits PC's general sprite data up
 ;*********************************************************************************
-{
 org $84A63C ;Loads original code routine to set general sprite setup for PCs
 	JSL PCGeneralSprite ;Loads routine to set general sprite setup for all PCs
 	LDX #$10
@@ -2615,12 +2382,10 @@ org $83A181 ;Load original code location to set PC Ride Armor sprites
 	TAX
 	LDA PCNPC_VRAMStartTable,x
 	STA $0A20
-}
 	
 ;*********************************************************************************
 ;Allows PCs and PC NPC's to use their own VRAM code and table
 ;*********************************************************************************
-{
 org $848090
 	JSL PCVRAMStart
 	
@@ -2636,56 +2401,47 @@ org $BFEF06 ;This loads the Z-Saber Wave Cutting effect on the Sigma Virus head.
 	
 org $BFED0A  ;This loads the Z-Saber Wave Cutting effect on the Sigma Virus head. Had to specifically load a new piece of code JUST for this to appear right. (Very strange.)
 	JSL SigmaVirusZSaberVRAMStart
-}
 	
 ;*********************************************************************************
 ;Sets delay timer at end of game before X/Zero/Sigma Virus event completely ends.
 ;*********************************************************************************
-{
 org $83B960
 	LDA #$30 ;Changed to #$30 instead of #$F0 so the wait time is MUCH shorter before it transitions to the cliff scene.
-}
 
 ;*********************************************************************************
 ;Set PC hitbox when dashing
 ;*********************************************************************************
-{
 org $84B658 ;Loads original code location to determine hitbox of PC when dashing.
 	JSL PCDashhitbox
 	NOP #10
 	RTS
-}
 	
 ;*********************************************************************************
 ;Loads PC's walking start speed/dash speed
 ;*********************************************************************************
-{
 org $84AF72 ;Loads original code location to set PC walking speed, dash speed and dash distance.
 	JSL PCStartWalkingDashDistanceSpeed ;Loads routine to set PC walking speed, dash speed and dash distance for each PC.
 	NOP
-}
+	
 ;*********************************************************************************
 ;Loads PC's jumping then moving speed
 ;*********************************************************************************
-{
 org $84B905 ;Loads original code that sets the PC's jumping then using directional keys to move speed
 	JSL PCJumpThenMove ;Load routine that sets the PC's jumping then using directional keys to move speed for each PC
 	SEP #$20
 	NOP #3
 	RTS
-}
+
 ;*********************************************************************************
 ;Loads PC's walking speed
 ;*********************************************************************************
-{
 org $84AF94 ;Load original routine that determines the walking speed of a character.
 	JSL PCWalkingSpeed ;Load routine that determines the walking speed of each PC.
 	NOP
-}
+	
 ;*********************************************************************************
 ;Loads PC's jumping height
 ;*********************************************************************************
-{
 org $84C473 ;Loads original code location that set the maximum jump height of PC.
 	JSL PCJumpHeight ;Loads routine that sets the maximum jump heightfor each PC.
 	NOP
@@ -2693,11 +2449,10 @@ org $84C473 ;Loads original code location that set the maximum jump height of PC
 org $84C5D3 ;Remove clone routine of jump height and have it load the normal one above at $84:C473
 	JSR $C469
 	NOP #20
-}
+	
 ;*********************************************************************************
 ;Loads PC's dash then jump speed
 ;*********************************************************************************
-{
 org $848A4D	;Load original code location that sets dash then jump speed.
 	JSL PCDashJump ;Load routine that sets dash then jump speed for each PC.
 	STA $5C
@@ -2712,23 +2467,19 @@ org $848AD7	;Load original code location that sets dash then jump speed.
 	JSL PCAirDashSettings ;Load routine that sets dash then jump speed for each PC.
 	STA $5C
 	NOP #5
-}
 
 ;*********************************************************************************
 ; Defeat bosses and store BIT to new RAM
 ;*********************************************************************************
-{
 org $809C7E
 	BEQ $09 ;Hard set to jump to an RTS to end routine properly.
 
 org $809C8A
 	JSL BossDefeated ;Load routine that stores new RAM for bosses being defeated
-}
 	
 ;*********************************************************************************
 ;Loads check for each bosses AI to determine whether they spawn or not after they've been defeated
 ;*********************************************************************************
-{
 org $83C8A7 ;Blizzard Buffalo check to see if spawns again in their own level
 	JSR $FFF0
 	BEQ $08
@@ -2773,11 +2524,14 @@ org $B9FFF0
 org $BFFFF0
 	JSL CheckBossesSpawnPerLevel
 	RTS
-}
+
+	
+	
+	
+
 ;*********************************************************************************
 ; Loads check for bosses defeated on Stage Select
 ;*********************************************************************************
-{
 org $80A49D ;Loads original code to setup a check to see which bosses were defeated.
 	JSL $838065 ;Loads original code that went through a loop to check for bosses defeated
 	JSL CheckBossesDefeated
@@ -2808,21 +2562,8 @@ org $80C31A
 	LDX #$00
 	BIT $892D,x
 	
-org $80C327 ;Original code location that loads portrait values of bosses on stage select so they can be gray'd out.
-	;LDA $9F67,x
-	LDA $9C5E,x
-	
-org $869C5E ;Original code location for portrait values of bosses on stage select for graying out.
-{
-	db $01
-	db $02
-	db $03
-	db $04
-	db $05
-	db $06
-	db $07
-	db $08
-}
+org $80C327
+	LDA $9F67,x
  
 org $80C252 ;Check if all bosses are defeated by using $7E:002C (Boss Counter). If so, load Doppler's 'D' Icon on Stage Select.
 	JSL $83806C
@@ -2838,11 +2579,10 @@ org $80C41D ;Check if all bosses are defeated by using $7E:002C (Boss Counter). 
 	
 org $80C456 ;Check if all bosses are defeated by using $7E:002C (Boss Counter). If so, allow Doppler's Lab to be selected on Stage Select.
 	JSL $83806C
-}
+	
 ;*********************************************************************************
 ; Store sub-weapons to PC after defeating a boss
 ;*********************************************************************************		
-{
 org $B9A149 ;Blast Hornet sub-weapon storage
 	JSL BossDefeatedStoreSubWeapon ;Load routine that stores the bosses sub-weapon to the shared routine and each split PC.
 	NOP
@@ -2867,12 +2607,10 @@ org $BFEB10 ;Tunnel Rhino sub-weapon storage
 org $93F0BC ;Volt Catfish sub-weapon storage
 	JSL BossDefeatedStoreSubWeapon ;Load routine that stores the bosses sub-weapon to the shared routine and each split PC.
 	NOP
-}
 	
 ;*********************************************************************************
 ; Check whether you have sub-weapons and modifying routines so sub-weapon life is 00-1C (Set to C0 if empty)
 ;*********************************************************************************
-{
 org $84AD7F ;Plays a blank SFX when swapping to sub-weapons. (This is used to stop Hyper Charge SFX)
 	LDA #$03
 	JSL !PlaySFX
@@ -3014,30 +2752,24 @@ EndNewSubWeapon:
 	LDA #$84
 	STA $6026,x
 	RTS
-}
 	
 ;*********************************************************************************
 ;*********************************************************************************
 ; Load sub-weapon icon when leaving menu
 ;*********************************************************************************
-{
 org $80CD51 ;Loads original code location that loaded the current sub-weapon PC has equipped.
 	JSL CurrentSubWeaponDouble ;Load routine that doubles the value of the current sub-weapon PC has equipped.
-}
 	
 ;*********************************************************************************
 ;Store's armor value when capsule animation is done
 ;*********************************************************************************
-{
 org $85C81D ;Loads original code location that stored a capsule part to you when the capsule animating was done.
 	JSL StoreCapsuleValue ;Loads routine that stores capsule part to X in his new RAM location.
 	NOP #2
-}
 
 ;*********************************************************************************
 ;Loads armor value for X in various circumstances
 ;*********************************************************************************
-{
 org $84FFBA ;Loads original code location that checks X's armor RAM for a specific piece.
 	LDA !XArmorsByte1_7EF418 ;Loads X's new armor value in various circumstances
 	RTS
@@ -3086,9 +2818,8 @@ org $849FAE ;Loads original code location that checks X's armor RAM for a specif
 org $84AC6F ;Loads original code location that checks X's armor RAM for a specific piece.
 	JSR $FFBA ;Loads X's new armor value in various circumstances
 	
-org $818D60 ;Loads original code location that checks X's armor RAM for a specific piece. (Used to determine if Z-Saber projectile can be used or not)
-	JSL PC_ZSaberProjectile
-	NOP
+org $818D60 ;Loads original code location that checks X's armor RAM for a specific piece.
+	JSR $FF90
 
 org $80CD82 ;Loads original code location that checks X's armor RAM for a specific piece.
 	JSR $FF64 ;Loads X's new armor value in various circumstances
@@ -3100,12 +2831,10 @@ org $80CDB6 ;Loads original code location that checks X's armor RAM for a specif
 	JSR $FF64 ;Loads X's new armor value in various circumstances
 org $80CDDA ;Loads original code location that checks X's armor RAM for a specific piece.
 	JSR $FF64 ;Loads X's new armor value in various circumstances
-}
 
 ;*********************************************************************************
 ;Loads armor value for X in Pink Capsules and disables Pink Capsules from not giving armor
 ;*********************************************************************************
-{
 org $93C051 ;Loads original code location that disabled PCs from re-entering Pink Capsules once they've been retrieved.
 	AND !XArmorsByte1_7EF418
 	BEQ CapsuleDontHaveArmor
@@ -3136,13 +2865,11 @@ org $86CD74
 	db $80
 	db $00
 	db $30 ;Wait time before you can move again
-}
 
 ;*********************************************************************************
 ;Rewrites most of Capsule routine to remove various checks for the Golden Armor
 ;Also rewritten to fix an issue with loading X's original location for armor parts
 ;*********************************************************************************
-{
 org $93C00B ;Original capsule location code
 {
 	LDA !RideChipsOrigin_7E1FD7
@@ -3235,23 +2962,20 @@ org $93C00B ;Original capsule location code
 	STA $20
 	RTL
 }
-}	
+	
 ;*********************************************************************************
 ; Stores Hyper Charge value to proper RAM area when obtaining Arm Chip capsule/Golden Armor capsule
 ;*********************************************************************************
-{
 org $85C824 ;Loads original routine that stored Hyper Charge
 	JSL StoreHyperCharge ;Load routine that stores Hyper Charge properly into new sub-weapon location.
 	NOP
 	
 org $86CD87 ;Wait time before you can leave Hyper Charge capsule
 	db $01 ;Changed to #$01 so it's quick
-}
 
 ;*********************************************************************************
 ; Sets PC Get Weapon graphics, tile map and palette properly
 ;*********************************************************************************
-{
 org $80A63E ;Loads original routine that obtained the PC's GET WEAPON compressed graphics and send it into VRAM
 	JSL PCGetWeaponGraphics ;Loads routine that obtains PC's GET WEAPON graphics depending on which PC you are.
 	NOP
@@ -3325,12 +3049,10 @@ org $80F514 ;Code location for jumping from one bank to another for DECOMPRESSED
 	JSR !LoadDecompressedGraphics ;Loads routine for DECOMPRESSED data
 	RTL
 }
-}
 
 ;*********************************************************************************
 ; Sets 'READY' data for PC
 ;*********************************************************************************
-{
 org $809B24 ;Loads original routine that stored COMPRESSED 'READY' sprites into VRAM
 	JSL PC_Ready_Sprites
 	NOP #3
@@ -3344,12 +3066,12 @@ org $849764 ;Loads original code location for 'READY' text graphics in intro sta
 
 org $81F574 ;Loads original code location that determines the 'READY' palette
 	JSL PC_Ready_Intro_Palette
-}
+
+
 
 ;*********************************************************************************
 ; Bit/Byte spawning modifications
 ;*********************************************************************************
-{
 org $82E0FB ;Routine to check how many sub-weapons you have to allow Bit/Byte/Vile spawning
 {
 	LDX #$07
@@ -3371,17 +3093,17 @@ org $BCC491 ;Removed code so Byte can spawn regardless if the current level was 
 	BIT #$04 ;Checks bit if Byte was fought once and was not destroyed.
 	BNE DisableByteSpawn ;If so, disable Byte's fight
 	
-		JSL $82E0FB
-		CMP #$08 ;Total bosses defeated then Byte cannot spawn
-		BEQ DisableByteSpawn
-			CMP #$02 ;Total bosses defeated before Byte spawns
-			BCC DisableByteSpawn
-				CMP #$07 ;Check if 7+ bosses defeated then determines if Byte spawns 100% or not
-				BCS CheckIfBitDead
-				
-					LDA $09CF ;RNG bit (Keeps increasing at all times)
-					AND #$01
-					BEQ AllowByteSpawn
+	JSL $82E0FB
+	CMP #$08 ;Total bosses defeated then Byte cannot spawn
+	BEQ DisableByteSpawn
+	CMP #$02 ;Total bosses defeated before Byte spawns
+	BCC DisableByteSpawn
+	CMP #$07 ;Check if 7+ bosses defeated then determines if Byte spawns 100% or not
+	BCS CheckIfBitDead
+	
+	LDA $09CF ;RNG bit (Keeps increasing at all times)
+	LSR
+	BCC AllowByteSpawn
 	
 DisableByteSpawn:
 	JML !CommonEventEnd
@@ -3399,17 +3121,17 @@ org $878F85 ;Removed code so Bit can spawn regardless if the current level was b
 	BIT #$01 ;Checks if Bit has been fought once and was not destroyed.
 	BNE DisableBitSpawn ;If so, disable Bit's fight	
 	
-		JSL $82E0FB
-		CMP #$08 ;Total bosses defeated then Bit cannot spawn
-		BEQ DisableBitSpawn
-			CMP #$02 ;Total bosses defeated before Bit spawns
-			BCC DisableBitSpawn
-				CMP #07 ;Check if 7+ bosses defeated then determines if Bit spawns 100% or not
-				BCS CheckIfByteDead
-				
-					LDA $09CF ;RNG bit (Keeps increasing at all times)
-					AND #$01
-					BNE AllowBitSpawn
+	JSL $82E0FB
+	CMP #$08 ;Total bosses defeated then Bit cannot spawn
+	BEQ DisableBitSpawn
+	CMP #$02 ;Total bosses defeated before Bit spawns
+	BCC DisableBitSpawn
+	CMP #07 ;Check if 7+ bosses defeated then determines if Bit spawns 100% or not
+	BCS CheckIfByteDead
+	
+	LDA $09CF ;RNG bit (Keeps increasing at all times)
+	LSR
+	BCS AllowBitSpawn
 
 DisableBitSpawn:
 	JML !CommonEventEnd
@@ -3434,12 +3156,10 @@ org $87910F ;Changes Bit's boss battle music to be Doppler's boss theme
 org $8795B0 ;Changes Vile's boss battle music to be Doppler's boss theme
 	LDA #$22 ;Sets boss music to be Doppler's boss music
 	JSL !PlayMusic
-}
 	
 ;*********************************************************************************
 ; Modifies the hitbox of Sigma's Battle Body (Cannon/Arm) so it's much smaller and fits the hand only!
 ;*********************************************************************************
-{
 org $86EA3D
 ;DC FC 10 16
 
@@ -3451,47 +3171,39 @@ org $86EA3D
 	
 org $81DDBD ;Sets velocity of PC entering Sigma's boss door on final level
 	LDA #$00E0 ;Changed to #$00E0 so Zero does not fall through the floor
-}
 	
 ;***************************
 ;***************************
 ; Set basis for all Item Objects in-game. (IE: Health refill, ammo refill, 1-ups, etc..)
 ;***************************
-{
 org $80DB00 ;Original code location that loads basis for all Item Objects in-game and a few other instances.
 	JSL !BaseItemObjectLocation
 	RTS
 	NOP #2
-}
 	
 ;*********************************************************************************
 ; Sets palette for PC sub-weapons after Vile jumps out of his Ride Armor in FACTORY level
 ; This is altered so it no longer does so. Seems redundant to load it.
 ;*********************************************************************************
-{
 org $83BB84 ;Removes palette load for PC and their sub-weapons
 	NOP #4
 ;This whole section is ridiculous. It literally loads a JSR to the code that is DIRECTLY NEXT TO IT.
 ;Removed the entire JSR and the RTL as the routine now loads a RTL at the end anyway.
-}
 
 ;*********************************************************************************
 ; Changes a pointer of PC's action (Action #18 - Entering boss door) so it resets PC's jump values
 ;*********************************************************************************
-{
 org $848263 ;Loads action #18 (PC Entering mid-boss door and miscellaneous PC pauses)
 	dw $B703 ;Sets new pointer location
 
 org $84B703 ;Load new code location to reset PC's double jump values when entering a door
 	JSL SetJumpValues
 	RTS
-}
 
 ;*********************************************************************************
 ; Original routine to store Hyper Charge life when getting damaged.
 ; Heavily altered so it's compressed but does the same thing now.
-;*********************************************************************************
-{	
+;*********************************************************************************	
 org $84CD8E ;Original code location that checked if you had Hyper Charge equipped, if so, do not heal.
 ;Whole routine was altered so it heals no matter what for 'half' the damage you take equipped or not.
 {
@@ -3535,14 +3247,13 @@ org $84CD8E ;Original code location that checked if you had Hyper Charge equippe
 	
 	JSR $CE3C
 }
-}
+
 	
 ;*********************************************************************************
 ; Alters loading location for all decompressed pointer data.
 ; Main table is now BLANK and is moved outside of the normal ROM.
 ; Code now allows for any bank usage as long as it's set properly in $12
 ;*********************************************************************************	
-{
 org $80873B
 {
 	JSL NewDecompressedLocation
@@ -3553,6 +3264,7 @@ org $80873B
 	REP #$21
 	LDA [$10],y
 }
+	
 org $80879E
 {
 	STA $00
@@ -3585,23 +3297,19 @@ EndDecompressLoading:
 	CLC
 	RTS
 }
-}
-
+	
 ;*********************************************************************************
 ; Something to do with single byte sub-weapon loading
 ;*********************************************************************************	
-{
 org $869C6D ;Single byte to load proper sub-weapons (First one is introduction level, thus goes unused)
 	db $07 ;This is used for the Stage Select Mini pop-up for Neon Tiger.
 	db $02,$07,$06,$01,$03,$04,$08,$05
-}
 	
 ;*********************************************************************************
 ; Rewriting the routine that restores sub-weapon ammo upon entering a level.
 ; DIFFICULT BASED
 ; If on hard mode or higher, sub-weapon ammo will NOT refill
-;*********************************************************************************
-{	
+;*********************************************************************************	
 org $80A3BC ;Loads original code location to restore sub-weapon ammo upon level entry
 	SEP #$20
 	LDA !Difficulty_7EF4E0
@@ -3623,12 +3331,10 @@ DecreaseSubWeaponRestore:
 	
 EndSubWeaponRestoreRoutine:
 	RTS
-}
 	
 ;*********************************************************************************
 ; Loads routine that checks how many bosses are defeated to allow Vile's Teleporter to spawn or be able to be gotten to (Various instances)
 ;*********************************************************************************
-{
 org $87E64E ;Loads original code location that checked how many bosses you had defeated to determine if you could use Jet Platform or not in Volt Catfish's level
 	JSL $82E0FB ;Loads routine that determines how many bosses you've defeated by increasing Y then storing it to A.
 	NOP #10
@@ -3640,12 +3346,10 @@ org $81F0E6 ;Loads original code location to spawn Vile's Teleporter in general 
 org $81CDCC ;Loads original code location to allow PC to get to Vile's Teleporter in Crush Crawfish's level
 	JSL $82E0FB ;Loads routine that determines how many bosses you've defeated by increasing Y then storing it to A.
 	NOP #10
-}
 	
 ;*********************************************************************************
 ;Sets PC's X/Y coordinates on the Cliff Scene and the Credits Roll Scene
 ;*********************************************************************************
-{
 org $80AC24
 	JSL PCCliffSceneCoordinates
 	NOP #20
@@ -3659,14 +3363,61 @@ org $80AE5B ;Sets PC's Y coordinates
 	
 org $80AEF6 ;Sets PCNPC's Y coordinates
 	NOP #10
+	
+;*********************************************************************************
+;Stage Select screen checking for Heart Tank values
+;*********************************************************************************
+org $8385D2
+{
+	PHA : PHX
+	LDA !Difficulty_7EF4E0
+	BIT #$01
+	BNE CheckStageSelectHeartTankSolo
+	
+	
+	LDA !XHeartTank_7EF41C
+	ORA !ZeroHeartTank_7EF44C
+	ORA !PC3HeartTank_7EF47C
+	ORA !PC4HeartTank_7EF4AC
+	STA $0000
+	
+	StageSelectHeartTankCommon:
+	LDA $9C0C,x
+	TAX
+	LDA $0000
+	DEX
+	BIT !BasicBITTable,x
+	BNE StageSelectHeartTankEndRoutine
+	
+	StageSelectHeartTankIncreaseEnd:
+	PLX : PLA
+	INC
+	RTS
+	
+	StageSelectHeartTankEndRoutine:
+	PLX : PLA
+	RTS
+	
+	CheckStageSelectHeartTankSolo:
+	STX $0002
+	LDA !CurrentPCCheck_1FFF
+	ASL #3
+	STA $0000
+	ASL
+	CLC
+	ADC $0000
+	TAX
+	LDA !XHeartTank_7EF41C,x
+	STA $0000
+	
+	LDX $0002
+	BRA StageSelectHeartTankCommon
 }
 	
-
 ;*********************************************************************************
 ;Allow PCs to be changed on the Title Screen by pressing the 'Select' button and other settings on Title Screen
 ;Only 'bug' for this is that X and Zero need to have separate character coordinates on screen so it loads them up properly
 ;*********************************************************************************
-{
 org $808F36
 	JSL TitleScreenSwitch
 	
@@ -3765,23 +3516,19 @@ org $8697AF ;Zero's title screen coordinates
 	db $91 ;Game Start
 	db $A1 ;Password
 	db $B1 ;Options
-}
 	
 	
 	
 ;*********************************************************************************
 ; Sets X/Y coordinates of the 'SHING' effect on the victory animation
 ;*********************************************************************************
-{
 org $84B155
 	JSL PCVictoryShingXCoordinate
 	NOP
-}
 	
 ;*********************************************************************************
 ; Loads X/Zero's Introduction graphic/new palette
 ;*********************************************************************************
-{
 org $80930A ;Original code location to load X/Zero Introduction Compressed graphics. Now loads them as decompressed graphics.
 	LDY #$B8
 	JSR !LoadDecompressedGraphics
@@ -3790,25 +3537,22 @@ org $80930A ;Original code location to load X/Zero Introduction Compressed graph
 org $80932B ;Original code location to load palette routine for Black Background for X/Zero Introduction graphics
 	JSL X_Zero_IntroductionPalette
 	NOP #3
-}
-		
+	
+	
 ;*********************************************************************************
 ; Alters Helmet Hologram code slightly so it's an RTL instead of an RTS. Also loads a new routine that will make the helmet hologram properly work with the original RAM values.
 ;*********************************************************************************
-{
 org $848FA8
 	JSL PC_HelmetHologram
 	NOP #3
 	
 org $849099
 	RTL
-}
 	
 	
 ;*********************************************************************************
 ; Setting up Save/Load Screen (SRAM starts at $70:0000 - $70:0100 for basis though)
 ;*********************************************************************************	
-{
 org $80FFD8
 	db $03 ;Sets SRAM to being available and as the smallest size (8KB)
 	
@@ -4256,11 +4000,11 @@ org $8182C7 ;Loads password screen cursor sprite data
 	PLD
 	RTL
 }
-}
+	
+	
 ;*********************************************************************************
 ; 'Thank you for playing' screen being moved and rewritten
-;*********************************************************************************
-{
+;*********************************************************************************	
 org $80B0D8
 {
 	JSL EndingCredits_ThankYouForPlaying
@@ -4296,12 +4040,11 @@ org $80B10D
 	JSR SaveScreen
 	RTL
 }
-}
+	
 
 ;*********************************************************************************
 ; Splitting Spiral Buster code up between X and Zero
 ;*********************************************************************************
-{
 ; org $81C157 ;Loads original code location to get the Missile that the Spiral Buster will use
 	; JSL Zero_SpiralBuster_SetMissile
 	; NOP
@@ -4318,13 +4061,12 @@ org $818394
 org $818398
 	JSR $8C24
 	RTL
-}
 	
+
 
 ;***************************
 ; Erasing/Altering old event data
 ;***************************
-{
 org $83BCD6 ;Loads object that holds X captive
 	NOP #12 ;NOP'd out all data so it does NOT increase the event on it's death anymore.
 			;Instead, it's handled inside of Zero NPC's event by checking for the object death.
@@ -4373,13 +4115,12 @@ org $88965B ;Loads Doppler level music after explosion of Mosquitus on Zero but 
 	EndDopplerMusicStart:
 	JML !CommonEventEnd	
 }
-}
+	
 	
 ;***************************
 ;***************************
 ; Dialogue box small: Changing the size so it can fit another line of text
 ;***************************
-{
 org !DialogueBoxSmall
 {
 	STA $0008
@@ -4393,32 +4134,27 @@ org !DialogueBoxSmall
 	STA $0006
 	JML $82FCC8
 }
-}
+	
 	
 ;***************************
 ; Sets PC's buster palette restoration as a JSR for various routines throughout the game
 ;***************************
-{
 org $84FFCA ;Loads PC Buster Palette as a JSR
 	JSL PCBusterPalette
 	SEP #$30
 	RTL
-}
 	
 ;***************************
 ;***************************
 ; Split PC NPC Zero into various PC NPCs
-;***************************
-{
+;***************************	
 org $80DA7A
 	JSL PCEventSplit
-}
 		
 ;***************************
 ;***************************
 ; Determines if a PC or PC NPC is firing X-Buster level 1/2/3
 ;***************************
-{
 org $818B71 ;Loads palette for level 2 buster missile if == 01 then sets direction of X-Buster for PC or PC NPC. (Changed so now it will load palette as long as missile is NOT 00.)
 {
 	LDA $0A
@@ -4455,14 +4191,12 @@ org $818A23 ;Loads a JSR to continue the buster routine so it doesn't lock onto 
 org $818FC7 ;Original location of X-Buster level 3 code
 	JSL XBusterPCNPC_Level3
 	NOP #5
-}
 	
 ;***************************
 ;***************************
 ; Determines if PC X or NPC X is on screen to display armor
 ; Writes new code to check if NPC X is on screen, if so, swap the sprite priority of the armor and X
 ;***************************
-{
 org $80F6CA ;Load location to get JSL of armor setup
 	JSL CheckPCArmorValue ;Routine to determine if PC or NPC X is wearing armor on screen.
 
@@ -4475,14 +4209,12 @@ org $838F6F ;Changes the end of the Armor Sprite routine to an RTL so it can be 
 	
 org $838FEC ;Changes the end of the PC Sprite routine to an RTL so it can be loaded from any bank.
 	RTL
-}
 	
 
 ;***************************
 ;***************************
 ; Alters Capsule data so it doesn't last as long nor does it flash the parts on
 ;***************************
-{
 org $BFDD18 ;Capsule flash so it doesn't flash parts, rather just repeats the lightning
 {
 	db $01,$00,$11
@@ -4527,13 +4259,10 @@ org $93C3AA ;Timer before it sets next event of Capsule Flash
 	
 org $93C408
 	JSL PCCapsuleExamples
-}
-
+	
 ;***************************
 ; Resets PC's sub-weapon graphical data during events (Possibly gameplay as well)
 ;***************************
-{
 org !ReloadSubWeapGreaphics
 	JSL PC_ResetSubWeapons
 	NOP
-}

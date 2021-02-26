@@ -272,14 +272,7 @@ org $80D3C9 ;Sets data for DARK sub-weapon icon X/Y coordinates/graphics
 	PLX
 	NOP #15
 }
-	
-	
-;***************************
-;***************************
-;Loads single byte data setup for moving in the menu to various sub-weapons
-;***************************
-org $869F65 ;Load single byte data for moving in menu?
-	db $0A,$00,$01,$02,$03,$04,$05,$06,$07,$08,$08
+
 
 ;***************************
 ;***************************

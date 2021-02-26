@@ -75,6 +75,11 @@ org $81B187 ;Play SFX for charged Triad Thunder. (Removed as it's not necessary 
 org $81AA42 ;Time before Tornado Fang launches
 	LDA #$17 ;Changed to 15 so it cuts time in half before it launches away
 	
+org $84D54B ;Original code location that cuts sub-weapon value in half to get proper projectile limit on screen WHEN ENTERING BOSS DOORS
+{
+	NOP
+}
+	
 
 ;***************************
 ;***************************
