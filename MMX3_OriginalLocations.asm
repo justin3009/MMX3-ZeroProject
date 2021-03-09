@@ -22,26 +22,6 @@ incsrc MMX3_NewCode_Locations.asm
 incsrc MMX3_VariousAddresses.asm
 ;***************************
 ;***************************
-; Expands the ROM to 4MB
-;***************************
-org $80FFD7 ;Original offset location that sets ROM size
-{
-	db $0C ;Sets to 4MB
-}
-
-org $C08000 ;Original offset location for where all new code begins. (Now fills the entire section to expand ROM to 4MB)
-{
-check bankcross off
-	fillbyte $FF
-	fill $200000
-check bankcross on
-}
-
-
-
-
-;***************************
-;***************************
 ; Sets game to FastROM (Have to find a way to make it load RAM as $80+)
 ;***************************
 org $808000 ;Loads original code location that's loaded right when the game is started. (Loads a new location to foce the game as FastROM!)
