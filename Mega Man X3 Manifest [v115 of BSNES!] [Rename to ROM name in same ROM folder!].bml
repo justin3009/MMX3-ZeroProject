@@ -1,0 +1,43 @@
+//Thanks to Morilli (Moritz Bender) for this BML fix!
+
+game
+  label:    Mega Man X3 - Zero Project
+  region:   NTSC
+  board:    HITACHI-LOROM-RAM
+    memory
+      type: ROM
+      size: 0x400000
+      content: Program
+    memory
+      type: RAM
+      size: 0x2000
+      content: Save
+    memory
+      type: ROM
+      size: 0xc00
+      content: Data
+      manufacturer: Hitachi
+      architecture: HG51BS169
+      identifier: Cx4
+    memory
+      type: RAM
+      size: 0xc00
+      content: Data
+      manufacturer: Hitachi
+      architecture: HG51BS169
+      identifier: Cx4
+      volatile
+    oscillator
+      frequency: 20000000
+
+board: HITACHI-LOROM-RAM
+  processor architecture=HG51BS169
+    map address=00-3f,80-bf:6c00-6fff,7c00-7fff
+    memory type=ROM content=Program
+      map address=00-7d,80-ff:8000-ffff mask=0x8000
+    memory type=RAM content=Save
+      map address=70-7d,f0-ff:0000-7fff mask=0x8000
+    memory type=ROM content=Data architecture=HG51BS169
+    memory type=RAM content=Data architecture=HG51BS169
+      map address=00-3f,80-bf:6000-6bff,7000-7bff mask=0xf000
+    oscillator
