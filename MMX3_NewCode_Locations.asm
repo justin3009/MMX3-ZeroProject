@@ -2329,9 +2329,12 @@ PC_ZSaberProjectile: ;Routine to determine which PC can use halved sub-weapon am
 	LDA !XArmorsByte1_7EF418 ;Load X's Armor Value from new RAM
 	BIT #$02
 	BEQ X_SaberProjectileCheck_Disable
+	
+		LDA $7E0CC8 ;NPC Active (Disables Z-Saber wave when NPC is active)
+		BNE X_SaberProjectileCheck_Disable
 
-		LDA #$01 ;Enable
-		RTS
+			LDA #$01 ;Enable
+			RTS
 	
 	X_SaberProjectileCheck_Disable:
 	LDA #$00 ;Enable
@@ -2347,8 +2350,11 @@ PC_ZSaberProjectile: ;Routine to determine which PC can use halved sub-weapon am
 		BIT #$10
 		BEQ Zero_SaberProjectileCheck_Disable
 		
-			LDA #$01 ;Enable
-			RTS
+			LDA !CurrentPC_0A8E ;This is specifically used to check in events to disable the Z-Saber Projectile.
+			BEQ Zero_SaberProjectileCheck_Disable
+		
+				LDA #$01 ;Enable
+				RTS
 
 	Zero_SaberProjectileCheck_Disable:
 	LDA #$00 ;Disable
@@ -6163,30 +6169,37 @@ ZSaberZeroSetup:  ;Load Zero's Z-Saber Sprite setup for PC NPC (Sprite Assembly,
 {
 	JSL !CheckMissileRoom
 	BNE EndZeroZSaberSetup
-	INC $0000,x
-	LDA #$02 ;Set Z-Saber event to active
-	STA $000A,x
-	LDA #$82 ;Set Z-Saber storage type [80+ = NPC. 80 = X, 82 = Zero]
-	STA $000B,x
-	LDA #$06 ;Set Z-Saber VRAM location
-	STA $0018,x
-	LDA $11 ;Load PC NPC's direction and stores same value into Z-Saber
-	AND #$70
-	ORA #$0E
-	STA $0011,x
-	LDA !PCNPC_OnGround_2B
-	BIT #$04
-	BNE ZeroZSaberGround
-	LDA #$07 ;Sprite assembly setup to use [00 = On Ground, 07 = In Air]
-	BRA SkipZeroZSaberGround
 	
-	ZeroZSaberGround:
-	LDA #$00 ;Sprite assembly setup to use [00 = On Ground, 07 = In Air]
-	
-	SkipZeroZSaberGround:
-	STA $003C,x
-	STA $1F44
-	STZ $0012,x
+		INC $0000,x
+		
+		LDA #$02 ;Set Z-Saber event to active
+		STA $000A,x
+		
+		LDA #$82 ;Set Z-Saber storage type [80+ = NPC. 80 = X, 82 = Zero]
+		STA $000B,x
+		
+		LDA #$06 ;Set Z-Saber VRAM location
+		STA $0018,x
+		
+		LDA $11 ;Load PC NPC's direction and stores same value into Z-Saber
+		AND #$70
+		ORA #$0E
+		STA $0011,x
+		
+		LDA !PCNPC_OnGround_2B
+		BIT #$04
+		BNE ZeroZSaberGround
+		
+			LDA #$07 ;Sprite assembly setup to use [00 = On Ground, 07 = In Air]
+			BRA SkipZeroZSaberGround
+		
+		ZeroZSaberGround:
+		LDA #$00 ;Sprite assembly setup to use [00 = On Ground, 07 = In Air]
+		
+		SkipZeroZSaberGround:
+		STA $003C,x
+		STA $1F44
+		STZ $0012,x
 	
 	EndZeroZSaberSetup:
 	RTL
@@ -11306,6 +11319,7 @@ MaohTheGiant_AI:
 		LDA $01
 		CMP #$04 ;Z-Saber Wave
 		BNE MaohTheGiant_AI_0A_NotZSaber
+		
 		JML $93EC4C
 		RTL
 		
