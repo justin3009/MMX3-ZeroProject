@@ -7553,6 +7553,7 @@ BossDoors_ClearVariousEnemyData:
 	STZ $000E,x ;Blanks out ???
 	STZ $0027,x ;Blanks out ???
 	STZ $0037,x ;Blanks out damage timer
+	STZ $003D,x ;Blanks out counter for Tunnel Rhino's drills
 	TXA
 	CLC
 	ADC #$0040
