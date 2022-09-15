@@ -7563,6 +7563,26 @@ BossDoors_ClearVariousEnemyData:
 	SEP #$30
 	RTL
 }
+; or here's the original fix I came up with, the "nuclear" option; wipes the whole table,
+; eight bytes at a time. in theory, it's slower, but from a player perspective, not by much
+;{
+	REP #$30
+	LDX #$0D18
+	BossDoors_StartClearing:
+	STZ $0000,X
+	STZ $0002,X
+	STZ $0004,X
+	STZ $0006,X
+	TXA 
+	CLC 
+	ADC #$0008
+	TAX 
+	CMP #$10D8
+	BCC BossDoors_StartClearing
+	SEP #$30
+	RTL 
+;}
+
 	
 ;*********************************************************************************
 ; Creates a damage table switch value for Worm Seeker mid-boss in Neon Tiger's level
