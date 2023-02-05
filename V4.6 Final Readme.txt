@@ -1,5 +1,5 @@
 *********************************************************************************
-Mega Man X3 - Zero Project 4.0 (Base Mod)						 	*
+Mega Man X3 - Zero Project (Base Mod)						 	*
 Created By: Justin3009 (xJustin3009x/Shishisenkou)					 	*
 *********************************************************************************
 Version 4.0	- Started Late 2017
@@ -58,7 +58,7 @@ Changes for X and Zero in Zero Project V4.1 (Base Mod)
 		e.	Zero's sub-weapon consumption is set to normal values instead of being doubled.
 03.	X and Zero both have increased animation speed with their buster and Z-Saber animations.
 		a.	Zero is quicker with his Z-Saber. X is quicker with his buster.
-		b.	X’s vertical dash speed has been increased slightly as well.
+		b.	Xâ€™s vertical dash speed has been increased slightly as well.
 
 04.	X no longer has a "shield" with any of the armor upgrades but he does retain the overall defense increase.
 05. X's helmet upgrade has had some changes to it with and without the "Chip" upgrade.
@@ -67,8 +67,8 @@ Changes for X and Zero in Zero Project V4.1 (Base Mod)
 				The dialogue has been updated for this change at the capsule.
 		b. 	The "Chip" upgrade has had a change overall.
 				If only the Helmet Chip is obtained then health regeneration will be like normal X3. Only one health per successful healing.
-				If the Golden Armor is obtained and regeneration is successful, it’ll double each time capping at a max of 08.
-					It’ll heal starting at 01. After, it'll double to 02 then 04 and lastly 08. This GREATLY reduces the time X must wait to refill sub-tanks and his own health.
+				If the Golden Armor is obtained and regeneration is successful, itâ€™ll double each time capping at a max of 08.
+					Itâ€™ll heal starting at 01. After, it'll double to 02 then 04 and lastly 08. This GREATLY reduces the time X must wait to refill sub-tanks and his own health.
 06. Hyper Charge (Hyper C.) has a few modifications from the original:
 		a.	X can use it at any time if the ammo is +4.
 		b.	X can refill ammo for the Hyper Charge even if the weapon is equipped.
@@ -95,20 +95,20 @@ General game changes in Zero Project V4.1 (Base Mod)
 		h.	Character switch text speed is increased GREATLY.
 		i.	Pressing "R" or "L" is MUCH faster in the menu now.
 05.	X and Zero are swapped during events.
-		a.	If you're playing as Zero, X will appear, vice versa. All events have this case even ones that shouldn’t ever happen.
+		a.	If you're playing as Zero, X will appear, vice versa. All events have this case even ones that shouldnâ€™t ever happen.
 				If X appears in the cut-scene, he will display any armor piece he has obtained!
-		b.	During the Mosquitus event to obtain the Z-Saber. When Mosquitus lands on Zero and starts exploding; if you cheat and have it load X instead, it’ll display Zero teleporting down with new dialogue.
+		b.	During the Mosquitus event to obtain the Z-Saber. When Mosquitus lands on Zero and starts exploding; if you cheat and have it load X instead, itâ€™ll display Zero teleporting down with new dialogue.
 				Doing so, X will be unavailable for the rest of the game. This is done to prevent any kind of crashing instances but also as little fun easter eggs for people.
 06.	Sub-tanks work like Mega Man Zero.
 		a.	If you're health is filled during a sub-tank's use then it will stop recovering HP and draining the sub-tank.
-07.	A ‘combo system’ has been somewhat put in place but is only viable with the X-Buster and the Z-Saber at this current time.
-		a.	This is a feature similar to X2’s and is more dynamic, but the dynamics on other weapons goes unused due to balancing issues.
+07.	A â€˜combo systemâ€™ has been somewhat put in place but is only viable with the X-Buster and the Z-Saber at this current time.
+		a.	This is a feature similar to X2â€™s and is more dynamic, but the dynamics on other weapons goes unused due to balancing issues.
 		b.	With this at least in place, you can combo your charged buster shots into an enemy to deal consistent damage and even the Z-Saber afterwards too!
-08.	X’s cross-over combo shot has been altered so the smaller buster shots on the side will ‘cross’ each other on screen.
-		a.	The overall movement is faster as well. Also, each shot hits SEPARATELY dealing INCREDIBLE damage on bosses if it all hits. It’s even more powerful than Zero’s base buster/Z-Saber combo!
+08.	Xâ€™s cross-over combo shot has been altered so the smaller buster shots on the side will â€˜crossâ€™ each other on screen.
+		a.	The overall movement is faster as well. Also, each shot hits SEPARATELY dealing INCREDIBLE damage on bosses if it all hits. Itâ€™s even more powerful than Zeroâ€™s base buster/Z-Saber combo!
 		b.	This makes X ridiculously powerful when it comes to the Hyper Charge as he can continuously deal combo shots and wreck nearly anything.
 09.	The Ride Armor pad has been slightly updated so you can use Ride Armors at ANY TIME IF you have at least ONE Ride Armor chip obtained.
-		a.	You are no longer required to go straight for the chip located in Blast Hornet’s stage.
+		a.	You are no longer required to go straight for the chip located in Blast Hornetâ€™s stage.
 10.	The 'X' on the stage select screen is now used for switching characters.
 		a.	It will change to an 'X' or 'Z' to reflect who you're currently using.
 11.	New portrait palettes if you have Golden Armor/Black Armor.
@@ -121,24 +121,24 @@ General game changes in Zero Project V4.1 (Base Mod)
 New additions in Zero Project V4.1 (Base Mod)
 -------------------------------------------------------
 01.	Passwords have been entirely removed. In place of this, a brand-new Save/Load Game system has been implemented.
-		a.	There is a total of 20 saves! There are four pages worth of saves and five on each page. If you’re loading a game, press ‘Select’ to delete a save file.
+		a.	There is a total of 20 saves! There are four pages worth of saves and five on each page. If youâ€™re loading a game, press â€˜Selectâ€™ to delete a save file.
 02.	The Save/Load Game screen displays all data throughout the game. The game will save:
 		a.	Sub-weapons
 		b.	Health upgrades
 		c.	Lives
-		d.	Character you last played as (Whomever you’re playing as appears first)
+		d.	Character you last played as (Whomever youâ€™re playing as appears first)
 		e.	Armor upgrades
 		f.	Chip upgrades
 		g.	Bit/Byte/Vile defeated
 		h.	Sub-tanks
 		i.	Z-Saber upgrade
-		j.	New Game+ feature called ‘Clear’ in the save menu.
-03.	New Game+ is a brand-new feature into V4.0 and the Base Mod. Upon game completion and the credits finish, you’ll see text that will say "Press any key to save".
-		a.	Once this is done, it’ll load the save screen. Save your game then back out. It’ll reset the game back to the Capcom logo.
-		b.	At the title screen, just reload the NG+ save and you’ll have everything from the last game but no bosses defeated! This means you can CARRY OVER all upgrades INCLUDING the Z-Saber AND keep Zero alive!
+		j.	New Game+ feature called â€˜Clearâ€™ in the save menu.
+03.	New Game+ is a brand-new feature into V4.0 and the Base Mod. Upon game completion and the credits finish, youâ€™ll see text that will say "Press any key to save".
+		a.	Once this is done, itâ€™ll load the save screen. Save your game then back out. Itâ€™ll reset the game back to the Capcom logo.
+		b.	At the title screen, just reload the NG+ save and youâ€™ll have everything from the last game but no bosses defeated! This means you can CARRY OVER all upgrades INCLUDING the Z-Saber AND keep Zero alive!
 04.	The regular X3 MSU-1 patch SHOULD be compatible with this new version of the Zero Project. No code overwrites any of the changes the MSU-1 uses.
 05.	Separate patches are included for headered and unheadered ROMS.
-		a.	They also include a patch that gives Zero X’s sub-weapon colors when he’s using sub-weapons, albeit with some disastrous results on color schemes at points.
+		a.	They also include a patch that gives Zero Xâ€™s sub-weapon colors when heâ€™s using sub-weapons, albeit with some disastrous results on color schemes at points.
 06.	X, Zero and any other one or two PCs that were possibly going to be added have their RAM ENTIRELY moved to a new location. 
 		a.	Any Game Genie codes from normal X3 will more than likely not work on this project anymore. However, a new file with all the locations of changes is included!
 07.	The Golden Armor can now be collected in two manners instead of one.
@@ -148,29 +148,29 @@ New additions in Zero Project V4.1 (Base Mod)
 		c.	However, you cannot mix and match these to obtain the Golden Armor. You can go either route, but both routes don't mix to allow obtaining it.
 08.	The in-game menu now displays what Chip upgrades you now have! When you obtain a Chip Upgrade, it will display the armor piece in the menu and turn Golden noting that one is active. 
 		a.	However, you can switch which chip is active at any time by going to the original capsule location. If you have the Golden Armor, all four Armor Chip pieces display and are golden in color.
-09.	New icons are in the menu to display each character’s main weapon or upgrade. 
-		a.	Zero will have his own icon for the Z-Buster while X will have his own. However, if you have the Z-Saber upgrade on X then it’ll display a Z-Saber icon.
+09.	New icons are in the menu to display each characterâ€™s main weapon or upgrade. 
+		a.	Zero will have his own icon for the Z-Buster while X will have his own. However, if you have the Z-Saber upgrade on X then itâ€™ll display a Z-Saber icon.
 10.	The Frog Armor has been greatly changed on overall gameplay. It now functions properly on land where you can walk and dash properly. 
-		a.	If you’re underwater, the dash is still replaced by the swimming mechanic, but you can still properly walk which makes it much easier to maneuver overall.
-11.	The boulders in Tunnel Rhino’s stage are destroyable objects now. You can use the Charged Triad Thunder like normal, but you can also use the Z-Saber, Spinning Blades, Charged Spinning Blades and Tornado Fang to destroy it.
+		a.	If youâ€™re underwater, the dash is still replaced by the swimming mechanic, but you can still properly walk which makes it much easier to maneuver overall.
+11.	The boulders in Tunnel Rhinoâ€™s stage are destroyable objects now. You can use the Charged Triad Thunder like normal, but you can also use the Z-Saber, Spinning Blades, Charged Spinning Blades and Tornado Fang to destroy it.
 		a.	This makes upgrades obtainable very early on and not in a specific route.
-12.	The ‘Gravity Well’ platform in Volt Catfish’s stage has been entirely replaced with a spike wall jump instead making the Armor Upgrade obtainable at any time.
-13.	The Hawk Chip location in Crush Crawfish’s is a destroyable object now.
+12.	The â€˜Gravity Wellâ€™ platform in Volt Catfishâ€™s stage has been entirely replaced with a spike wall jump instead making the Armor Upgrade obtainable at any time.
+13.	The Hawk Chip location in Crush Crawfishâ€™s is a destroyable object now.
 		a.	You can use the Charged Triad Thunder like normal
 		b.	The Z-Saber also works (If one were somehow able to hit it)
-		c.	All instances of Ride Armor weapons (Obviously most cannot hit it) which INCLUDES the Frog Armor’s missiles that fall after a period of time
+		c.	All instances of Ride Armor weapons (Obviously most cannot hit it) which INCLUDES the Frog Armorâ€™s missiles that fall after a period of time
 		d.	Tornado Fang works as well if you fire multiple in a row to create a spread.
-14.	Tornado Fang’s spread distance has been increased so it can be used to destroy the platform in Crush Crawfish’s stage but also cover more ground in general, making this a bit more useful.
+14.	Tornado Fangâ€™s spread distance has been increased so it can be used to destroy the platform in Crush Crawfishâ€™s stage but also cover more ground in general, making this a bit more useful.
 15.	Zero now has a unique GET WEAPON portrait thanks to Metalwario64.
-16.	X’s GET WEAPON screen has been slightly updated so he’ll display his base ‘blue’ color when he first appears. Once the screen flashes, it’ll display his sub-weapon color.
-17.	X’s face graphics in the introduction story sequence when pressing no buttons has been updated by Metalwario64. Zero’s chest orbs now also display their proper color in that same sequence.
+16.	Xâ€™s GET WEAPON screen has been slightly updated so heâ€™ll display his base â€˜blueâ€™ color when he first appears. Once the screen flashes, itâ€™ll display his sub-weapon color.
+17.	Xâ€™s face graphics in the introduction story sequence when pressing no buttons has been updated by Metalwario64. Zeroâ€™s chest orbs now also display their proper color in that same sequence.
 18.	X and Zero have their own 1-up icons now entirely separate from one another!
-19.	Bit/Byte encounters are entirely random now. It’s a 50/50 chance on whoever will spawn.
+19.	Bit/Byte encounters are entirely random now. Itâ€™s a 50/50 chance on whoever will spawn.
 		a.	If 7+ bosses are defeated and either Bit or Byte is dead, the other will always have a 100% chance of spawning unless they've been fought once as well.
-20.	Bit/Byte/Vile encounters have had their music changed to Doppler’s battle theme.
+20.	Bit/Byte/Vile encounters have had their music changed to Dopplerâ€™s battle theme.
 21.	Bit/Byte are encounterable even on stages when bosses have been defeated! However, if all 8 mavericks are defeated and the Doppler stages are loaded, they can no longer be fought.
 		b.	This gives ample time to do whatever the player wants instead of being stuck in specific spots.
-22.	Dialogue can be skipped entirely along with most events if you press the ‘Start’ button during dialogue sequences now.
+22.	Dialogue can be skipped entirely along with most events if you press the â€˜Startâ€™ button during dialogue sequences now.
 
 
 
