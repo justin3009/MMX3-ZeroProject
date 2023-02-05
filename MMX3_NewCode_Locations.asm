@@ -7330,6 +7330,9 @@ TitleScreen_InitCheat: { ;New function that checks if "L+R+X" are held when sele
 			LDA #$5C
 			STA !CurrentPCAction_09DA
 			
+			LDA #$00
+			STA $09DB
+			
 			LDA #$FF
 			STA !RideChipsOrigin_7E1FD7
 			
@@ -7414,6 +7417,9 @@ TitleScreen_CheckCheat: { ;New function that will set all upgrades and enable NG
 	
 	LDA #$01 ;Sets "Introduction Level" as completed
 	STA !IntroductionLevelBIT_1FD3
+	
+	LDA #$00
+	STA $3D ;Stores to $7E:003D (Temp. storage for Cheat Mode)
 	
 	LDA #$01 ;Enable Cheat Mode
 	RTL

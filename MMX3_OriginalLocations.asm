@@ -3750,7 +3750,7 @@ org $8697AF ;Zero's title screen coordinates
 	db $B1 ;Options
 }
 
-org $808F7B ;Original code location that sets "X" or "Zero" to fire a "Charged Shot" when selecting any option on the menu.
+org $808F7B ;Original code location that sets "X" or "Zero" to fire a "Charged Shot" when selecting any option on the menu. Cheat Mode is set if "L + R + X" are held when selecting "New Game".
 {
 	JSL TitleScreen_InitCheat
 	NOP
