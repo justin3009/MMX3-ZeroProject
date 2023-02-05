@@ -67,6 +67,10 @@ org $80FF75 ;Loads original code location that sets the game to start. (Updated 
 	
 	JML $808004
 }
+;org $80FFD5 ;Original offset location for "Header". (THIS WILL CAUSE IT TO ERROR AND NOT WORK WITH CX4 CHIP!)
+{
+	;db $30 ;Sets header to display "FastROM"
+}
 
 
 	
@@ -3644,7 +3648,6 @@ org $80AEF6 ;Sets PCNPC's Y coordinates
 
 ;*********************************************************************************
 ;Allow PCs to be changed on the Title Screen by pressing the 'Select' button and other settings on Title Screen
-;Only 'bug' for this is that X and Zero need to have separate character coordinates on screen so it loads them up properly
 ;*********************************************************************************
 {
 org $808F36
@@ -3746,7 +3749,21 @@ org $8697AF ;Zero's title screen coordinates
 	db $A1 ;Password
 	db $B1 ;Options
 }
+
+org $808F7B ;Original code location that sets "X" or "Zero" to fire a "Charged Shot" when selecting any option on the menu.
+{
+	JSL TitleScreen_InitCheat
+	NOP
+}
+org $809995 ;Original code location that sets all armors, health, bosses defeated, story flag, etc.. back to normal settings when starting "New Game" on the Title Screen.
+{
+	JSL TitleScreen_CheckCheat
+	BEQ TitleScreen_Normal
 	
+		JMP $99D6
+	
+	TitleScreen_Normal:
+}
 	
 	
 ;*********************************************************************************

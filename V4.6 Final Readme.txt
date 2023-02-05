@@ -1,0 +1,288 @@
+*********************************************************************************
+Mega Man X3 - Zero Project 4.0 (Base Mod)						 	*
+Created By: Justin3009 (xJustin3009x/Shishisenkou)					 	*
+*********************************************************************************
+Version 4.0	- Started Late 2017
+		- Finished July 22nd	2018
+Version 4.1	- Started August. On hiatus for a year.
+		- Finished ???		2019
+Version 4.2	- September 24th	2020
+Version 4.3	- September 26th	2020
+Version 4.4	- February 24th		2021
+Version 4.5	- June 26th		2022
+Version 4.6	- February 05th		2023
+--------------------------------------------------------------------------------
+
+Content
+-------------
+01. What's new?
+	1A. Change Log
+	1B. Changes for X and Zero in Zero Project V4.1 (Base Mod)
+	1C. General game changes in Zero Project V4.1 (Base Mod)
+	1D. New additions in Zero Project V4.1 (Base Mod)
+02. Version Updates
+03. Unused/Unfinished Planned Features 
+04. Credits
+05. Contact
+
+
+
+*********************************************************************************
+01. What's new?									 		*
+*********************************************************************************
+This project is now on Github and open to the public for editing! The source is all there. Feel free to report bug reports here with explanations or create forks of the project!
+https://github.com/justin3009/MMX3-ZeroProject
+
+
+
+This requires a Mega Man X 3 (U) ROM! Most emulators support this ROM project now, however, BizHawk may not work from what's been tested by others.
+
+The latest version of Asar was used to compile all the .asm files. There's some unused features were being worked on that are either commented out or are in-game but cannot be accessed without cheating.
+----------------------------------------------------------
+Changes for X and Zero in Zero Project V4.1 (Base Mod)
+----------------------------------------------------------
+01.	Zero is fully playable throughout the game! Features included are:
+		a.	Can use sub-weapons although ammo consumption is doubled without the Black Armor upgrade.
+		b.	Starts off with air-dash and double jump.
+		c.	Can collect all upgrades including Heart Tanks, Sub-Tanks, Ride Armor Chips, Capsules and Chip Capsules. However, capsules give no benefit but can be collected for X to use at any time.
+		d.	Can use Ride Armors.
+		e.	Has +4 maximum health compared to X to help offset his size difference.
+		f.	CANNOT use the Hyper C. (Hyper Charge).
+		g.	Z-Saber damage has been altered based on credit roll statistics. Speed + Power combined is what was used to determine who gets damaged the most or least.
+		h.	Can combo his buster shots and Z-Saber consecutively without any wait time!
+02.	The Golden Armor/Black Armor capsule is the only capsule that gives Zero an upgrade and will garner him increased abilities such as:
+		a.	Zero's overall speed is increased.
+		b.	Zero's defenese is increased so he takes half damage.
+		c.	Zero's Z-Saber will deal +2 damage extra while also recoloring his Z-Saber to purple.
+		d.	Zero's air-dash and ground-dash times are lengthened.
+		e.	Zero's sub-weapon consumption is set to normal values instead of being doubled.
+03.	X and Zero both have increased animation speed with their buster and Z-Saber animations.
+		a.	Zero is quicker with his Z-Saber. X is quicker with his buster.
+		b.	X’s vertical dash speed has been increased slightly as well.
+
+04.	X no longer has a "shield" with any of the armor upgrades but he does retain the overall defense increase.
+05. X's helmet upgrade has had some changes to it with and without the "Chip" upgrade.
+		a.	The base helmet upgrade has been altered to cut sub-weapon ammo in half along with the radar it provides.
+				The code indicates that you had to have both Helmet and Armor upgrades but in other instances the code only checked for the helmet. So this was altered to be apart of the helmet as well.
+				The dialogue has been updated for this change at the capsule.
+		b. 	The "Chip" upgrade has had a change overall.
+				If only the Helmet Chip is obtained then health regeneration will be like normal X3. Only one health per successful healing.
+				If the Golden Armor is obtained and regeneration is successful, it’ll double each time capping at a max of 08.
+					It’ll heal starting at 01. After, it'll double to 02 then 04 and lastly 08. This GREATLY reduces the time X must wait to refill sub-tanks and his own health.
+06. Hyper Charge (Hyper C.) has a few modifications from the original:
+		a.	X can use it at any time if the ammo is +4.
+		b.	X can refill ammo for the Hyper Charge even if the weapon is equipped.
+		c.	X CANNOT use the Z-Saber when using the Hyper Charge.	
+07.	Various normal game bugs have been fixed including (hopefully) the "Lemon Bug" in which you would be stuck using base buster shots until you opened the menu screen and switched to a new sub-weapon.
+
+
+
+
+----------------------------------------------------------
+General game changes in Zero Project V4.1 (Base Mod)
+----------------------------------------------------------
+01.	The game now remembers who you played as last after you've completed a level or died.
+02.	The unused buster frames Zero has are incorporated into his animation making them 'slightly' smoother.
+03.	Zero CAN be played in the introduction stage now with his own unique dialogue!
+04.	Dialogue has been updated to reflect both characters being usable in game along various menu changes.
+		a.	X has his own set of dialogue.
+		b.	X has his own set of menu text.
+		c.	X has his own set of menu icons.
+		d.	Zero has his own set of dialogue.
+		e.	Zero has his own set of menu text.
+		f.	Zero has his own set of menu icons.
+		g.	There's room for dialogue, menu text and icons for PC #3/PC #4 but they are currently all unused and would more than likely break the game being cheated in currently.
+		h.	Character switch text speed is increased GREATLY.
+		i.	Pressing "R" or "L" is MUCH faster in the menu now.
+05.	X and Zero are swapped during events.
+		a.	If you're playing as Zero, X will appear, vice versa. All events have this case even ones that shouldn’t ever happen.
+				If X appears in the cut-scene, he will display any armor piece he has obtained!
+		b.	During the Mosquitus event to obtain the Z-Saber. When Mosquitus lands on Zero and starts exploding; if you cheat and have it load X instead, it’ll display Zero teleporting down with new dialogue.
+				Doing so, X will be unavailable for the rest of the game. This is done to prevent any kind of crashing instances but also as little fun easter eggs for people.
+06.	Sub-tanks work like Mega Man Zero.
+		a.	If you're health is filled during a sub-tank's use then it will stop recovering HP and draining the sub-tank.
+07.	A ‘combo system’ has been somewhat put in place but is only viable with the X-Buster and the Z-Saber at this current time.
+		a.	This is a feature similar to X2’s and is more dynamic, but the dynamics on other weapons goes unused due to balancing issues.
+		b.	With this at least in place, you can combo your charged buster shots into an enemy to deal consistent damage and even the Z-Saber afterwards too!
+08.	X’s cross-over combo shot has been altered so the smaller buster shots on the side will ‘cross’ each other on screen.
+		a.	The overall movement is faster as well. Also, each shot hits SEPARATELY dealing INCREDIBLE damage on bosses if it all hits. It’s even more powerful than Zero’s base buster/Z-Saber combo!
+		b.	This makes X ridiculously powerful when it comes to the Hyper Charge as he can continuously deal combo shots and wreck nearly anything.
+09.	The Ride Armor pad has been slightly updated so you can use Ride Armors at ANY TIME IF you have at least ONE Ride Armor chip obtained.
+		a.	You are no longer required to go straight for the chip located in Blast Hornet’s stage.
+10.	The 'X' on the stage select screen is now used for switching characters.
+		a.	It will change to an 'X' or 'Z' to reflect who you're currently using.
+11.	New portrait palettes if you have Golden Armor/Black Armor.
+12.	New feature in which before the Z-Saber boss in Doppler's level if you're playing as Zero, it forces the menu to load and X warns Zero to be careful.
+
+
+
+
+-------------------------------------------------------
+New additions in Zero Project V4.1 (Base Mod)
+-------------------------------------------------------
+01.	Passwords have been entirely removed. In place of this, a brand-new Save/Load Game system has been implemented.
+		a.	There is a total of 20 saves! There are four pages worth of saves and five on each page. If you’re loading a game, press ‘Select’ to delete a save file.
+02.	The Save/Load Game screen displays all data throughout the game. The game will save:
+		a.	Sub-weapons
+		b.	Health upgrades
+		c.	Lives
+		d.	Character you last played as (Whomever you’re playing as appears first)
+		e.	Armor upgrades
+		f.	Chip upgrades
+		g.	Bit/Byte/Vile defeated
+		h.	Sub-tanks
+		i.	Z-Saber upgrade
+		j.	New Game+ feature called ‘Clear’ in the save menu.
+03.	New Game+ is a brand-new feature into V4.0 and the Base Mod. Upon game completion and the credits finish, you’ll see text that will say "Press any key to save".
+		a.	Once this is done, it’ll load the save screen. Save your game then back out. It’ll reset the game back to the Capcom logo.
+		b.	At the title screen, just reload the NG+ save and you’ll have everything from the last game but no bosses defeated! This means you can CARRY OVER all upgrades INCLUDING the Z-Saber AND keep Zero alive!
+04.	The regular X3 MSU-1 patch SHOULD be compatible with this new version of the Zero Project. No code overwrites any of the changes the MSU-1 uses.
+05.	Separate patches are included for headered and unheadered ROMS.
+		a.	They also include a patch that gives Zero X’s sub-weapon colors when he’s using sub-weapons, albeit with some disastrous results on color schemes at points.
+06.	X, Zero and any other one or two PCs that were possibly going to be added have their RAM ENTIRELY moved to a new location. 
+		a.	Any Game Genie codes from normal X3 will more than likely not work on this project anymore. However, a new file with all the locations of changes is included!
+07.	The Golden Armor can now be collected in two manners instead of one.
+		a.	The first manner is the same as the original game with all upgrades.
+		b.	The second manner is based on the Chip Capsules obtained. You can now collect ALL Chip Capsules instead of picking just one. 
+				If all four are collected, go to the Golden Armor capsule like normal and you will obtain the Golden Armor! This bypasses the need for full health, all Sub-tanks and all Heart Tanks!
+		c.	However, you cannot mix and match these to obtain the Golden Armor. You can go either route, but both routes don't mix to allow obtaining it.
+08.	The in-game menu now displays what Chip upgrades you now have! When you obtain a Chip Upgrade, it will display the armor piece in the menu and turn Golden noting that one is active. 
+		a.	However, you can switch which chip is active at any time by going to the original capsule location. If you have the Golden Armor, all four Armor Chip pieces display and are golden in color.
+09.	New icons are in the menu to display each character’s main weapon or upgrade. 
+		a.	Zero will have his own icon for the Z-Buster while X will have his own. However, if you have the Z-Saber upgrade on X then it’ll display a Z-Saber icon.
+10.	The Frog Armor has been greatly changed on overall gameplay. It now functions properly on land where you can walk and dash properly. 
+		a.	If you’re underwater, the dash is still replaced by the swimming mechanic, but you can still properly walk which makes it much easier to maneuver overall.
+11.	The boulders in Tunnel Rhino’s stage are destroyable objects now. You can use the Charged Triad Thunder like normal, but you can also use the Z-Saber, Spinning Blades, Charged Spinning Blades and Tornado Fang to destroy it.
+		a.	This makes upgrades obtainable very early on and not in a specific route.
+12.	The ‘Gravity Well’ platform in Volt Catfish’s stage has been entirely replaced with a spike wall jump instead making the Armor Upgrade obtainable at any time.
+13.	The Hawk Chip location in Crush Crawfish’s is a destroyable object now.
+		a.	You can use the Charged Triad Thunder like normal
+		b.	The Z-Saber also works (If one were somehow able to hit it)
+		c.	All instances of Ride Armor weapons (Obviously most cannot hit it) which INCLUDES the Frog Armor’s missiles that fall after a period of time
+		d.	Tornado Fang works as well if you fire multiple in a row to create a spread.
+14.	Tornado Fang’s spread distance has been increased so it can be used to destroy the platform in Crush Crawfish’s stage but also cover more ground in general, making this a bit more useful.
+15.	Zero now has a unique GET WEAPON portrait thanks to Metalwario64.
+16.	X’s GET WEAPON screen has been slightly updated so he’ll display his base ‘blue’ color when he first appears. Once the screen flashes, it’ll display his sub-weapon color.
+17.	X’s face graphics in the introduction story sequence when pressing no buttons has been updated by Metalwario64. Zero’s chest orbs now also display their proper color in that same sequence.
+18.	X and Zero have their own 1-up icons now entirely separate from one another!
+19.	Bit/Byte encounters are entirely random now. It’s a 50/50 chance on whoever will spawn.
+		a.	If 7+ bosses are defeated and either Bit or Byte is dead, the other will always have a 100% chance of spawning unless they've been fought once as well.
+20.	Bit/Byte/Vile encounters have had their music changed to Doppler’s battle theme.
+21.	Bit/Byte are encounterable even on stages when bosses have been defeated! However, if all 8 mavericks are defeated and the Doppler stages are loaded, they can no longer be fought.
+		b.	This gives ample time to do whatever the player wants instead of being stuck in specific spots.
+22.	Dialogue can be skipped entirely along with most events if you press the ‘Start’ button during dialogue sequences now.
+
+
+
+
+*********************************************************************************
+2. Version Updates								*
+*********************************************************************************
+V4.1
+-------------
+01.	'Hopefully' fixed the rare bug of X and Zero losing their upgrades and various other things after you defeat the REX-2000.
+		a. This was due to an extremely rare occurence where the ceiling tiles could overwrite the PC RAM. This HOPEFULLY has been fixed by moving the PC data down by 100 bytes.
+			If this occurs again, I'll have to completely move their data into the farthest regions of bank $7F but that would require a massive code rewrite in doing so.
+02.	X has a new feature where if he uses a 'Charged Gravity Well' shot, his animation will end ASAP.
+		a. He can then jump with a higher gravity boost and shoot only lemon shots. [Thanks to DRN-01 of MMX9 community for the idea]
+03.	Zero no longer takes double sub-weapon ammo when he has the Black Armor. It will result in the normal amount used in base form X.
+04.	Using L/R on Zero will no longer load the Hyper C. sub-weapon. The Hyper C. is also not possible to select as Zero.
+05.	Various enemies have had their collision damage and/or health lessened due to them hitting like a truck or tanking way more than what they probably should.
+		a.	Head Gunner:			Collision damage reduced from 04 to 02.
+		b.	Victoroid:				Collision damage reduced from 08 to 04. Health reduced from 30 to 28.
+		c.	Tombort:				Collision damage reduced from 06 to 02. Health reduced from 18 to 10. (Collision damage is unused)
+		d.	Atareeter:				Collision damage reduced from 08 to 04. Health reduced from 30 to 28.
+		e.	Volt Kurageil:			Collision damage reduced from 06 to 04.
+		f.	REX-2000:				Collision damage reduced from 08 to 04.
+		g.	Sigma (Base):			Collision damage reduced from 08 to 04.
+		h.	Bit:					Collision damage increased from 01 to 02.
+		i.	Byte:					Collision damage increased from 01 to 02.
+		j.	Press Disposer:			Collision damage reduced from 06 to 03.
+		k.	Godkarmachine:			Collision damage reduced from 08 to 06.
+		l.	Dr. Doppler:			Collision damage reduced from 06 to 03.
+
+V4.2 + V4.2a
+-------------
+01.	Fixed the Frog Armor walking sprites glitching out. (Due to sprite assembly not being written in compilation)
+02.	Fixed some Save/Load Menu text issues. (Wasn't removing all of the text data properly)
+03.	Slightly reorganized some code in various files. Regioned some of it off so it's more readable, grouped a few things, etc.. not a lot done.
+
+
+V4.3
+-------------
+01.	Fixed a palette bug with the Z-Saber wave striking enemies.
+		a.	This is a natural game bug oddly but hopefully this fixes any issues arising with it.
+02.	Altered the Helmet Chip upgrade along with the Golden Armor variation.
+		a.	The Helmet Chip will allow X to regenerate health as normal like the original game again.
+		b.	The Golden Armor will allow X's regeneration to double each time it's successful capping at #$08.
+03.	The Helmet Sensor will NO LONGER run at the start of a level if every single upgrade has been obtained. Although, this does NOT check for Hard Mode currently which goes unused.
+04.	Fixed some minor Save/Load screen text problems.
+05.	Fixed cursor coordinates when selecting "Yes   No" in the Save/Load screen.
+06.	Altered Bit & Byte spawning randomization code just a tiny bit but it effectively does the same thing.
+07.	Fixed a bug in which Godkarmachine O Inary's (Bit & Byte combined) hands would not deal damage.
+08.	Added in the ability for Zero to use the Z-Saber projectile.
+		a.	This is only available if you have the Black Armor and are on NG+.
+
+
+V4.4 (Massive thanks to Solren for discovering nearly all of these bugs)
+-------------
+01.	Fixed a bug in which sub-weapon ammo could underflow and refill itself.
+02.	Fixed a bug in which sub-weapon ammo would refill the wrong sub-weapon due to an incorrect value.
+03.	Fixed a bug in which sub-weapon projectile limits were reset incorrectly upon entering boss doors.
+04.	Fixed a bug in which the Frog Armor could only dash once in Toxic Seahorse's stage due to a misreading of RAM.
+05.	Fixed a bug in which X could use charged variations of sub-weapons without the arm part.
+06.	Fixed a bug in which X's sub-weapons could potentially use less or more ammo.
+07.	Fixed a bug in which X's Z-Saber projectile code was bugged and would affect Zero's sprites in the introduction.
+08.	Fixed a bug in which pressing L+R on the Hyper Charge to reset the sub-weapons would not disable the palette or SFX properly.
+
+
+V4.5 (Thanks to Guilherme Resende for finding)
+-------------
+01. Fixed a bug in New Game+ in cut scenes where Zero could use the Z-Saber. It would launch the Saber Wave and cause VRAM issues.
+
+
+V4.6
+------------
+01. Fixed a bug in New Game+ mode in Mac's Room. When X or Zero use the Z-Saber here specifically, it would never send out the Saber Wave.
+02. Added in a new "Cheat Code" on the Start Menu. If L+R+X are held together and you hit "New Game", the character will swing their Z-Saber instead.
+	a. When this is done you'll start on the "Stage Select" screen on NG+ mode with all upgrades.
+
+
+
+*********************************************************************************
+03. Unused/Unfinished Planned Features							 	*
+*********************************************************************************
+01.	Difficulties: Normal, Hard, Xtreme.
+	a.	Normal is normal gameplay.
+	b.	Hard separates PC upgrades entirely from one another minus Ride Chips and Capsules.
+	c.	Xtreme separates characters entirely. You can only play as one character throughout the whole game; heart tanks only give +1 health and the characters start with half of their base max health. Limited lives as well.
+02.	Difficulties are somewhat implemented and work to an extent, but most features for them do not work. However, they can be somewhat set with a RAM change.
+	a.	$7E:F3E0 is the RAM. Changing it to 01 will initiate all difficulties or setting it to 11 will set it to a higher difficulty with NG+ on.
+	b.	There are probably many bugs with this so be wary.
+
+
+
+
+*********************************************************************************
+04. Credits										 	*
+*********************************************************************************
+Big thanks to the Mega Man X9 community for repeated beta testing!
+
+
+Other:
+01.	Tsuraranoma for his buster modifications!
+02.	ShadowMH for providing the dialogue for Zero and editing!
+03.	RHDN community for helping with coding issues when they arrived!
+04.	Metalwario64 for providing Zero's GET WEAPON image along with various other graphical tweaks!
+05.	MANY, MANY thanks to all the people who have beta tested this throughout the months! There are way too many to count but thank you!
+06.	All of my Twitter followers for posting bug reports, ideas and such!
+
+
+
+
+******************************************************************************
+05. Contact										 *
+******************************************************************************
+For more updates on this project (if they arrive) and other projects, follow me at:
+Twitter: 	https://twitter.com/Justin3009
+

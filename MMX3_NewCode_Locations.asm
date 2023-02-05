@@ -2333,11 +2333,17 @@ PC_ZSaberProjectile: ;Routine to determine which PC can use halved sub-weapon am
 		LDA $7E0CC8 ;NPC Active (Disables Z-Saber wave when NPC is active)
 		BNE X_SaberProjectileCheck_Disable
 
+			X_SaberProjectileCheck_Enable_Set:
 			LDA #$01 ;Enable
 			RTS
 	
 	X_SaberProjectileCheck_Disable:
-	LDA #$00 ;Enable
+	LDA !CurrentLevel_1FAE
+	BNE X_SaberProjectileCheck_Disable_Set
+		BRA X_SaberProjectileCheck_Enable_Set
+		
+	X_SaberProjectileCheck_Disable_Set:
+	LDA #$00 ;Disable
 	RTS
 	}
 	Zero_SaberProjectileCheck: ;This section checks for Zero and his specifics to use the Z-Saber Projectile.
@@ -2564,7 +2570,6 @@ GroundLandSetJump: ;Routine that sets JumpDashAmount_7EF4E6 when landing on grou
 	JSL SetJumpValues
 	RTL
 }
-
 DashFinish_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when ground dashing is finished.
 {
 	JSL SetJumpValues
@@ -2573,7 +2578,6 @@ DashFinish_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when ground dashing
 	LDA #$20
 	RTL
 }
-
 WallSlide_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when wall sliding.
 {
 	JSL SetJumpValues
@@ -2582,7 +2586,6 @@ WallSlide_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when wall sliding.
 	STZ $55
 	RTL
 }
-
 GetOnLadder_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when getting on ladder.
 {
 	JSL SetJumpValues
@@ -2591,7 +2594,6 @@ GetOnLadder_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when getting on la
 	STZ $A7
 	RTL
 }
-
 GetOffLadder_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when getting on getting off ladder.
 {
 	JSL SetJumpValues
@@ -2600,7 +2602,6 @@ GetOffLadder_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when getting on g
 	LDA #$26
 	RTL
 }
-
 BeginClimbDownLadder_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when getting on ladder by climbing DOWN.
 {
 	JSL SetJumpValues
@@ -2609,7 +2610,6 @@ BeginClimbDownLadder_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when gett
 	LDA #$28
 	RTL
 }
-
 ClimbingLadder_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when getting climbing ladder.
 {
 	JSL SetJumpValues
@@ -2618,7 +2618,6 @@ ClimbingLadder_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when getting cl
 	LDA #$2A
 	RTL
 }
-
 WaterJump_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when getting jumping on the surface of water.
 {
 	JSL SetJumpValues
@@ -2627,7 +2626,6 @@ WaterJump_SetJump: ;Routine that sets JumpDashAmount_7EF4E6 when getting jumping
 	LDA #$48
 	RTL
 }
-
 
 SetCutScene_SetJump: ;Routine that sets the 'cut scene' value then sets JumpDashAmount_7EF4E6 when any kind of forced movement occurs.
 {
@@ -3476,7 +3474,7 @@ PCBusterPalette: ;Routine that sets the PC's sub-weapon/buster/Z-Saber palette d
 		JSL !Palette
 		RTS
 }
-				
+
 DisablePCSubWeaponCharging: ;Routine that determines which PC can charge sub-weapons or not.
 {
 	SEP #$30
@@ -5916,6 +5914,7 @@ RideArmor_SpritePriorities: ;Blanked out the other routine because Zero's sprite
 	; STA $12
 	; RTL
 }
+
 ;*********************************************************************************
 ; Triggers the new Mosquitus warning code to check current PC.
 ; Also sets layer properties in the menu now so it displays the weapons like it should.
@@ -5926,6 +5925,7 @@ MosquitusWarning_CheckPCS: ;Routine that checks PCs to determine who gets what w
 ;This is for when Zero is able to get X's buster from Mosquitus damage and allows him to use his buster ALA X's X2 buster
 {
 	STX $0010
+	
 	SEP #$20
 	LDA $0B
 	BNE MosquitusWarning_CheckPC_NoWarning
@@ -5947,49 +5947,50 @@ MosquitusWarning_CheckPCS: ;Routine that checks PCs to determine who gets what w
 		db $FF,$FF
 		
 	
-		X_MosquitusWarning_CheckPCS:
+		X_MosquitusWarning_CheckPCS: { ;This section is X's code.
 		LDX $0010
 		LDA !Difficulty_7EF4E0
 		BIT #$10
 		BEQ X_MosquitusWarning_CheckPCS_NoWarning
-		LDA !ZSaberObtained_1FB2
-		BIT #$80
-		BEQ X_MosquitusWarning_CheckPCS_NoWarning
-		LDA #$00 ;Set to #$02 and X will have a warning ONLY ON NG+
-		BRA X_MosquitusWarning_CheckPCS_End
+		
+			LDA !ZSaberObtained_1FB2
+			BIT #$80
+			BEQ X_MosquitusWarning_CheckPCS_NoWarning
+			
+				LDA #$00 ;Set to #$02 and X will have a warning ONLY ON NG+
+				RTS
 		
 		X_MosquitusWarning_CheckPCS_NoWarning:
 		LDA #$00
-		
-		X_MosquitusWarning_CheckPCS_End:
 		RTS
-		
-		Zero_MosquitusWarning_CheckPCS:
+		}
+		Zero_MosquitusWarning_CheckPCS: { ;This section loads Zero's code.
 		LDX $0010
 		LDA !Difficulty_7EF4E0
 		BIT #$10
 		BEQ Zero_MosquitusWarning_CheckPCS_Warning
-		LDA !ZSaberObtained_1FB2
-		BIT #$80
-		BEQ Zero_MosquitusWarning_CheckPCS_Warning
-		LDA #$00
-		BRA Zero_MosquitusWarning_CheckPCS_End
+		
+			LDA !ZSaberObtained_1FB2
+			BIT #$80
+			BEQ Zero_MosquitusWarning_CheckPCS_Warning
+			
+				LDA #$00
+				RTS
 		
 		Zero_MosquitusWarning_CheckPCS_Warning:
 		LDA #$02
-		
-		Zero_MosquitusWarning_CheckPCS_End:
 		RTS
-		
-		PC3_MosquitusWarning_CheckPCS:
+		}
+		PC3_MosquitusWarning_CheckPCS: { ;This section loads PC #3's code.
 		LDX $0010
 		LDA #$00
 		RTS
-		
-		PC4_MosquitusWarning_CheckPCS:
+		}
+		PC4_MosquitusWarning_CheckPCS: { ;This section loads PC #4's code.
 		LDX $0010
 		LDA #$00
 		RTS
+		}
 }
 
 
@@ -5998,21 +5999,25 @@ MosquitusWarning: ;Loads routine that triggers the Mosquitus warning when about 
 {
 	LDA $1F5D
 	CMP #$40
-	BEQ MosquitusWarningEndRoutine
-	LDA !CurrentPCCheck_1FFF
-	EOR #$02
-	STA !CurrentPCCheck_1FFF
-MosquitusWarningEndRoutine:
+	BEQ MosquitusWarning_End
+	
+		LDA !CurrentPCCheck_1FFF
+		EOR #$02
+		STA !CurrentPCCheck_1FFF
+	
+	MosquitusWarning_End:
 	RTL
 }
 
 MosquitusWarningSetLayerProperties: ;Loads routine that sets Mosquitus warning Menu Layer properties and coordinates.
 {
 	BVC MosquitusWarningSetLayerProperties_IgnoreSettings
-	LDA #$8D
-	STA $00B5
-	LDA #$FF
-	STA $00B6
+	
+		LDA #$8D
+		STA $00B5
+		
+		LDA #$FF
+		STA $00B6
 	
 	MosquitusWarningSetLayerProperties_IgnoreSettings:
 	RTL
@@ -6260,7 +6265,7 @@ MissileFlickering: ;Routine used as a timer that allows missiles to 'flicker' as
 	SEP #$10
 	RTL
 }
-		
+
 ;***************************
 ; Set PC NPC direction, palette slot and VRAM slot
 ;***************************	
@@ -6289,7 +6294,7 @@ PCNPC_DirectionPaletteVRAM: ;Load PC NPC palette storage INTO RAM
 	STA !PCNPC_VRAMSlot_18
 	RTL
 }
-		
+
 ;***************************
 ; Various PC, NPC, enemy and objects falling velocity setup
 ;***************************
@@ -6305,7 +6310,7 @@ FallingVelocity: ;Common routine that sets up various PC, NPC, Enemy and objects
 	SEP #$20
 	RTL
 }
-			
+
 ;***************************
 ; Sets data for X's X-Buster. X/Y coordinates, palette RAM slot, VRAM slot.
 ;***************************
@@ -6445,11 +6450,13 @@ XBusterPCNPC_Level1_2:
 {
 	LDA !PCorPCNPC_Buster_7EF4EB
 	BNE XBusterPCNPC_Level1_2IgnoreStorage
-	LDA $09E9
-	AND #$70
-	ORA $0000
-	STA $11
-	STZ $30
+	
+		LDA $09E9
+		AND #$70
+		ORA $0000
+		STA $11
+		
+		STZ $30
 	
 	XBusterPCNPC_Level1_2IgnoreStorage:
 	RTL
@@ -6463,10 +6470,11 @@ XBusterPCNPC_Level3:
 {
 	LDA !PCorPCNPC_Buster_7EF4EB
 	BNE XBusterPCNPC_Level3IgnoreStorage
-	LDA $09E9
-	AND #$70
-	ORA #$06
-	STA $11
+	
+		LDA $09E9
+		AND #$70
+		ORA #$06
+		STA $11
 	
 	XBusterPCNPC_Level3IgnoreStorage:
 	RTL
@@ -7158,40 +7166,46 @@ TitleScreenSwitch:
 	LDA !CurrentPCAction_09DA
 	CMP #$76
 	BEQ LoopAnimation
-	LDA $AD ;Loads current key being pressed
-	BIT #$20
-	BEQ TitleScreenSwitchEnd
 	
-	STZ !CurrentPCSubAction_09DB
-	LDA !CapsuleIntro_7EF4E4
-	STA $0000
-	LDA !CurrentPCCheck_1FFF
-	CMP #$02
-	BEQ TitleScreenSwitchToX
-	
-	TitleScreenSwitchToZero:
-	LDA #$02
-	TSB !CurrentPCCheck_1FFF
-	LDA #$80
-	TSB $0000
-	LDA $0000
-	STA !CapsuleIntro_7EF4E4
-	BRA LoopAnimation
-	
-	TitleScreenSwitchToX:
-	LDA #$02
-	TRB !CurrentPCCheck_1FFF
-	LDA #$80
-	TRB $0000
-	LDA $0000
-	STA !CapsuleIntro_7EF4E4
+		LDA $AD ;Loads current key being pressed
+		BIT #$20
+		BEQ TitleScreenSwitchEnd
+		
+			STZ !CurrentPCSubAction_09DB
+			
+			LDA !CapsuleIntro_7EF4E4
+			STA $0000
+			
+			LDA !CurrentPCCheck_1FFF
+			CMP #$02
+			BEQ TitleScreenSwitchToX
+			
+				TitleScreenSwitchToZero:
+				LDA #$02
+				TSB !CurrentPCCheck_1FFF
+				
+				LDA #$80
+				TSB $0000
+				
+				LDA $0000
+				STA !CapsuleIntro_7EF4E4
+				BRA LoopAnimation
+				
+			TitleScreenSwitchToX:
+			LDA #$02
+			TRB !CurrentPCCheck_1FFF
+			
+			LDA #$80
+			TRB $0000
+			LDA $0000
+			STA !CapsuleIntro_7EF4E4
 	
 	LoopAnimation:
 	LDA !CurrentPCSubAction_09DB
 	CMP #$06
 	BNE TitleScreenSwitchIgnoreDrawText
 	
-	JSL PCTitleScreenDrawText
+		JSL PCTitleScreenDrawText
 	
 	TitleScreenSwitchIgnoreDrawText:
 	LDA #$76
@@ -7199,7 +7213,7 @@ TitleScreenSwitch:
 	LDA #$24
 	STA !CurrentHealth_09FF
 
-	JSL $48000 ;Loads basis for X actions on the title screen
+	JSL $848000 ;Loads basis for X actions on the title screen
 	
 	LDA #$04
 	STA !PCHealthBar_1F22
@@ -7208,13 +7222,14 @@ TitleScreenSwitch:
 	STA $003B
 	
 	JSL PCTitleScreenCoordinates
+	
 	LDA #$00 ;Sets 'A' to #$00 so you can't start game until switching is complete
 	STZ $AD
 	BRA TitleScreenSwitchTotalEnd
 	
-	TitleScreenSwitchEnd:
-	LDA $AD
-	BIT #08 ;Checks for 'Up' key to be moved
+		TitleScreenSwitchEnd:
+		LDA $AD
+		BIT #08 ;Checks for 'Up' key to be moved
 	
 	TitleScreenSwitchTotalEnd:
 	RTL
@@ -7303,6 +7318,108 @@ PCTitleScreenCoordinates:
 			LDA $87F8,x
 			RTS
 }
+
+TitleScreen_InitCheat: { ;New function that checks if "L+R+X" are held when selecting the "New Game" option. If so, set flag for "Cheat Mode" being set.
+	LDA $3C ;Loads $7E:003C (Current Title Screen option) [00 - New Game] [01 - Load Game] [02 - Options]
+	BNE TitleScreen_InitCheat_SetBuster
+	
+		LDA $A8 ;Loads $7E:00A8 (Current button being pressed)
+		CMP #$70
+		BNE TitleScreen_InitCheat_SetBuster
+		
+			LDA #$5C
+			STA !CurrentPCAction_09DA
+			
+			LDA #$FF
+			STA !RideChipsOrigin_7E1FD7
+			
+			LDA #$10 ;Sets to "New Game+" mode.
+			STA $7EF4E0 ;Stores to $7E:F4E0 (Shared RAM - Difficulty Selection & New Game+)
+			
+			LDA #$01
+			STA $3D ;Stores to $7E:003D (Temp. storage for "Cheat Mode" being able)
+			RTL
+	
+	TitleScreen_InitCheat_SetBuster:
+	LDA #$08
+	STA $0A31
+	RTL
+
+}
+TitleScreen_CheckCheat: { ;New function that will set all upgrades and enable NG+ Mode at the start.
+	LDA $3D ;Loads $7E:003D (Temp. storage for "Cheat Mode")
+	BEQ TitleScreen_CheckCheat_Normal
+		BRA TitleScreen_CheckCheat_NG
+	
+	TitleScreen_CheckCheat_Normal:
+	STZ !CurrentLevel_1FAE
+	STZ !CurrentDopplerLevel_1FAF
+	STZ !DopplerLabBIT_1FB0
+	
+	LDA #$00 ;Disable Cheat Mode
+	RTL
+	
+	
+	
+	TitleScreen_CheckCheat_NG:
+	LDA #$FF
+	STA !RideChipsOrigin_7E1FD7
+	STA !CurrentPCArmorOriginFull_7E1FD1
+	STA !XArmorsByte1_7EF418
+	STA !XHeartTank_7EF41C
+	STA !ZeroHeartTank_7EF44C
+	STA !PC3HeartTank_7EF47C
+	STA !PC4HeartTank_7EF4AC
+	STA !XSubTankCollect_7EF41D
+	STA !ZeroSubTankCollect_7EF44D
+	STA !PC3SubTankCollect_7EF47D
+	STA !PC4SubTankCollect_7EF4AD
+	
+	LDA #$81 ;Sets Dr. Light was spoken too.
+	STA !CapsuleIntro_7EF4E4
+	
+	LDA #$8E
+	STA $1FB7 ;Sub-Tank #1 (Set to full)
+	STA $1FB8 ;Sub-Tank #2 (Set to full)
+	STA $1FB9 ;Sub-Tank #3 (Set to full)
+	STA $1FBA ;Sub-Tank #4 (Set to full)
+	
+	LDA #$1C ;Max Sub-Weapon Health
+	STA $1FBB ;Acid Burst
+	STA $1FBC ;Parasitic Bomb
+	STA $1FBD ;Triad Thunder
+	STA $1FBE ;Spinning Blades
+	STA $1FBF ;Ray Shooter
+	STA $1FC0 ;Gravity Well
+	STA $1FC1 ;Frost Shield
+	STA $1FC2 ;Tornado Fang
+	STA $1FC3 ;Hyper Chip
+	
+	LDA #$20
+	STA !XMaxHealth_7EF41B
+	STA !PC3MaxHealth_7EF47B
+	STA !PC4MaxHealth_7EF4AB
+	
+	LDA #$24
+	STA !ZeroMaxHealth_7EF44B
+	
+	LDA #$10 ;Sets to "New Game+" mode.
+	STA !Difficulty_7EF4E0 ;Stores to $7E:F4E0 (Shared RAM - Difficulty Selection & New Game+)
+	
+	LDA #$80 ;Sets Z-Saber obtained.
+	STA !ZSaberObtained_1FB2
+	
+	LDA #$02
+	STA $1FB4 ;Stores to $7E:1FB4 (Max Lives)
+	
+	LDA #$01 ;Sets "Introduction Level" as completed
+	STA !IntroductionLevelBIT_1FD3
+	
+	LDA #$01 ;Enable Cheat Mode
+	RTL
+
+}
+
 
 ;*********************************************************************************
 ; Sets X/Y coordinates of the 'SHING' effect on the victory animation
@@ -7553,7 +7670,6 @@ BossDoors_ClearVariousEnemyData:
 	STZ $000E,x ;Blanks out ???
 	STZ $0027,x ;Blanks out ???
 	STZ $0037,x ;Blanks out damage timer
-	STZ $003D,x ;Blanks out counter for Tunnel Rhino's drills
 	TXA
 	CLC
 	ADC #$0040
@@ -7563,26 +7679,6 @@ BossDoors_ClearVariousEnemyData:
 	SEP #$30
 	RTL
 }
-; or here's the original fix I came up with, the "nuclear" option; wipes the whole table,
-; eight bytes at a time. it's slower (8x by cycle count), but from a player perspective, not by much
-;{
-;	REP #$30
-;	LDX #$0D18
-;	BossDoors_StartClearing:
-;	STZ $0000,X
-;	STZ $0002,X
-;	STZ $0004,X
-;	STZ $0006,X
-;	TXA 
-;	CLC 
-;	ADC #$0008
-;	TAX 
-;	CMP #$10D8
-;	BCC BossDoors_StartClearing
-;	SEP #$30
-;	RTL 
-;}
-
 	
 ;*********************************************************************************
 ; Creates a damage table switch value for Worm Seeker mid-boss in Neon Tiger's level
