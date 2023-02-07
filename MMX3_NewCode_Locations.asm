@@ -398,17 +398,17 @@ PCIconBase: ;Base start of the PC Icon routine.
 		LDA !CurrentLevel_1FAE ;Load current level
 		BNE PCIconRoutine
 		
-		LDA !IntroductionLevelBIT_1FD3 ;Load bit to determine if introduction level is complete or not
-		BIT #$01
-		BNE PCIconRoutine
-		
-		LDA !CapsuleIntro_7EF4E4
-		BIT #$80 ;Checks if you're using Zero on introduction or not
-		BEQ LoadXInstead
-		
-		LDA #$02
-		STA !CurrentPCCheck_1FFF
-		BRA PCIconRoutine
+			LDA !IntroductionLevelBIT_1FD3 ;Load bit to determine if introduction level is complete or not
+			BIT #$01
+			BNE PCIconRoutine
+			
+				LDA !CapsuleIntro_7EF4E4
+				BIT #$80 ;Checks if you're using Zero on introduction or not
+				BEQ LoadXInstead
+			
+			LDA #$02
+			STA !CurrentPCCheck_1FFF
+			BRA PCIconRoutine
 		
 		LoadXInstead:
 		STZ !CurrentPCCheck_1FFF ;Store #$00 to Current PCCheck so you are 'X'
@@ -11451,6 +11451,25 @@ MaohTheGiant_AI:
 		JSL $82DF64
 		JML $82E876
 		RTL
+}
+
+BossDoor_SetPalette: ;Loads new function that specifically resets a value at $7F:8321 on Neon Tiger's level at the boss door to prevent saber wave palette issues.
+{
+	JSL $84D0E8
+	
+	LDA !CurrentLevel_1FAE
+	CMP #$08 ;Checks for "Neon Tiger"
+	BNE BossDoor_SetPalette_End
+	
+		LDA !Checkpoint_1FB5
+		CMP #$02 ;Neon Tiger boss door
+		BNE BossDoor_SetPalette_End
+		
+			LDA #$00
+			STA $7F8321
+	
+	BossDoor_SetPalette_End:
+	RTL
 }
 
 }

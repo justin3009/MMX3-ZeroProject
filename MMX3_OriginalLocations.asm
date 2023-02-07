@@ -4392,14 +4392,15 @@ org !DialogueBoxSmall
 }
 }
 	
-;***************************
-; Sets PC's buster palette restoration as a JSR for various routines throughout the game
-;***************************
+org $84FFCA ;Original code location that sets PC's buster palette restoration as a JSR for various routines throughout the game
 {
-org $84FFCA ;Loads PC Buster Palette as a JSR
 	JSL PCBusterPalette
 	SEP #$30
 	RTL
+}
+org $81E0F1 ;Original code location when entering a boss door. [Now altered to do the same but checks for Neon Tiger's level and sets $7F:8321 to #$00 to prevent palette issues]
+{
+	JSL BossDoor_SetPalette
 }
 	
 ;***************************
