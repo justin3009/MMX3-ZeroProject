@@ -1966,6 +1966,14 @@ org $88B7C0 ;Loads event #$0A for Mac.
 	org $88FFF0
 	JSL Mac_AI_0A ;Loads routine for specific sub-weapons with damage timers to properly work with Mac
 	RTL
+	
+org $B99237 ;Original code location for Worm Seeker damage function.
+{
+;Alters it to be a new location so specific sub-weapons will actually damage him and not break him.
+	dw $C1BB
+	org $B9C1BB
+	JML WormSeeker_AI_0A
+}
 }
 
 ;*********************************************************************************

@@ -11443,14 +11443,29 @@ MaohTheGiant_AI:
 		CMP #$04 ;Z-Saber Wave
 		BNE MaohTheGiant_AI_0A_NotZSaber
 		
-		JML $93EC4C
-		RTL
+			JML $93EC4C
+			RTL
 		
 	MaohTheGiant_AI_0A_NotZSaber:
 		JSL $84D8D5
 		JSL $82DF64
 		JML $82E876
 		RTL
+}
+WormSeeker_AI_0A: ;Loads routine to get Worm Seeker's AI event for when he's hit by Z-Saber or Tornado Fang.
+{
+	JSL $82DDFE
+	
+	LDA $01
+	CMP #$04 ;Z-Saber Wave
+	BNE WormSeeker_AI_0A_NotZSaber
+	
+		JML $B99398
+		RTL
+	
+	WormSeeker_AI_0A_NotZSaber:
+	JSL $84D8D5
+	JML $B9935A
 }
 
 BossDoor_SetPalette: ;Loads new function that specifically resets a value at $7F:8321 on Neon Tiger's level at the boss door to prevent saber wave palette issues.
