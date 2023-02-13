@@ -2328,7 +2328,7 @@ PC_ZSaberProjectile: ;Routine to determine which PC can use halved sub-weapon am
 	{
 	LDA !XArmorsByte1_7EF418 ;Load X's Armor Value from new RAM
 	BIT #$02
-	BEQ X_SaberProjectileCheck_Disable
+	BEQ X_SaberProjectileCheck_Disable_Set
 	
 		LDA $7E0CC8 ;NPC Active (Disables Z-Saber wave when NPC is active)
 		BNE X_SaberProjectileCheck_Disable
