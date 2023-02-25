@@ -2339,7 +2339,8 @@ PC_ZSaberProjectile: ;Routine to determine which PC can use halved sub-weapon am
 	
 	X_SaberProjectileCheck_Disable:
 	LDA !CurrentLevel_1FAE
-	BNE X_SaberProjectileCheck_Disable_Set
+	CMP #$01
+	BCS X_SaberProjectileCheck_Enable_Set
 	
 		LDA !Checkpoint_1FB5
 		BEQ X_SaberProjectileCheck_Disable_Set
