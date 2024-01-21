@@ -16,7 +16,16 @@ $7E:1FCF - Z-Saber check on enemy
 $7E:1FD0 - Z-Saber BIT on Bosses (Checks whether they can be damaged by Z-Saber again or not)
 	--> Checks RAM using $7E:F400 (Enemy Z-Saber BIT table. Covers all 15 enemies that can be on screen at once)
 
-$7E:1FD1 - Now total Chip Capsule collection. (If F0 then GA capsule is available)
+$7E:1FD1 - Now total Chip Capsule collection. (When set to #$F0, then the capsule is available)
+	00 - Nothing
+	01 - Nothing
+	02 - Nothing
+	04 - Nothing
+	08 - Nothing
+	10 - Helmet Chip acquired
+	20 - Arm Chip acquired
+	40 - Armor Chip acquired
+	80 - Leg Chip acquired
 
 $7E:1FD3 - Bit flag for introduction level beat/Secret ending flag
 	00 - No level done
@@ -24,7 +33,15 @@ $7E:1FD3 - Bit flag for introduction level beat/Secret ending flag
 	02 - Secret ending active (UNUSED)
 
 $7E:1FD7 - Ride Chip collection (Stays universal no matter difficulty)
-
+	00 - Nothing
+	01 - N Chip
+	02 - K Chip
+	04 - H Chip
+	08 - F Chip
+	10 - Helmet Chip (Active)
+	20 - Arm Chip (Active)
+	40 - Armor Chip (Active)
+	80 - Leg Chip (Active)
 
 -------------------------------
 X Data
@@ -52,7 +69,25 @@ For sub-weapons:
 	Set to C0: Sub-weapons obtained but have no health left.
 
 $7E:F418 - X's Armor #1 pieces/X's Armor #2 pieces (00-0F then 10-80)
+	00 - Nothing
+	01 - Helmet (X3 Armor - Acquired)
+	02 - Arm (X3 Armor - Acquired)
+	04 - Armor (X3 Armor - Acquired)
+	08 - Legs (X3 Armor - Acquired)
+	10 - UNUSED
+	20 - UNUSED
+	40 - UNUSED
+	80 - UNUSED
 $7E:F419 - X's Armor #3 pieces/X's Armor #4 pieces (00-0F then 10-80) (UNUSED)
+	00 - Nothing
+	01 - UNUSED
+	02 - UNUSED
+	04 - UNUSED
+	08 - UNUSED
+	10 - UNUSED
+	20 - UNUSED
+	40 - UNUSED
+	80 - UNUSED
 $7E:F41A - X's Current health (PC swap)
 $7E:F41B - X's Max health
 $7E:F41C - X's Heart Tank collection
@@ -73,6 +108,10 @@ $7E:F41E - X's Armors fully obtained (UNUSED)
 	02 - Armor #2
 	04 - Armor #3
 	08 - Armor #4
+	10 - UNUSED
+	20 - UNUSED
+	40 - UNUSED
+	80 - UNUSED
 $7E:F41F - X's availability (UNUSED)
 	00 - Available
 	01 - Unavailable
@@ -105,7 +144,25 @@ For sub-weapons:
 	Set to C0: Sub-weapons obtained but have no health left.
 
 $7E:F448 - Zero's Armor #1 pieces/Zero's Armor #2 pieces (00-0F then 10-80) (UNUSED)
+	00 - Nothing
+	01 - UNUSED
+	02 - UNUSED
+	04 - UNUSED
+	08 - UNUSED
+	10 - UNUSED
+	20 - UNUSED
+	40 - UNUSED
+	80 - UNUSED
 $7E:F449 - Zero's Armor #3 pieces/Zero's Armor #4 pieces (00-0F then 10-80) (UNUSED)
+	00 - Nothing
+	01 - UNUSED
+	02 - UNUSED
+	04 - UNUSED
+	08 - UNUSED
+	10 - UNUSED
+	20 - UNUSED
+	40 - UNUSED
+	80 - UNUSED
 $7E:F44A - Zero's Current health (PC swap)
 $7E:F44B - Zero's Max health
 $7E:F44C - Zero's Heart Tank collection
@@ -126,6 +183,10 @@ $7E:F44E - Zero's Armors fully obtained (UNUSED)
 	02 - Armor #2
 	04 - Armor #3
 	08 - Armor #4
+	10 - UNUSED
+	20 - UNUSED
+	40 - UNUSED
+	80 - UNUSED
 $7E:F44F - Zero's availability (UNUSED)
 	00 - Available
 	01 - Unavailable
@@ -162,6 +223,15 @@ $7E:F4E1 - Mode Select (This goes unused!)
 
 $7E:F4E2 - Boss Defeat Counter
 $7E:F4E3 - Boss Defeat Counter #2 (Extra - UNUSED)
+	00 - Nothing
+	01 - UNUSED
+	02 - UNUSED
+	04 - UNUSED
+	08 - UNUSED
+	10 - UNUSED
+	20 - UNUSED
+	40 - UNUSED
+	80 - UNUSED
 $7E:F4E4 - Bit for PC talking to Dr. Light for first time
 	00 - Nothing
 	01 - Zero talked
