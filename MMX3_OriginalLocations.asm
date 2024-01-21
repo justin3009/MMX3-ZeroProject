@@ -616,6 +616,7 @@ org $80A2C3
 ;***************************
 ; Removes original palette data pointers location and moves it to bank $C8
 ; Alters palette code so it has a larger bank usage instead of $86 as it's base.
+; $C8:9823 is the base for all palette pointers.
 ;***************************	
 {
 org $81806B
@@ -3484,42 +3485,48 @@ org $84B703 ;Load new code location to reset PC's double jump values when enteri
 ; Heavily altered so it's compressed but does the same thing now.
 ;*********************************************************************************
 {	
-org $84CD8E ;Original code location that checked if you had Hyper Charge equipped, if so, do not heal.
+org $84CD87 ;Original code location that checked if you had Hyper Charge equipped, if so, do not heal.
 ;Whole routine was altered so it heals no matter what for 'half' the damage you take equipped or not.
 {
-	SEP #$30
-	LDA !CurrentPC_0A8E ;Loads $7E:0A8E (Current PC). If you are not X, it will automatically skip the routine to heal Hyper Charge.
-	BNE EndHealHyperCharge
-	
-	LDX #$09
-	JSL LoadPCSplitSubWeapon
+	LDA !RideChipsOrigin_7E1FD7
+	BIT #$20
 	BEQ EndHealHyperCharge
-	CMP #$C0
-	BEQ BeginHealHyperCharge
-	BRA SkipBeginHealAndContinue
 	
-	BeginHealHyperCharge:
-	LDA #$00
+		SEP #$30
+		LDA !CurrentPC_0A8E ;Loads $7E:0A8E (Current PC). If you are not X, it will automatically skip the routine to heal Hyper Charge.
+		BNE EndHealHyperCharge
+		
+			LDX #$09
+			JSL LoadPCSplitSubWeapon
+			BEQ EndHealHyperCharge
+			
+				CMP #$C0
+				BEQ BeginHealHyperCharge
+					BRA SkipBeginHealAndContinue
+				
+				BeginHealHyperCharge:
+				LDA #$00
 
-	SkipBeginHealAndContinue:
-	STA $0002
-	LDA $0000
-	CMP #$01
-	BEQ SkipHyperChargeHealDivide
-	LSR
+				SkipBeginHealAndContinue:
+				STA $0002
+				LDA $0000
+				CMP #$01
+				BEQ SkipHyperChargeHealDivide
+				
+					LSR
 
-	SkipHyperChargeHealDivide:
-	CLC
-	ADC $0002
-	CMP #$1C
-	BCS StoreMaxHyperCharge
-	BRA	SkipStoreMaxHyperCharge
-	
-	StoreMaxHyperCharge:
-	LDA #$1C
-	
-	SkipStoreMaxHyperCharge:
-	JSL StorePCSplitSubWeapon
+				SkipHyperChargeHealDivide:
+				CLC
+				ADC $0002
+				CMP #$1C
+				BCS StoreMaxHyperCharge
+					BRA	SkipStoreMaxHyperCharge
+				
+				StoreMaxHyperCharge:
+				LDA #$1C
+				
+				SkipStoreMaxHyperCharge:
+				JSL StorePCSplitSubWeapon
 	
 	EndHealHyperCharge:
 	SEP #$20
